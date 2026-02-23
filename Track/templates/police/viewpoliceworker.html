@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+
+<head>
+    {% include "police/policeheder.html" %}
+    <title>SafeTrack.com | Advanced Subject Search</title>
+    <style>
+        .search-hero {
+            background: linear-gradient(135deg, var(--primary-navy), var(--secondary-blue));
+            padding: 40px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-input-modern {
+            width: 100%;
+            padding: 20px 30px 20px 60px;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.95);
+            font-size: 18px;
+            color: var(--primary-navy);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .search-input-modern:focus {
+            outline: none;
+            background: white;
+            box-shadow: 0 8px 30px rgba(49, 130, 206, 0.4);
+            transform: scale(1.02);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-blue);
+            font-size: 20px;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .status-accepted {
+            background: #DCFCE7;
+            color: #166534;
+        }
+
+        .status-rejected {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .status-pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-content">
+
+        <!-- Search Hero Section -->
+        <div class="search-hero">
+            <h2 style="color: white; font-weight: 800; text-align: center; margin-bottom: 30px; letter-spacing: 1px;">
+                <i class="fa-solid fa-user-shield" style="margin-right: 15px; color: var(--accent-blue);"></i> Subject
+                Intelligence Database
+            </h2>
+            <div class="search-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <form method="get" action="{% url 'view2' %}" onsubmit="return false;">
+                    <input type="text" name="search" id="search" onkeyup="searchOpen()" class="search-input-modern"
+                        placeholder="Query by Name, Aadhar Protocol, or Location Sector...">
+                </form>
+            </div>
+            <p
+                style="text-align: center; color: rgba(255,255,255,0.6); margin-top: 20px; font-size: 12px; font-weight: 600;">
+                <i class="fa-solid fa-satellite"></i> LIVE DATA LINK ACTIVE • REAL-TIME AJAX INDEXING
+            </p>
+        </div>
+
+        <!-- Results Table -->
+        <div class="police-card">
+            <div class="table-responsive">
+                <table class="police-table">
+                    <thead>
+                        <tr>
+                            <th>Profile</th>
+                            <th>Intelligence ID / Name</th>
+                            <th>Identity Protocol</th>
+                            <th>Place of Origin</th>
+                            <th>Contact mobile</th>
+                            <th>Vetting Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="worker-table-body">
+                        {% for i in list %}
+                        <tr>
+                            <td>
+                                <img src="/media/{{i.image}}"
+                                    style="width:45px; height:45px; border-radius:12px; border:2px solid #E2E8F0; object-fit: cover;">
+                            </td>
+                            <td>
+                                <div style="font-weight: 700; color: var(--primary-navy);">{{i.worker_name}}</div>
+                                <div style="font-size: 11px; opacity: 0.7;">Reg: {{i.regis_date}}</div>
+                            </td>
+                            <td><span style="font-family: monospace; font-weight: 700;">{{i.aadhar_number}}</span></td>
+                            <td>{{i.place}}</td>
+                            <td>{{i.mobile}}</td>
+                            <td>
+                                {% if i.status|lower == 'accepted' %}
+                                <span class="status-badge status-accepted">VERIFIED</span>
+                                {% elif i.status|lower == 'rejected' %}
+                                <span class="status-badge status-rejected">WATCHLIST</span>
+                                {% else %}
+                                <span class="status-badge status-pending">IN-PROCESS</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Animated Intelligence Feed Footer -->
+        <div
+            style="display: flex; align-items: center; justify-content: center; gap: 30px; margin-top: 40px; opacity: 0.5;">
+            <div
+                style="font-size: 11px; font-weight: 700; color: var(--primary-navy); text-transform: uppercase; letter-spacing: 2px;">
+                Secure Tunnel: TLS 1.3 • Sector 7 Command • Node 0.4
+            </div>
+            <i class="fa-solid fa-fingerprint fa-2x"></i>
+        </div>
+
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="{% static 'files/js/jquery.js' %}"></script>
+    <script>
+        function searchOpen() {
+            var url = '/view1/';
+            var searchText = $('#search').val();
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                data: {
+                    'search1': searchText
+                },
+                success: function (data) {
+                    $("#worker-table-body").html(data);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Search protocol failure:", status, error);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

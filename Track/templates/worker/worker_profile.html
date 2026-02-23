@@ -1,0 +1,259 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block extra_css %}
+<style>
+
+/* ===== Global Font Size ===== */
+body {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px !important;
+    color: #1f2937;
+    background: url('{% static "images/profile-bg.jpg" %}') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+}
+
+/* Dark overlay for background */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: -1;
+}
+
+/* ===== Page Header ===== */
+.page-header-accent {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    padding: 2rem;
+    border-radius: 18px;
+    margin-bottom: 2rem;
+    box-shadow: 0 15px 40px rgba(79, 70, 229, 0.25);
+}
+
+.page-header-accent h2,
+.page-header-accent p {
+    font-size: 16px;
+}
+
+/* ===== Main Glass Card ===== */
+.glass-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Profile Top Card ===== */
+.profile-top-card {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border-radius: 18px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.profile-image {
+    width: 130px;
+    height: 130px;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: auto;
+    border: 4px solid rgba(255,255,255,0.4);
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-top-card h4,
+.profile-top-card p {
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+/* ===== Small Detail Cards ===== */
+.profile-section {
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 16px;
+    color: #4f46e5;
+}
+
+.small-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: 0.3s ease;
+}
+
+.small-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+.info-label {
+    font-weight: 600;
+    font-size: 16px;
+    color: #6b7280;
+}
+
+.info-value {
+    font-size: 16px;
+    margin-top: 3px;
+}
+
+/* ===== Button ===== */
+.btn-gradient {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border: none;
+    padding: 0.7rem 2rem;
+    border-radius: 40px;
+    font-size: 16px;
+    font-weight: 600;
+    box-shadow: 0 8px 25px rgba(79,70,229,0.3);
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(79,70,229,0.4);
+    color: white;
+}
+
+/* Responsive */
+@media(max-width:768px){
+    .glass-card {
+        padding: 1.5rem;
+    }
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header-accent">
+    <h2>My Profile</h2>
+    <p>View your personal information and contact details.</p>
+</div>
+
+<div class="row justify-content-center">
+<div class="col-lg-8">
+
+<div class="glass-card">
+
+{% if worker %}
+
+<!-- Profile Top -->
+<div class="profile-top-card">
+    <div class="profile-image">
+        <img src="/media/{{ worker.image }}" alt="Profile">
+    </div>
+    <h4>{{ worker.worker_name }}</h4>
+    <p>{{ worker.email }}</p>
+</div>
+
+<!-- Personal Details -->
+<div class="profile-section">
+    <div class="section-title">Personal Details</div>
+
+    <div class="small-card">
+        <div class="info-label">Full Name</div>
+        <div class="info-value">{{ worker.worker_name }}</div>
+    </div>
+
+    <div class="small-card">
+        <div class="info-label">Gender</div>
+        <div class="info-value">{{ worker.gender }}</div>
+    </div>
+
+    <div class="small-card">
+        <div class="info-label">Date of Birth</div>
+        <div class="info-value">{{ worker.dob }}</div>
+    </div>
+
+    <div class="small-card">
+        <div class="info-label">Aadhaar Number</div>
+        <div class="info-value">{{ worker.aadhar_number }}</div>
+    </div>
+
+    <div class="small-card">
+        <div class="info-label">Languages Known</div>
+        <div class="info-value">{{ worker.languages_known }}</div>
+    </div>
+</div>
+
+<!-- Contact Details -->
+<div class="profile-section">
+    <div class="section-title">Contact Information</div>
+
+    <div class="small-card">
+        <div class="info-label">Mobile</div>
+        <div class="info-value">{{ worker.mobile }}</div>
+    </div>
+
+    <div class="small-card">
+        <div class="info-label">Phone</div>
+        <div class="info-value">{{ worker.phone|default:"Not provided" }}</div>
+    </div>
+</div>
+
+<!-- Address -->
+<div class="profile-section">
+    <div class="section-title">Address Information</div>
+
+    <div class="small-card">
+        <div class="info-label">Street</div>
+        <div class="info-value">{{ worker.address }}</div>
+    </div>
+
+    <div class="small-card">
+        <div class="info-label">City</div>
+        <div class="info-value">{{ worker.place }}</div>
+    </div>
+
+    <div class="small-card">
+        <div class="info-label">State</div>
+        <div class="info-value">{{ worker.state|default:"Not provided" }}</div>
+    </div>
+
+    <div class="small-card">
+        <div class="info-label">PIN Code</div>
+        <div class="info-value">{{ worker.pincode|default:"Not provided" }}</div>
+    </div>
+</div>
+
+<!-- Edit Button -->
+<div class="text-center mt-4">
+    <a href="{% url 'viewemydetailsworker' %}" class="btn-gradient">
+        <i class="fas fa-edit mr-2"></i>Edit Profile
+    </a>
+</div>
+
+{% else %}
+<div class="text-center">
+    <p>No profile data found.</p>
+</div>
+{% endif %}
+
+</div>
+</div>
+</div>
+
+{% endblock %}

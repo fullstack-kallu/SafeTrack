@@ -1,0 +1,340 @@
+{% extends 'agency/agency_base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+
+/* Page Section */
+.vacancy-section {
+    padding: 60px 20px;
+    background: linear-gradient(to right, #eef2ff, #f8f9ff);
+    min-height: 100vh;
+}
+
+/* Main Card */
+.vacancy-card {
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    padding: 35px;
+    transition: 0.3s ease-in-out;
+}
+
+.vacancy-card:hover {
+    transform: translateY(-3px);
+}
+
+/* Title */
+.vacancy-title {
+    font-size: 30px;
+    font-weight: 700;
+    color: #3f51b5;
+    text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+/* Section Title */
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #5c6bc0;
+    margin: 30px 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+/* Vacancy Info Box */
+.vacancy-info {
+    background: #f8f9ff;
+    border-left: 4px solid #3f51b5;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    border-radius: 0 8px 8px 0;
+}
+
+.vacancy-info h5 {
+    color: #3f51b5;
+    margin-bottom: 10px;
+}
+
+.vacancy-info p {
+    margin: 5px 0;
+    color: #555;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+/* Table */
+.vacancy-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+
+/* Header */
+.vacancy-table thead {
+    background: linear-gradient(45deg, #3f51b5, #5c6bc0);
+    color: #fff;
+}
+
+.vacancy-table th {
+    padding: 16px;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+}
+
+/* Body */
+.vacancy-table td {
+    padding: 16px;
+    vertical-align: middle;
+}
+
+.vacancy-table tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.vacancy-table tbody tr:hover {
+    background: #f3f5ff;
+    transform: scale(1.01);
+}
+
+/* Worker Info Styling */
+.worker-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.worker-name {
+    font-weight: 700;
+    color: #333;
+    font-size: 16px;
+}
+
+.worker-details {
+    font-size: 13px;
+    color: #777;
+    margin-top: 4px;
+}
+
+/* Status Badge */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-fixed {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-block;
+    margin-right: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-view {
+    background: #3f51b5;
+    color: #fff;
+}
+
+.btn-view:hover {
+    background: #303f9f;
+    color: #fff;
+}
+
+.btn-add {
+    background: #28a745;
+    color: #fff;
+}
+
+.btn-add:hover {
+    background: #218838;
+    color: #fff;
+}
+
+/* Empty Message */
+.empty-message {
+    text-align: center;
+    padding: 25px;
+    font-weight: 500;
+    color: #888;
+}
+
+/* ----------- MOBILE RESPONSIVE ----------- */
+
+@media (max-width: 768px) {
+
+    .vacancy-title {
+        font-size: 22px;
+    }
+
+    .vacancy-table thead {
+        display: none;
+    }
+
+    .vacancy-table, 
+    .vacancy-table tbody, 
+    .vacancy-table tr, 
+    .vacancy-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .vacancy-table tr {
+        margin-bottom: 20px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        padding: 15px;
+    }
+
+    .vacancy-table td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+        font-size: 14px;
+    }
+
+    .vacancy-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        font-weight: 600;
+        text-align: left;
+        color: #3f51b5;
+    }
+    
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .action-btn {
+        margin-right: 0;
+        text-align: center;
+    }
+}
+
+</style>
+
+<div class="vacancy-section">
+    <div class="container">
+        <div class="vacancy-card">
+
+            <div class="vacancy-title">
+                <i class="fa fa-users"></i> Applied Vacancy Details
+            </div>
+
+            <div class="table-wrapper">
+                <table class="vacancy-table">
+                    <thead>
+                        <tr>
+                            <th>Vacancy</th>
+                            <th>Openings</th>
+                            <th>Applied Worker</th>
+                            <th>Qualification</th>
+                            <th>Experience</th>
+                            <th>Contact</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in list %}
+                        <tr>
+                            <td data-label="Vacancy">
+                                <strong>{{ i.vacancy }}</strong>
+                                <div style="font-size: 12px; color: #777; margin-top: 4px;">
+                                    <i class="fa fa-calendar"></i> {{ i.date }}
+                                </div>
+                            </td>
+                            <td data-label="Openings">
+                                <span class="badge bg-primary">{{ i.vacancy_no }}</span>
+                            </td>
+                            <td data-label="Applied Worker">
+                                <div class="worker-info">
+                                    <span class="worker-name">{{ i.worker_name }}</span>
+                                    <span class="worker-details">
+                                        {{ i.gender }} | {{ i.dob }}
+                                    </span>
+                                    <span class="worker-details">
+                                        <i class="fa fa-map-marker"></i> {{ i.place }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td data-label="Qualification">{{ i.qualification }}</td>
+                            <td data-label="Experience">{{ i.experience }}</td>
+                            <td data-label="Contact">
+                                <div style="font-size: 13px;">
+                                    <div><i class="fa fa-phone"></i> {{ i.phone }}</div>
+                                    <div><i class="fa fa-mobile"></i> {{ i.mobile }}</div>
+                                    <div><i class="fa fa-envelope"></i> {{ i.email }}</div>
+                                </div>
+                            </td>
+                            <td data-label="Status">
+                                {% if i.status == 'Active' %}
+                                    <span class="status-badge status-active">{{ i.status }}</span>
+                                {% elif i.status == 'fixed' %}
+                                    <span class="status-badge status-fixed">{{ i.status }}</span>
+                                {% else %}
+                                    <span class="status-badge status-pending">{{ i.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Actions">
+                                <div class="action-buttons">
+                                    <a href="/viewappliedvacancy2/?worid={{ i.worker_id }}&vacid={{ i.vacancy_id }}" class="action-btn btn-view">
+                                        <i class="fa fa-eye"></i> View
+                                    </a>
+                                    {% if i.status == 'Active' %}
+                                    <a href="/addmyworker/?worker_id={{ i.worker_id }}&vacancy_id={{ i.vacancy_id }}" class="action-btn btn-add">
+                                        <i class="fa fa-plus"></i> Add Worker
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="empty-message">
+                                <i class="fa fa-info-circle"></i> No workers have applied for any vacancy yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

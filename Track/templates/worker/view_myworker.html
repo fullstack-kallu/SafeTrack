@@ -1,0 +1,61 @@
+{% extends 'agency/agency_base.html' %}
+{% load static %}
+
+{% block title %}My Workers{% endblock %}
+
+{% block content %}
+<div class="page-header-accent">
+    <h2 class="h4 font-weight-bold">Assigned Workers</h2>
+    <p class="text-muted small">List of workers currently assigned to your firm.</p>
+</div>
+
+<div class="glass-card">
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Photo</th>
+                    <th>Worker Details</th>
+                    <th>Personal Info</th>
+                    <th>Contact</th>
+                    <th>Documents</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in list %}
+                <tr>
+                    <td>
+                        <img src="/media/{{i.image}}" alt="{{ i.worker_name }}"
+                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; border: 2px solid var(--secondary-color);">
+                    </td>
+                    <td>
+                        <div class="font-weight-bold">{{ i.worker_name }}</div>
+                        <div class="text-muted small">Languages: {{ i.languages_known }}</div>
+                    </td>
+                    <td>
+                        <div><i class="fas fa-venus-mars mr-1"></i> {{ i.gender }}</div>
+                        <div class="text-muted small"><i class="fas fa-birthday-cake mr-1"></i> {{ i.dob }}</div>
+                    </td>
+                    <td>
+                        <div class="small"><i class="fas fa-phone mr-1"></i> {{ i.phone }}</div>
+                        <div class="small"><i class="fas fa-mobile-alt mr-1"></i> {{ i.mobile }}</div>
+                        <div class="small text-lowercase"><i class="fas fa-envelope mr-1"></i> {{ i.email }}</div>
+                    </td>
+                    <td>
+                        <div class="small"><i class="fas fa-id-card mr-1"></i> Aadhaar: {{ i.aadhar_number }}</div>
+                        <div class="text-muted small"><i class="fas fa-map-marker-alt mr-1"></i> {{ i.place }}</div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">
+                        <i class="fas fa-user-slash fa-3x mb-3"></i>
+                        <p>No workers assigned to your firm yet.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

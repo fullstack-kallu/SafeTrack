@@ -1,0 +1,140 @@
+{% extends 'agency/agency_base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+/* Page Background */
+.vacancy-section {
+    padding: 40px 20px;
+    background: #f4f6fb;
+    min-height: 100vh;
+}
+
+/* Card Style Container */
+.vacancy-card {
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    padding: 30px;
+}
+
+/* Title */
+.vacancy-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #3f51b5;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Table Responsive */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.vacancy-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.vacancy-table thead {
+    background: linear-gradient(45deg, #3f51b5, #5c6bc0);
+    color: white;
+}
+
+.vacancy-table th, 
+.vacancy-table td {
+    padding: 14px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.vacancy-table tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: 0.3s;
+}
+
+.vacancy-table tbody tr:hover {
+    background: #f1f3ff;
+}
+
+/* Mobile Styling */
+@media (max-width: 768px) {
+
+    .vacancy-title {
+        font-size: 22px;
+    }
+
+    .vacancy-table thead {
+        display: none;
+    }
+
+    .vacancy-table tr {
+        display: block;
+        margin-bottom: 15px;
+        background: #f9f9f9;
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .vacancy-table td {
+        display: block;
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+    }
+
+    .vacancy-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        font-weight: bold;
+        text-align: left;
+    }
+}
+</style>
+
+<div class="vacancy-section">
+    <div class="container">
+        <div class="vacancy-card">
+
+            <div class="vacancy-title">
+                <i class="fa fa-briefcase"></i> Posted Vacancy Details
+            </div>
+
+            <div class="table-responsive">
+                <table class="vacancy-table">
+                    <thead>
+                        <tr>
+                            <th>Date Posted</th>
+                            <th>Vacancy Title</th>
+                            <th>Openings</th>
+                            <th>Job Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in list %}
+                        <tr>
+                            <td data-label="Date Posted">{{ i.date }}</td>
+                            <td data-label="Vacancy Title">{{ i.vacancy }}</td>
+                            <td data-label="Openings">{{ i.vacancy_no }}</td>
+                            <td data-label="Job Description">{{ i.description }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" style="text-align:center; padding:20px;">
+                                No vacancies posted yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

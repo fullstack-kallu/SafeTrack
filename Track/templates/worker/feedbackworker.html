@@ -1,0 +1,35 @@
+
+<html lang="en">
+  <head>
+    <title>Worker feedback</title>
+   </head>
+  <body>
+    <center>
+        <form action="/feedbackinsertworker/" method="get" > 
+   
+              
+     <table class="gridtable"  align="center">
+<tr>
+
+<th colspan="4">ADD FEEDBACK</th></tr>
+<tr>
+<input type="hidden" name="emp_id" value="{{emp_id}}"   required></td> </tr>
+<tr><td>Feedback title</td><td><input type="text" name="title"   required></td> </tr>
+
+<td>Description</td><td><textarea name="description" id="description" pattern="[a-zA-Z0]+" required></textarea></td></tr>
+<tr><td colspan="2" align="center"><input type="submit" name="submit" value="POST FEEDBACK" ></td></tr> 
+</table>
+<BR><BR>
+
+</form>
+
+</head>
+
+
+         
+                   
+
+
+    
+  </body>
+</html>

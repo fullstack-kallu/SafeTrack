@@ -1,0 +1,40 @@
+
+<html lang="en">
+  <head>
+    <title>view_feedback</title>
+    
+  </head>
+  <body>
+    
+    
+<center>
+        <form action="" method="get" > 
+   
+              
+     <table class="gridtable" border="2"  align="center">
+<tr>
+<th>Date</th><th>Feedbck title</th><th>Feedbck Description</th>
+{% for i in list %}
+
+<tr><td>{{i.date}}</td>
+<td>{{i.feedback_title}}</td>
+<td>{{i.feedback_description}}</td></tr>
+
+
+
+{% endfor %}
+</table>
+<BR><BR>
+
+</form>
+
+</head>
+
+
+         
+                   
+
+
+    
+  </body>
+</html>

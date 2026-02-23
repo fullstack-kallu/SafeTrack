@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+
+<head>
+    {% include "police/policeheder.html" %}
+    <title>SafeTrack.com | Police Station Records</title>
+</head>
+
+<body>
+
+    <div class="main-content">
+        <div class="police-card">
+            <div class="card-header">
+                <h4><i class="fa-solid fa-building-shield"></i> Police Station Intel</h4>
+                <div class="badge-modern bg-info">Official Record</div>
+            </div>
+
+            <p style="color: #718096; margin-bottom: 30px; font-size: 14px;">
+                Verified registry of police station headquarters and liaison details contributing to the migrant
+                tracking network.
+            </p>
+
+            <div class="table-responsive">
+                <table class="police-table">
+                    <thead>
+                        <tr>
+                            <th>Branch</th>
+                            <th>Direct Address</th>
+                            <th>Phone (L)</th>
+                            <th>Mobile (M)</th>
+                            <th>Email Link</th>
+                            <th>District</th>
+                            <th>Zone / City</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in list %}
+                        <tr>
+                            <td style="font-weight: 700; color: var(--primary-navy);">{{i.branch}}</td>
+                            <td>{{i.address}}</td>
+                            <td><i class="fa-solid fa-phone-flip"
+                                    style="font-size: 10px; margin-right: 5px; opacity: 0.5;"></i> {{i.phone}}</td>
+                            <td><i class="fa-solid fa-mobile-screen-button"
+                                    style="font-size: 10px; margin-right: 5px; opacity: 0.5;"></i> {{i.mobile}}</td>
+                            <td style="color: var(--accent-blue);">{{i.email}}</td>
+                            <td><span class="badge-modern"
+                                    style="background: #F1F5F9; color: #475569;">{{i.district}}</span></td>
+                            <td>{{i.city}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 30px; text-align: right;">
+                <p style="font-size: 11px; color: #A0AEC0;">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Last verified: Current Session
+                </p>
+            </div>
+        </div>
+
+        <!-- Extra Notes Section -->
+        <div class="police-card"
+            style="background: linear-gradient(rgba(10, 31, 68, 0.02), rgba(10, 31, 68, 0.02)); border: 1px dashed #E2E8F0;">
+            <h5
+                style="font-weight: 800; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; margin-bottom: 15px; color: var(--primary-navy);">
+                <i class="fa-solid fa-circle-info" style="color: var(--accent-blue);"></i> Command Notes
+            </h5>
+            <ul style="list-style: none; padding: 0; font-size: 13px; color: #4A5568; line-height: 1.6;">
+                <li style="margin-bottom: 8px;"><i class="fa-solid fa-chevron-right"
+                        style="font-size: 10px; color: var(--accent-blue); margin-right: 10px;"></i> Ensure all contact
+                    details are updated quarterly for seamless emergency coordination.</li>
+                <li><i class="fa-solid fa-chevron-right"
+                        style="font-size: 10px; color: var(--accent-blue); margin-right: 10px;"></i> Use official
+                    designated channels for classified data transmission.</li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+
+</html>

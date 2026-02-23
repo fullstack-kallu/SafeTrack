@@ -1,0 +1,107 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block page_title %}Operational Intelligence{% endblock %}
+
+{% block main_content %}
+<div class="animate-fade-up">
+	<!-- STATS GRID -->
+	<div class="stats-grid">
+		<div class="stat-item">
+			<div class="stat-icon" style="background: #DBEAFE; color: #3B82F6;"><i class="fa-solid fa-users"></i></div>
+			<div class="stat-data">
+				<h4>2,840</h4>
+				<p>Total Workers</p>
+			</div>
+		</div>
+		<div class="stat-item">
+			<div class="stat-icon" style="background: #DCFCE7; color: #10B981;"><i class="fa-solid fa-building"></i>
+			</div>
+			<div class="stat-data">
+				<h4>156</h4>
+				<p>Active Agencies</p>
+			</div>
+		</div>
+		<div class="stat-item">
+			<div class="stat-icon" style="background: #FEE2E2; color: #EF4444;"><i
+					class="fa-solid fa-triangle-exclamation"></i></div>
+			<div class="stat-data">
+				<h4>12</h4>
+				<p>Critical Alerts</p>
+			</div>
+		</div>
+		<div class="stat-item">
+			<div class="stat-icon" style="background: #FEF3C7; color: #D97706;"><i
+					class="fa-solid fa-shield-halved"></i></div>
+			<div class="stat-data">
+				<h4>48</h4>
+				<p>Police Units</p>
+			</div>
+		</div>
+	</div>
+
+	<div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px;">
+		<!-- CHART SECTION -->
+		<div class="admin-card">
+			<div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
+				<h4 style="margin: 0; font-weight: 800;">Registration Trends</h4>
+				<select
+					style="border: none; background: #F8FAFC; padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 700;">
+					<option>Last 30 Days</option>
+				</select>
+			</div>
+			<div
+				style="height: 300px; background: #F8FAFC; border-radius: 15px; display: flex; align-items: center; justify-content: center; border: 1px dashed #CBD5E1;">
+				<p style="color: #94A3B8; font-size: 14px;"><i class="fa-solid fa-chart-line"></i> Interactive Analytics
+					Link Established</p>
+			</div>
+		</div>
+
+		<!-- RECENT ACTIVITY -->
+		<div class="admin-card">
+			<h4 style="margin: 0 0 25px 0; font-weight: 800;">Maintenance Log</h4>
+			<div style="display: flex; flex-direction: column; gap: 20px;">
+				<div style="display: flex; gap: 15px; align-items: flex-start;">
+					<div
+						style="width: 10px; height: 10px; border-radius: 50%; background: var(--admin-accent); margin-top: 5px;">
+					</div>
+					<div>
+						<p style="font-size: 14px; font-weight: 700; margin: 0;">New Agency Registered</p>
+						<p style="font-size: 12px; color: #64748B; margin: 0;">Global Logistics North Hub • 2m ago</p>
+					</div>
+				</div>
+				<div style="display: flex; gap: 15px; align-items: flex-start;">
+					<div
+						style="width: 10px; height: 10px; border-radius: 50%; background: var(--admin-success); margin-top: 5px;">
+					</div>
+					<div>
+						<p style="font-size: 14px; font-weight: 700; margin: 0;">Salary Batch Processed</p>
+						<p style="font-size: 12px; color: #64748B; margin: 0;">Sector Delta • 1h ago</p>
+					</div>
+				</div>
+				<div style="display: flex; gap: 15px; align-items: flex-start;">
+					<div
+						style="width: 10px; height: 10px; border-radius: 50%; background: var(--admin-danger); margin-top: 5px;">
+					</div>
+					<div>
+						<p style="font-size: 14px; font-weight: 700; margin: 0;">NOC Revocation Alert</p>
+						<p style="font-size: 12px; color: #64748B; margin: 0;">System Security Node • 4h ago</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- WELCOME BANNER (Optional Graphics) -->
+	<div
+		style="background: linear-gradient(135deg, var(--admin-navy), var(--admin-deep-blue)); border-radius: 25px; padding: 40px; color: white; display: flex; justify-content: space-between; align-items: center; margin-top: 30px; position: relative; overflow: hidden;">
+		<div style="position: relative; z-index: 2;">
+			<h2 style="font-weight: 800; margin-bottom: 10px;">SafeMigrate Admin OS v4.2</h2>
+			<p style="opacity: 0.7; margin: 0; max-width: 500px;">Managing migration documentation, security vetting,
+				and agency compliance across all regional nodes.</p>
+		</div>
+		<i class="fa-solid fa-microchip fa-6x"
+			style="position: absolute; right: -20px; bottom: -20px; opacity: 0.1;"></i>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block page_title %}All Employers/Agencies{% endblock %}
+
+{% block main_content %}
+<div class="animate-fade-up">
+    <div class="admin-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <h4 style="margin: 0; font-weight: 800;"><i class="fa-solid fa-building"
+                        style="margin-right: 10px;"></i> All Registered Employers/Agencies</h4>
+                <p style="font-size: 13px; color: #64748B; margin: 5px 0 0 0;">Complete list of all registered employers and agencies in the system.</p>
+            </div>
+        </div>
+
+        {% if list %}
+        <div class="data-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Company/Firm Name</th>
+                        <th>Owner Name</th>
+                        <th>Aadhar Number</th>
+                        <th>Mobile</th>
+                        <th>Email</th>
+                        <th>Place</th>
+                        <th>Status</th>
+                        <th style="text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in list %}
+                    <tr>
+                        <td>
+                            <div style="font-weight: 800; color: var(--admin-navy);">{{i.firm_name}}</div>
+                        </td>
+                        <td>{{i.name}}</td>
+                        <td style="font-family: monospace; font-weight: 700;">{{i.aadhar_no}}</td>
+                        <td>{{i.mobile}}</td>
+                        <td>{{i.email}}</td>
+                        <td>{{i.place}}</td>
+                        <td>
+                            {% if i.status == 'Active' %}
+                            <span style="background: #DCFCE7; color: #10B981; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">ACTIVE</span>
+                            {% elif i.status == 'pending' %}
+                            <span style="background: #FEF3C7; color: #D97706; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">PENDING</span>
+                            {% else %}
+                            <span style="background: #FEE2E2; color: #EF4444; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">{{i.status|upper}}</span>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: center;">
+                            <a href="/admin_view_single_employer?emp_id={{i.emp_id}}" class="btn-admin btn-primary" style="padding: 6px 15px; font-size: 11px;">
+                                <i class="fa-solid fa-eye"></i> VIEW DETAILS
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 50px; color: #64748B;">
+            <i class="fa-solid fa-building" style="font-size: 48px; color: #64748B; margin-bottom: 20px;"></i>
+            <h4 style="margin: 0; font-weight: 800;">No Employers Found</h4>
+            <p style="margin: 10px 0 0 0;">There are no employers registered in the system.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

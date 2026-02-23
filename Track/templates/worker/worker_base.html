@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Worker Dashboard{% endblock %} | SafeTrack</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;800" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/modern_ui.css' %}">
+    
+   <!-- 🔥 THIS IS IMPORTANT -->
+    {% block extra_css %}{% endblock %}
+<style>
+        /* Sidebar font sizes - 16px */
+        .nav-link {
+            font-size: 16px !important;
+        }
+        .submenu-link {
+            font-size: 16px !important;
+        }
+        .sidebar-logo {
+            font-size: 16px !important;
+        }
+        
+        .page-header-accent {
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .data-table th {
+            color: var(--text-muted);
+            font-weight: 500;
+            padding: 1rem;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+
+        .data-table tr {
+            background: var(--card-bg);
+            transition: transform 0.2s;
+        }
+
+        .data-table tr:hover {
+            transform: scale(1.01);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .data-table td {
+            padding: 1rem;
+            color: var(--text-main);
+        }
+
+        .data-table td:first-child {
+            border-radius: 12px 0 0 12px;
+        }
+
+        .data-table td:last-child {
+            border-radius: 0 12px 12px 0;
+        }
+
+        .btn-modern {
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 8px;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-modern:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        input,
+        select,
+        textarea {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid var(--glass-border) !important;
+            color: white !important;
+            border-radius: 8px !important;
+            padding: 0.75rem !important;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileMenu()"></div>
+    <button class="mobile-toggle" onclick="toggleMobileMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <a href="/homeworker/" class="sidebar-logo">
+                <i class="fas fa-user-shield"></i> SafeTrack
+            </a>
+
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="/homeworker/" class="nav-link {% if request.path == '/homeworker/' %}active{% endif %}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/viewemydetailsworker/"
+                        class="nav-link {% if '/viewemydetailsworker/' in request.path %}active{% endif %}">
+                        <i class="fas fa-user-circle"></i> Edit Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/worker_profile/"
+                        class="nav-link {% if '/worker_profile/' in request.path %}active{% endif %}">
+                        <i class="fas fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/idcard/" class="nav-link {% if '/idcard/' in request.path %}active{% endif %}">
+                        <i class="fas fa-id-badge"></i> ID Card
+                    </a>
+                </li>
+
+                <li class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+                    <div class="nav-link">
+                        <i class="fas fa-tools"></i> Jobs <i class="fas fa-chevron-down ms-auto"
+                            style="font-size: 0.7rem; margin-left: auto;"></i>
+                    </div>
+                    <ul class="submenu">
+                        <li><a href="/perdayjob/" class="submenu-link">Job Schedule</a></li>
+                        <li><a href="/viewvacancyhome/" class="submenu-link">Available Vacancies</a></li>
+                        <li><a href="/vacancy_search/" class="submenu-link">Search Vacancy</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/viewfeedbackworkerhome/" class="nav-link">
+                        <i class="fas fa-comment-dots"></i> Feedback
+                    </a>
+                </li>
+
+                <li class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+                    <div class="nav-link">
+                        <i class="fas fa-file-contract"></i> NOC <i class="fas fa-chevron-down ms-auto"
+                            style="font-size: 0.7rem; margin-left: auto;"></i>
+                    </div>
+                    <ul class="submenu">
+                        <li><a href="/viewnoc/" class="submenu-link">View My NOC</a></li>
+                        <li><a href="/addcomplaint/" class="submenu-link">File Complaint</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+                    <div class="nav-link">
+                        <i class="fas fa-cog"></i> Settings <i class="fas fa-chevron-down ms-auto"
+                            style="font-size: 0.7rem; margin-left: auto;"></i>
+                    </div>
+                    <ul class="submenu">
+                        <li><a href="/password/" class="submenu-link">Change Password</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item mt-auto">
+                    <a href="/home/" class="nav-link text-danger">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content animate-page">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script>
+        function toggleMobileMenu() {
+            document.querySelector('.sidebar').classList.toggle('mobile-open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
+        function toggleSubmenu(element) {
+            element.classList.toggle('open');
+            const icon = element.querySelector('.fa-chevron-down');
+            if (icon) {
+                icon.style.transform = element.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+                icon.style.transition = 'transform 0.3s';
+            }
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

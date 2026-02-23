@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>SafeTrack.com | ID Card</title>
+    <link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
+    <style>
+        .id-card {
+            width: 350px;
+            border: 2px solid #333;
+            padding: 20px;
+            margin: 50px auto;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .photo {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #333;
+            margin: 10px auto;
+            display: block;
+        }
+
+        .details {
+            margin-top: 15px;
+        }
+
+        .details p {
+            margin: 5px 0;
+            font-family: monospace;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    {% for i in list %}
+    <div class="id-card">
+        <div class="header">
+            <h4>SafeTrack.com</h4>
+            <p>WORKER IDENTITY CARD</p>
+        </div>
+        <img src="/media/{{i.image}}" class="photo">
+        <div class="details">
+            <p><strong>NAME:</strong> {{i.worker_name}}</p>
+            <p><strong>ID:</strong> {{i.worker_id}}</p>
+            <p><strong>DOB:</strong> {{i.dob}}</p>
+            <p><strong>AADHAR:</strong> {{i.aadhar_number}}</p>
+            <p><strong>ADDRESS:</strong> {{i.address}}</p>
+        </div>
+    </div>
+    {% endfor %}
+</body>
+
+</html>

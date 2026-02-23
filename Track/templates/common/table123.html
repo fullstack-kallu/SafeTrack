@@ -1,0 +1,12 @@
+<tr>
+       <th>Date</th><th>Vacancy</th><th>Number of vacancy</th><th>About job</th>
+{% for i in list %}
+<tr><td>{{i.date}}</td>
+
+<td>{{i.vacancy}}</td>
+<td>{{i.vacancy_no}}</td>
+<td>{{i.description}}</td>
+
+<td><a href="/viewvacancyhome3?vacancy_id={{i.vacancy_id}}"><font color="red">APPLY</td>
+
+{% endfor %}

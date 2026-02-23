@@ -1,0 +1,77 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block page_title %}System Integrity: Edit Admin Details{% endblock %}
+
+{% block main_content %}
+<div class="animate-fade-up" style="max-width: 700px; margin: 0 auto;">
+  <div class="admin-card">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <div
+        style="width: 80px; height: 80px; background: #F1F5F9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: var(--admin-accent);">
+        <i class="fa-solid fa-user-gear fa-2x"></i>
+      </div>
+      <h4 style="margin: 0; font-weight: 800;">Security Profile Update</h4>
+      <p style="font-size: 13px; color: #64748B;">Amend administrative credentials for the monitoring node.</p>
+    </div>
+
+    {% for i in list %}
+    <form action="/edit_admin3/" method="get">
+      <input type="hidden" name="admin_id" value="{{i.admin_id}}">
+      <input type="hidden" name="country" value="{{i.country}}">
+      <input type="hidden" name="state" value="{{i.state}}">
+      <input type="hidden" name="phone" value="{{i.phone}}">
+
+      <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <label style="font-size: 12px; font-weight: 800; color: #64748B; text-transform: uppercase;">Identifier
+            Account</label>
+          <input type="text" name="name" value="{{i.name}}" required
+            style="padding: 12px 15px; border-radius: 12px; border: 1px solid #E2E8F0; outline: none; transition: var(--transition); background: #F8FAFC;">
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <label style="font-size: 12px; font-weight: 800; color: #64748B; text-transform: uppercase;">Signal Protocol
+            (Mobile)</label>
+          <input type="text" name="mobile" value="{{i.mobile}}" required
+            style="padding: 12px 15px; border-radius: 12px; border: 1px solid #E2E8F0; outline: none; transition: var(--transition); background: #F8FAFC;">
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <label style="font-size: 12px; font-weight: 800; color: #64748B; text-transform: uppercase;">Intelligence
+            Channel (Email)</label>
+          <input type="email" name="email" value="{{i.email}}" required
+            style="padding: 12px 15px; border-radius: 12px; border: 1px solid #E2E8F0; outline: none; transition: var(--transition); background: #F8FAFC;">
+        </div>
+
+        <div style="margin-top: 20px;">
+          <button type="submit" class="btn-admin btn-primary"
+            style="width: 100%; justify-content: center; padding: 15px;">
+            <i class="fa-solid fa-shield-halved"></i> AUTHORIZE AMENDMENT
+          </button>
+          <a href="javascript:history.back()"
+            style="display: block; text-align: center; margin-top: 15px; font-size: 13px; color: #64748B; text-decoration: none; font-weight: 700;">
+            Abort Amendment
+          </a>
+        </div>
+      </div>
+    </form>
+    {% endfor %}
+  </div>
+
+  <!-- Security Note -->
+  <div style="display: flex; gap: 15px; align-items: center; opacity: 0.6; padding: 0 20px;">
+    <i class="fa-solid fa-lock" style="color: var(--admin-accent);"></i>
+    <p style="font-size: 11px; margin: 0; line-height: 1.4;">All administrative amendments are logged in the immutable
+      audit trail. Ensure credentials follow encryption protocols.</p>
+  </div>
+</div>
+
+<style>
+  input:focus {
+    border-color: var(--admin-accent) !important;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.1);
+    background: white !important;
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}Job Vacancies{% endblock %}
+
+{% block extra_css %}
+<style>
+    .table-container {
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        overflow-x: auto; 
+    }
+    
+    .table-header {
+        color: #34495e; 
+        margin-bottom: 20px;
+        font-weight: 700;
+        font-size: 24px;
+    }
+
+    .TFtable {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .TFtable th,
+    .TFtable td {
+        padding: 12px 15px;
+        border: none; 
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .TFtable th {
+        background-color: #3498db;
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .TFtable tr:nth-child(odd) {
+        background-color: #f9f9f9; 
+    }
+    .TFtable tr:nth-child(even) {
+        background-color: #ffffff; 
+    }
+    
+    .TFtable tr:hover {
+        background-color: #e8f0fe; 
+        cursor: default;
+    }
+    
+    .apply-action a {
+        font-weight: 700;
+        color: white;
+        background-color: #2ecc71;
+        text-decoration: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: background-color 0.3s;
+        display: inline-block;
+        white-space: nowrap;
+    }
+    
+    .apply-action a:hover {
+        background-color: #27ae60;
+    }
+
+    .vacancy-no-col {
+        font-weight: 700;
+        color: #e74c3c;
+        text-align: center;
+    }
+    
+    .TFtable th:nth-child(3) {
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header-accent">
+    <h1><i class="fas fa-list-alt"></i> Available Job Vacancies</h1>
+    <p>Browse and apply for available job opportunities</p>
+</div>
+
+<div class="table-container">
+    <table class="TFtable">
+        <thead>
+            <tr>
+                <th><i class="fa fa-calendar-check-o"></i> Date Posted</th>
+                <th><i class="fa fa-tag"></i> Vacancy Title</th>
+                <th><i class="fa fa-users"></i> No. of Slots</th>
+                <th><i class="fa fa-info-circle"></i> Job Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in list %}
+            <tr>
+                <td>{{i.date}}</td>
+                <td>{{i.vacancy}}</td>
+                <td class="vacancy-no-col">{{i.vacancy_no}}</td>
+                <td>{{i.description}}</td>
+                <td class="apply-action">
+                    <a href="/viewvacancyhome3?vacancy_id={{i.vacancy_id}}">
+                        <i class="fa fa-send"></i> APPLY
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

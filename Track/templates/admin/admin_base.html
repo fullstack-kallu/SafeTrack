@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>SafeMigrate | Admin Control Panel</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'files/css/admin_styles.css' %}">
+    
+    <!-- Global Font Scaling -->
+    <link rel="stylesheet" href="{% static 'files/css/global_fonts.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">
+                <i class="fa-solid fa-shield-halved fa-lg"></i>
+            </div>
+            <h3>Safe Migrate</h3>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="{% if request.path == '/homeadmin/' %}active{% endif %}">
+                <a href="/homeadmin/"><i class="fa-solid fa-gauge-high"></i> <span>Dashboard</span></a>
+            </li>
+
+            <li
+                class="{% if '/viewadminworker/' in request.path or '/registration/' in request.path or '/editadminworker/' in request.path %}active{% endif %}">
+                <a href="#"><i class="fa-solid fa-users"></i> <span>Worker Management</span></a>
+                <ul class="submenu-admin">
+                    <li><a href="/registration/"><i class="fa-solid fa-plus"></i> Add Worker</a></li>
+                    <li><a href="/viewadminworker/"><i class="fa-solid fa-list"></i> View Database</a></li>
+                    <li><a href="/editadminworker/"><i class="fa-solid fa-user-pen"></i> Edit Records</a></li>
+                </ul>
+            </li>
+
+            <li
+                class="{% if '/viewempadmin/' in request.path or '/viewemprequest/' in request.path or '/admin_view_pending_employers/' in request.path or '/admin_view_all_employers/' in request.path %}active{% endif %}">
+                <a href="#"><i class="fa-solid fa-building-user"></i> <span>Agency Hub</span></a>
+                <ul class="submenu-admin">
+                    
+                    <li><a href="/admin_view_all_employers/"><i class="fa-solid fa-list"></i> View Agencies</a></li>
+                   
+                    <li><a href="/admin_view_pending_employers/"><i class="fa-solid fa-user-check"></i> Agency Approvals</a></li>
+                </ul>
+            </li>
+
+            <li class="{% if '/viewadminpolice/' in request.path %}active{% endif %}">
+                <a href="/viewadminpolice/"><i class="fa-solid fa-building-shield"></i> <span>Police Units</span></a>
+            </li>
+
+            <li class="{% if '/worker_salary/' in request.path %}active{% endif %}">
+                <a href="/worker_salary/"><i class="fa-solid fa-file-invoice-dollar"></i> <span>Revenue &
+                        Salary</span></a>
+            </li>
+
+        </ul>
+
+        <div class="sidebar-footer">
+            <a href="/home/"
+                style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 18px; display: flex; align-items: center; gap: 10px;"
+                <i class="fa-solid fa-right-from-bracket"></i> <span>Secure Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="admin-main">
+        <div class="admin-header">
+            <div>
+                <p
+                    style="font-size: 12px; font-weight: 700; color: var(--admin-accent); margin: 0; text-transform: uppercase; letter-spacing: 1px;">
+                    Admin Terminal</p>
+                <h1>{% block page_title %}Dashboard Overview{% endblock %}</h1>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <div
+                    style="background: white; padding: 10px 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 8px; height: 8px; background: #10B981; border-radius: 50%;"></div>
+                    <span style="font-size: 13px; font-weight: 700;">System Online</span>
+                </div>
+            </div>
+        </div>
+
+        {% block main_content %}{% endblock %}
+    </main>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {% block extra_js %}{% endblock %}
+
+</body>
+
+</html>

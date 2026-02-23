@@ -1,0 +1,218 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block title %}Police Station Registration - SafeTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Police Registration Specific Styles */
+    .police-reg-hero {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .police-reg-hero h1 {
+        font-weight: 700;
+        color: #1a365d;
+        margin-bottom: 10px;
+    }
+
+    .police-reg-hero p {
+        color: #4a5568;
+    }
+
+    /* Form Container */
+    .police-form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-top: 5px solid #e63946;
+    }
+
+    .police-form-card h2 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #1a365d;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .police-form-card h2 i {
+        color: #e63946;
+        margin-right: 10px;
+    }
+
+    .form-grid-police {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-group-police.full-width {
+        grid-column: span 2;
+    }
+
+    .form-group-police label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 700;
+        color: #1a365d;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+
+    .input-police {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+    .input-police:focus {
+        border-color: #e63946;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+    }
+
+    textarea.input-police {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .btn-police-submit {
+        background: #e63946;
+        color: white;
+        padding: 14px;
+        border: none;
+        border-radius: 50px;
+        width: 100%;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 20px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-police-submit:hover {
+        background: #d02d38;
+        transform: translateY(-2px);
+    }
+
+    .police-note {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 12px;
+        color: #718096;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+        .form-grid-police {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-group-police.full-width {
+            grid-column: auto;
+        }
+        
+        .police-form-card {
+            padding: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<div class="police-reg-hero">
+    <h1>Police Station Registration</h1>
+    <p>Register your police station to manage worker verification and NOC</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <div class="police-form-card">
+            <h2><i class="fas fa-building-shield"></i> Command Center Registration</h2>
+
+            <form action="/regpoliceinsert/" method="get">
+                {% csrf_token %}
+
+                <div class="form-grid-police">
+                    <div class="form-group-police full-width">
+                        <label>Station Branch / Unit Name</label>
+                        <input type="text" name="branch" class="input-police" placeholder="e.g., Central Division Station" required>
+                    </div>
+
+                    <div class="form-group-police full-width">
+                        <label>Operational Jurisdiction Address</label>
+                        <textarea name="address" class="input-police" placeholder="Enter full station address" required></textarea>
+                    </div>
+
+                    <div class="form-group-police">
+                        <label>Landline Phone</label>
+                        <input type="text" name="Phone" class="input-police" placeholder="Optional">
+                    </div>
+                    <div class="form-group-police">
+                        <label>Emergency Mobile</label>
+                        <input type="text" name="Mobile" class="input-police" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit number" required>
+                    </div>
+
+                    <div class="form-group-police full-width">
+                        <label>Official Email</label>
+                        <input type="email" name="Email_id" class="input-police" placeholder="station@gov.in" required>
+                    </div>
+
+                    <div class="form-group-police">
+                        <label>City</label>
+                        <input type="text" name="city" class="input-police" placeholder="Enter City" required>
+                    </div>
+                    <div class="form-group-police">
+                        <label>District</label>
+                        <input type="text" name="district" class="input-police" placeholder="Enter District" required>
+                    </div>
+                    <div class="form-group-police full-width">
+                        <label>State</label>
+                        <input type="text" name="state" class="input-police" placeholder="Enter State" required>
+                    </div>
+
+                    <div class="form-group-police">
+                        <label>Password</label>
+                        <input type="password" name="Password" class="input-police" required>
+                    </div>
+                    <div class="form-group-police">
+                        <label>Confirm Password</label>
+                        <input type="password" name="re_Password" class="input-police" required>
+                    </div>
+
+                    <div class="form-group-police full-width">
+                        <button type="submit" class="btn-police-submit">Initialize Station Access</button>
+                        <p class="police-note">Authorized Personnel Only</p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    // Password confirmation validation
+    $('input[name="re_Password"]').on('input', function () {
+        var password = $('input[name="Password"]').val();
+        var confirmPassword = $(this).val();
+
+        if (password !== confirmPassword) {
+            $(this).css('border-color', '#e74c3c');
+        } else {
+            $(this).css('border-color', '#2ecc71');
+        }
+    });
+});
+</script>
+{% endblock %}

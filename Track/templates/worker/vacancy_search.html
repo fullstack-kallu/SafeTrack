@@ -1,0 +1,179 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}Search Vacancies{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Page Wrapper */
+    .vacancy-wrapper {
+        padding: 2rem;
+    }
+
+    /* Card */
+    .card-custom {
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        transition: 0.3s ease;
+    }
+
+    .card-custom:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+
+    /* Header */
+    .table-header {
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Search */
+    .search-box {
+        display: flex;
+        border-radius: 50px;
+        overflow: hidden;
+        border: 2px solid #667eea;
+    }
+
+    .search-box input {
+        flex: 1;
+        padding: 12px 20px;
+        border: none;
+        font-size: 16px;
+        outline: none;
+    }
+
+    .search-box span {
+        background: #667eea;
+        color: white;
+        padding: 12px 20px;
+    }
+
+    /* Table */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px;
+    }
+
+    .custom-table th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 14px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .custom-table td {
+        padding: 14px;
+        font-size: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .custom-table tbody tr:hover {
+        background-color: #f4f6ff;
+    }
+
+    /* Apply Button */
+    .btn-apply {
+        background: linear-gradient(135deg, #00b894, #00cec9);
+        color: white;
+        padding: 6px 14px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.3s;
+        display: inline-block;
+    }
+
+    .btn-apply:hover {
+        background: linear-gradient(135deg, #00cec9, #00b894);
+        transform: scale(1.05);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .vacancy-wrapper {
+            padding: 1rem;
+        }
+
+        .table-header {
+            font-size: 1.4rem;
+        }
+
+        .custom-table th,
+        .custom-table td {
+            font-size: 13px;
+            padding: 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="vacancy-wrapper">
+
+    <!-- Search Card -->
+    <div class="card-custom">
+        <h2 class="table-header">
+            <i class="fa fa-search"></i> Search Available Vacancies
+        </h2>
+
+        <form method="get" action="{% url 'vacancy_search' %}">
+            <div class="search-box">
+                <input type="text" name="search" id="search"
+                       onkeyup="searchOpen()"
+                       placeholder="Search by job title, date, or description...">
+                <span><i class="fa fa-search"></i></span>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card-custom table-responsive">
+        <table class="custom-table" id="table_id">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Vacancy Title</th>
+                    <th>Slots</th>
+                    <th>About Job</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in list %}
+                <tr>
+                    <td>{{ i.date }}</td>
+                    <td>{{ i.vacancy }}</td>
+                    <td>{{ i.vacancy_no }}</td>
+                    <td>{{ i.description }}</td>
+                    <td>
+                        <a class="btn-apply"
+                           href="/viewvacancyhome3?vacancy_id={{ i.vacancy_id }}">
+                           <i class="fa fa-paper-plane"></i> Apply
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

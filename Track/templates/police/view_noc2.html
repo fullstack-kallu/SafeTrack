@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+
+<head>
+    {% include "police/policeheder.html" %}
+    <title>SafeTrack.com | Official NOC Document</title>
+    <style>
+        .certificate-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        #DivIdToPrint {
+            background: white;
+            padding: 60px;
+            border-radius: 4px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #E2E8F0;
+        }
+
+        /* Watermark */
+        #DivIdToPrint::before {
+            content: "OFFICIAL DOCUMENT";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 80px;
+            color: rgba(0, 0, 0, 0.02);
+            font-weight: 900;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .cert-header {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 3px double #0A1F44;
+            padding-bottom: 30px;
+        }
+
+        .govt-logo {
+            width: 80px;
+            margin-bottom: 15px;
+        }
+
+        .govt-title {
+            font-weight: 800;
+            font-size: 22px;
+            color: #0A1F44;
+            letter-spacing: 2px;
+        }
+
+        .dept-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #1E293B;
+            margin-top: 5px;
+        }
+
+        .cert-type {
+            display: inline-block;
+            background: #0A1F44;
+            color: white;
+            padding: 8px 30px;
+            font-weight: 800;
+            font-size: 14px;
+            letter-spacing: 3px;
+            margin-top: 25px;
+            border-radius: 4px;
+        }
+
+        .worker-meta-table {
+            width: 100%;
+            margin: 40px 0;
+            border-collapse: collapse;
+        }
+
+        .worker-meta-table td {
+            padding: 15px;
+            border-bottom: 1px solid #F1F5F9;
+            font-size: 15px;
+        }
+
+        .label-cell {
+            font-weight: 800;
+            color: #64748B;
+            text-transform: uppercase;
+            font-size: 11px;
+            width: 200px;
+        }
+
+        .value-cell {
+            font-weight: 600;
+            color: #0A1F44;
+        }
+
+        .cert-body {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #334155;
+            text-align: justify;
+            margin-bottom: 60px;
+        }
+
+        .cert-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 60px;
+            border-top: 1px solid #E2E8F0;
+            padding-top: 30px;
+        }
+
+        .security-meta {
+            font-family: monospace;
+            font-size: 12px;
+            color: #94A3B8;
+        }
+
+        .security-meta strong {
+            color: #475569;
+        }
+
+        .sig-block {
+            text-align: right;
+        }
+
+        .sig-img {
+            width: 120px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        .sig-name {
+            font-weight: 800;
+            font-size: 14px;
+            color: #0A1F44;
+        }
+
+        .sig-desig {
+            font-size: 12px;
+            color: #64748B;
+        }
+
+        .btn-print {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            margin: 40px 0;
+            box-shadow: 0 10px 20px rgba(49, 130, 206, 0.2);
+            transition: var(--transition);
+        }
+
+        .btn-print:hover {
+            background: #2563EB;
+            transform: translateY(-2px);
+        }
+
+        @media print {
+
+            .sidebar,
+            .btn-print,
+            .sidebar-header {
+                display: none !important;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                padding: 0 !important;
+            }
+
+            #DivIdToPrint {
+                border: none;
+                box-shadow: none;
+                padding: 20px;
+            }
+
+            body {
+                background: white;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-content">
+        <div class="certificate-container">
+
+            <div id="DivIdToPrint">
+                {% for i in list %}
+                <div class="cert-header">
+                    <img src="{% static 'files/images/emblam.png' %}" class="govt-logo">
+                    <div class="govt-title">GOVERNMENT OF KERALA</div>
+                    <div class="dept-title">POLICE INTELLIGENCE DEPARTMENT</div>
+                    <div class="cert-type">NOC CERTIFICATE</div>
+                </div>
+
+                <table class="worker-meta-table">
+                    <tr>
+                        <td class="label-cell">Subject Name</td>
+                        <td class="value-cell">{{i.worker_name}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Date of Birth</td>
+                        <td class="value-cell">{{i.dob}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Aadhar Protocol</td>
+                        <td class="value-cell" style="letter-spacing: 2px;">{{i.aadhar_number}}</td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">Registered Address</td>
+                        <td class="value-cell">{{i.address}}</td>
+                    </tr>
+                </table>
+
+                <div class="cert-body">
+                    <p>
+                        This operational document serves as official certification for
+                        <strong>{{i.worker_name}}</strong>, a registered migrant professional under the SafeTrack
+                        network.
+                    </p>
+                    <p>
+                        Comprehensive background investigation and regional intelligence screening have been completed.
+                        Records indicate the subject has performed <strong>{{i.crime}}</strong> within the
+                        jurisdictional context.
+                    </p>
+                    <p>
+                        This certificate is issued based on electronic verification of provided credentials, local
+                        liaison reports, and centralized criminal database cross-referencing. This document is valid
+                        unless revocation protocols are initiated by local command.
+                    </p>
+                </div>
+
+                <div class="cert-footer">
+                    <div class="security-meta">
+                        <div>DOCUMENT ID: <strong>{{i.date|date:"Ymd"}}-CUOUO8</strong></div>
+                        <div>ISSUED ON: <strong>{{i.date}}</strong></div>
+                        <div style="margin-top: 10px; color: #22C55E;"><i class="fa-solid fa-stamp"></i> DIGITALLY
+                            VERIFIED BY HQ</div>
+                    </div>
+                    <div class="sig-block">
+                        <div
+                            style="font-family: 'Audiowide'; font-size: 18px; color: rgba(10,31,68,0.2); margin-bottom: -15px;">
+                            K.K. Padhmapresaadh</div>
+                        <div class="sig-name">K.K. Padhmapresaadh</div>
+                        <div class="sig-desig">Director General of Kerala Police</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn-print" onclick="window.print()">
+                    <i class="fa-solid fa-print"></i> Generate Physical Copy
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+
+</html>

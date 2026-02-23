@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+
+<head>
+    {% include "police/policeheder.html" %}
+    <title>SafeTrack.com | Revocation Registry</title>
+</head>
+
+<body>
+
+    <div class="main-content">
+        <div class="police-card">
+            <div class="card-header">
+                <h4><i class="fa-solid fa-file-excel"></i> Digital Revocation Bureau</h4>
+                <div class="badge-modern bg-urgent">Danger Zone</div>
+            </div>
+
+            <p style="color: #718096; margin-bottom: 30px; font-size: 14px;">
+                Interface for the permanent deletion of issued certificates. Identify the worker profile to proceed with
+                the certificate revocation protocol.
+            </p>
+
+            <div class="table-responsive">
+                <table class="police-table">
+                    <thead>
+                        <tr>
+                            <th>Unit</th>
+                            <th>Intelligence Profile</th>
+                            <th>Aadhar Protocol</th>
+                            <th>Current Place</th>
+                            <th>Status</th>
+                            <th style="text-align: center;">Task</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in list %}
+                        <tr>
+                            <td>
+                                <img src="/media/{{i.image}}"
+                                    style="width:45px; height:45px; border-radius:12px; border:2px solid #FEE2E2; object-fit: cover;">
+                            </td>
+                            <td>
+                                <div style="font-weight: 700; color: var(--primary-navy);">{{i.worker_name}}</div>
+                                <div style="font-size: 11px; opacity: 0.7;">Verified Sector: {{i.place}}</div>
+                            </td>
+                            <td><span style="font-family: monospace; font-weight: 700;">{{i.aadhar_number}}</span></td>
+                            <td>{{i.place}}</td>
+                            <td><span class="badge-modern" style="background:#FEE2E2; color:#EF4444;">Review
+                                    Deletion</span></td>
+                            <td style="text-align: center;">
+                                <a href="/deletenoc2?worker_id={{i.worker_id}}" class="badge-modern"
+                                    style="background: #EF4444; color: white; text-decoration: none; padding: 10px 18px; display: inline-flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid fa-trash-can"></i> INITIALIZE
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div
+            style="background: #FFFBEB; border-radius: 20px; padding: 25px; border-left: 5px solid #F59E0B; margin-top: 30px;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <i class="fa-solid fa-triangle-exclamation" style="color: #F59E0B; font-size: 24px;"></i>
+                <div>
+                    <h5 style="font-weight: 800; color: #92400E; margin: 0;">Revocation Warning</h5>
+                    <p style="margin: 0; font-size: 13px; color: #B45309;">Deletion of NOC records is permanent and
+                        cannot be undone via this terminal. All actions are logged.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

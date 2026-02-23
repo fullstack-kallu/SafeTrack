@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+
+<head>
+  {% include "police/policeheder.html" %}
+  <title>SafeTrack.com | Rapid NOC Issuance</title>
+</head>
+
+<body>
+
+  <div class="main-content">
+    <div class="police-card">
+      <div class="card-header">
+        <h4><i class="fa-solid fa-address-book"></i> Personnel Registration Index</h4>
+        <div class="badge-modern bg-info">Sector: Alpha</div>
+      </div>
+
+      <p style="color: #718096; margin-bottom: 30px; font-size: 14px;">
+        Direct access registry for initiating No Objection Certificates. Select a profile to initialize the background
+        check sequence.
+      </p>
+
+      <div class="table-responsive">
+        <table class="police-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Gender</th>
+              <th>Aadhar Protocol</th>
+              <th>Designated Place</th>
+              <th>Primary Contact</th>
+              <th style="text-align: center;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in list %}
+            <tr>
+              <td style="font-weight: 800; color: var(--primary-navy);">{{i.worker_name}}</td>
+              <td>{{i.gender|capfirst}}</td>
+              <td><span style="font-family: monospace; font-weight: 700;">{{i.aadhar_number}}</span></td>
+              <td>{{i.place}}</td>
+              <td>{{i.mobile}}</td>
+              <td style="text-align: center;">
+                <a href="/addnoc?worker_id={{i.worker_id}}" class="badge-modern"
+                  style="background: var(--accent-blue); color: white; text-decoration: none; padding: 10px 18px; display: inline-flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-file-shield"></i> ISSUE NOC
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

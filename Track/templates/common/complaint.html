@@ -1,0 +1,120 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}File Complaint{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-card-container {
+        max-width: 550px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        padding: 30px;
+    }
+
+    .form-header {
+        color: #c0392b;
+        margin-bottom: 25px;
+        font-weight: 700;
+        font-size: 26px;
+        text-align: center;
+    }
+    
+    .form-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .form-table td {
+        padding: 10px 0;
+        font-size: 16px;
+        font-weight: 600;
+        vertical-align: top;
+    }
+
+    .form-table td:first-child {
+        width: 30%;
+        color: #555;
+    }
+    
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 15px;
+        min-height: 150px;
+        resize: vertical;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+    
+    textarea:focus {
+        border-color: #c0392b;
+        box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.2);
+        outline: none;
+    }
+
+    .submit-btn-container {
+        padding-top: 20px;
+        text-align: center;
+    }
+    
+    .submit-btn {
+        background-color: #c0392b;
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 6px;
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+        max-width: 200px;
+        box-shadow: 0 4px 6px rgba(192, 57, 43, 0.3);
+    }
+
+    .submit-btn:hover {
+        background-color: #e74c3c;
+    }
+    
+    .submit-btn i {
+        margin-right: 8px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header-accent">
+    <h1><i class="fas fa-exclamation-triangle"></i> Report a Complaint</h1>
+    <p>Submit your complaint regarding NOC details</p>
+</div>
+
+<div class="form-card-container">
+    <form action="/complaint2/" method="get"> 
+        <table class="form-table">
+            <tr>
+                <td colspan="2"><input type="hidden" name="noc_id" value="{{noc_id}}"></td>
+            </tr>
+            <tr>
+                <td>Complaint Details</td>
+                <td>
+                    <textarea 
+                        name="complaint" 
+                        id="complaint" 
+                        placeholder="Describe your complaint here..."
+                        required></textarea>
+                </td>
+            </tr>
+        </table>
+        
+        <div class="submit-btn-container">
+            <input type="submit" class="submit-btn" name="submit" value="SUBMIT COMPLAINT">
+        </div>
+    </form>
+</div>
+{% endblock %}

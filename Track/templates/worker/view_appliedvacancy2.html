@@ -1,0 +1,199 @@
+
+
+
+<!--[if IE 9]>
+<html class="ie ie9" lang="en-US">
+<![endif]-->
+<html lang="en-US">
+{% load  static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+	<title>SafeTrack.com</title>
+
+
+	<link href="{% static 'http://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,800' %}" rel='stylesheet' type='text/css'>
+	<link href="{% static 'http://fonts.googleapis.com/css?family=Audiowide' %}" rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
+	<link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
+	<link rel="stylesheet" href="{% static 'files/css/simple-line-icons.css' %}">
+	<link rel="stylesheet" href="{% static 'files/css/font-awesome.min.css' %}">
+	<link rel="stylesheet" href="{% static 'files/css/style.css' %}">
+	<link rel="stylesheet" href="{% static 'files/rs-plugin/css/settings.css' %}">
+
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+	<![endif]-->
+
+</head>
+<body>
+
+	
+	<div class="sidebar-menu-container" id="sidebar-menu-container">
+
+		<div class="sidebar-menu-push">
+
+			<div class="sidebar-menu-overlay"></div>
+
+			<div class="sidebar-menu-inner">
+
+				<header class="site-header">
+					<div id="main-header" class="main-header header-sticky">
+						<div class="inner-header clearfix">
+							<div class="logo">
+								<a href="">SafeTrack.com</a>
+							</div>
+							<div class="header-right-toggle pull-right hidden-md hidden-lg">
+								<a href="{% static 'javascript:void(0)' %}" class="side-menu-button"><i class="fa fa-bars"></i></a>
+							</div>
+							<nav class="main-navigation pull-right hidden-xs hidden-sm">
+								<ul>
+									<li><a href="/homeemp/">Home</a></li>
+									<!--<li><a href="/viewempworker/" >Worker</a>-->
+										
+									</li>
+									<li><a href="/viewmyworker/" >My Worker</a>
+										
+									</li>
+									
+									<li><a href="#" class="has-submenu">Vacancy</a>
+										<ul class="sub-menu">
+											<li><a href="/addvacancy/">Post vacancy</a></li>
+											<li><a href="/viewvacancy/">View vacancy</a></li>
+											<li><a href="/editvacancy1/">Edit vacancy</a></li>
+											<li><a href="/deletevacancy1/">Delete vacancy</a></li>
+											<li><a href="/viewappliedvacancy/">Applied vacancy</a></li>
+											
+											
+										</ul>
+									</li>
+								<!--<li><a href="/viewnoc1/" >NOC</a>-->
+										
+									</li>
+									<li><a href="#" class="has-submenu">Feedback</a>
+										<ul class="sub-menu">
+											<li><a href="/view_feedbackworker/">Add Feedback</a></li>
+											<li><a href="/viewfeedback/">View Feedback</a></li>
+											<li><a href="/editfeedbackworker1/">Edit Feedback</a></li>
+											<li><a href="/deletefeedback1/">Delete Feedback</a></li>
+											
+											
+										</ul>
+									</li>
+									<li><a href="#" class="has-submenu">My Details</a>
+										<ul class="sub-menu">
+										<li><a href="/viewemydetails/">View details</a></li>
+											<li><a href="/vieweditemp/">Update details </a></li>
+											
+											
+											
+										</ul>
+									</li>
+									<li><a href="#" class="has-submenu">Sheddules</a>
+										<ul class="sub-menu">
+										<li><a href="/viewmyworker_jobsheddule/">Add sheddules</a></li>
+											<li><a href="/viewjobshedule/">View sheddules </a></li>
+											<li><a href="/deletejobshedule1/">Delete sheddules </a></li>
+											
+											
+											
+										</ul>
+									</li>
+									
+									
+									<li><a href="/home/">Logout</a></li>
+									
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</header> <br><br><br><br><br><br><br>
+				
+<html lang="en">
+  <head>
+    <title>view_worker</title>
+    <style type="text/css">
+	.TFtable{
+		width:80%; 
+		border-collapse:collapse; 
+	}
+	.TFtable td{ 
+		padding:7px; border:#4e95f4 1px solid;
+	}
+	/* provide some minimal visual accomodation for IE8 and below */
+	.TFtable tr{
+		background: #b8d1f3;
+	}
+	/*  Define the background color for all the ODD background rows  */
+	.TFtable tr:nth-child(odd){ 
+		background: #D3D3D3;
+	}
+	/*  Define the background color for all the EVEN background rows  */
+	.TFtable tr:nth-child(even){
+		background: #FFFFFF;
+	}
+</style>
+  </head>
+  <body background="/static/files/images/whi.png" >
+   
+    
+<center>
+
+        <form action="" method="get" > 
+   
+              
+      <table  class="TFtable" >
+	 	  <th colspan="5"><th> </th><b><font size="4" color="black">Worker Details </TH></tr>
+<tr>
+<th>Name</th><th>Gender</th><th>DOB</th><th>Aadhar Number</th><th>Registration_date</th><th>Place</th><th>Address</th><th>Languages_known</th><th>Phone</th><th>Mobile</th><th>Email</th>
+{% for i in list %}
+<tr><td>{{i.worker_name}}</td>
+<td>{{i.gender}}</td>
+<td>{{i.dob}}</td>
+<td>{{i.aadhar_number}}</td>
+<td>{{i.regis_date}}</td>
+<td>{{i.place}}</td>
+<td>{{i.address}}</td>
+<td>{{i.languages_known}}</td>
+<td>{{i.phone}}</td>
+<td>{{i.mobile}}</td>
+<td>{{i.email}}</td>
+<td><a href="/addmyworker?worker_id={{i.worker_id}}&vacancy_id={{i.vaccancy_id}}"><font color="red">ADD MY WORKER</td>
+
+{% endfor %}
+</table>
+<BR><BR>
+<BR><BR>
+<BR><BR>
+	 	  <th colspan="5"><th> </th><b><font size="4" color="black">feedback of worker </TH></tr>
+		  <BR><BR>
+
+<table  class="TFtable" >
+
+<tr>
+<th>Feedback title </th><th>Feedback description</th></tr>
+{% for i in feed %}
+<tr>
+<td>{{i.feedback_title}}</td>
+<td>{{i.feedback_description}}</td>
+</tr>
+{% empty %}
+	<td colspan="2" align="center"><h3> no feedbacks </h3><td></tr>
+{% endfor %}
+</table>
+<BR><BR>
+</form>
+
+</head>
+
+
+         
+                   
+
+
+    
+  </body>
+</html>

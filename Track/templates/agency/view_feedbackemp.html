@@ -1,0 +1,45 @@
+
+<html lang="en">
+  <head>
+    <title>view_emp</title>
+    
+  </head>
+  <body>
+    
+    
+<center>
+        <form action="/update_employer/" method="get" > 
+   
+              
+     <table class="gridtable" border="2"  align="center">
+<tr>
+<th>Name</th><th>Gender</th><th>Firm Name</th><th>Aadhar Number</th><th>DOB</th><th>Address</th><th>Place</th><th>Phone</th><th>Mobile</th><th>Email</th>
+{% for i in list %}
+<tr><td>{{i.name}}</td>
+<td>{{i.gender}}</td>
+<td>{{i.firm_name}}</td>
+<td>{{i.aadhar_no}}</td>
+<td>{{i.dob}}</td>
+<td>{{i.emp_address}}</td>
+<td>{{i.place}}</td>
+<td>{{i.phone}}</td>
+<td>{{i.mobile}}</td>
+<td>{{i.email}}</td>
+
+<td><a href="/addfeedbackworker?emp_id={{i.emp_id}}">Add feedback</a></td>
+{% endfor %}
+</table>
+<BR><BR>
+
+</form>
+
+</head>
+
+
+         
+                   
+
+
+    
+  </body>
+</html>

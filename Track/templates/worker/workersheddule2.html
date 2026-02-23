@@ -1,0 +1,184 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}Worker Schedule - SafeTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .schedule-form {
+        max-width: 600px;
+        margin: 0 auto 30px;
+        padding: 25px;
+        background: var(--card-bg, #fff);
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .schedule-form h3 {
+        margin-bottom: 20px;
+        color: var(--text-main, #333);
+        text-align: center;
+    }
+
+    .date-inputs {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .date-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .date-field label {
+        font-weight: 500;
+        color: var(--text-muted, #666);
+    }
+
+    .date-field input[type="date"] {
+        padding: 10px 15px;
+        border-radius: 8px;
+        min-width: 180px;
+    }
+
+    .btn-submit {
+        margin-top: 20px;
+        padding: 12px 30px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--card-bg, #fff);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-top: 30px;
+    }
+
+    .schedule-table th {
+        background: #2563eb;
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 500;
+    }
+
+    .schedule-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .schedule-table tr:nth-child(even) {
+        background: #f9fafb;
+    }
+
+    .schedule-table tr:hover {
+        background: #f3f4f6;
+    }
+
+    .schedule-table img {
+        border-radius: 8px;
+        object-fit: cover;
+    }
+
+    .table-title {
+        text-align: center;
+        font-size: 24px;
+        color: var(--text-main, #333);
+        margin: 30px 0 20px;
+        font-weight: 600;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-muted, #666);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header-accent">
+    <h2>Worker Schedules</h2>
+    <p class="text-muted">View and manage worker schedules</p>
+</div>
+
+<form action="/workersheddule2/" method="get" class="schedule-form">
+    <h3>Schedules of Each Worker</h3>
+    <div class="date-inputs">
+        <div class="date-field">
+            <label for="start">Start Date</label>
+            <input type="date" id="start" name="start">
+        </div>
+        <div class="date-field">
+            <label for="end">End Date</label>
+            <input type="date" id="end" name="end">
+        </div>
+    </div>
+    <div style="text-align: center;">
+        <input type="submit" name="submit" value="Get Information" class="btn-submit">
+    </div>
+</form>
+
+{% if list %}
+<h3 class="table-title">Worker Schedules</h3>
+<div style="overflow-x: auto;">
+    <table class="schedule-table">
+        <thead>
+            <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>DOB</th>
+                <th>Aadhar Number</th>
+                <th>Place</th>
+                <th>Address</th>
+                <th>Mobile</th>
+                <th>Job</th>
+                <th>Salary</th>
+                <th>Working Hours</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for worker in list %}
+            <tr>
+                <td><img src="/media/{{ worker.image }}" height="50" width="50" alt="{{ worker.worker_name }}"></td>
+                <td>{{ worker.worker_name }}</td>
+                <td>{{ worker.gender }}</td>
+                <td>{{ worker.dob }}</td>
+                <td>{{ worker.aadhar_number }}</td>
+                <td>{{ worker.place }}</td>
+                <td>{{ worker.address }}</td>
+                <td>{{ worker.mobile }}</td>
+                <td>{{ worker.job_details }}</td>
+                <td>{{ worker.salary }}</td>
+                <td>{{ worker.working_hours }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="no-data">
+    <p>No worker schedules found. Please select a date range above.</p>
+</div>
+{% endif %}
+
+{% endblock %}

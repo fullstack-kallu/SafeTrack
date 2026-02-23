@@ -1,0 +1,849 @@
+
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Force 16px font size */
+* { font-size: 16px !important; }
+h1, h2, h3, h4, h5, h6, p, .form-label, .section-title, .section-subtitle { font-size: 16px !important; }
+
+/* ===== Variables ===== */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+    --border-radius: 20px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== Body ===== */
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.05" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,133.3C960,128,1056,96,1152,90.7C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+    background-size: cover;
+    pointer-events: none;
+}
+
+/* ===== Page Header ===== */
+.page-header {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius);
+    padding: 3rem;
+
+    color: rgb(60, 5, 191);
+    position: relative;
+    overflow: hidden;
+    animation: slideDown 0.6s ease-out;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 60%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.05);
+    transform: rotate(35deg);
+    pointer-events: none;
+}
+
+.page-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.page-header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    position: relative;
+    z-index: 1;
+}
+
+/* ===== Main Container ===== */
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* ===== Progress Bar ===== */
+.progress-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.progress-line {
+    position: absolute;
+    top: 25px;
+    left: 10%;
+    right: 10%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    z-index: 1;
+}
+
+.progress-line-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #43e97b, #38f9d7);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.step-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: rgb(71, 15, 201);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.step-circle.active {
+    background: white;
+    color: #667eea;
+    border-color: white;
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+}
+
+.step-circle.completed {
+    background: linear-gradient(135deg, #43e97b, #38f9d7);
+    border-color: transparent;
+    color: white;
+}
+
+.step-label {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: rgba(20, 13, 225, 0.8);
+    font-weight: 500;
+}
+
+/* ===== Form Container ===== */
+.form-container {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+}
+
+/* ===== Form Sections ===== */
+.form-section {
+    padding: 2.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: none;
+    animation: slideIn 0.5s ease-out;
+}
+
+.form-section.active {
+    display: block;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+}
+
+.section-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: var(--primary-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.3rem;
+    margin-right: 1rem;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.section-subtitle {
+    color: #718096;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+/* ===== Form Groups ===== */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-label.required::after {
+    content: ' *';
+    color: #f56565;
+}
+
+.form-control, .form-select {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: var(--transition);
+    background: white;
+}
+
+.form-control:focus, .form-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.form-control:hover, .form-select:hover {
+    border-color: #cbd5e0;
+}
+
+/* ===== Image Upload ===== */
+.image-upload-container {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+}
+
+.image-upload-area {
+    flex: 1;
+    border: 3px dashed #cbd5e0;
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    transition: var(--transition);
+    cursor: pointer;
+    background: #f7fafc;
+    position: relative;
+    overflow: hidden;
+}
+
+.image-upload-area:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+    transform: scale(1.02);
+}
+
+.image-upload-area input[type="file"] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.image-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 4px solid white;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background: #f7fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== Form Navigation ===== */
+.form-navigation {
+    padding: 2rem 2.5rem;
+    background: #f7fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn {
+    padding: 0.875rem 2rem;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    color: rgb(73, 14, 237);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+.btn-secondary {
+    background: white;
+    color: #4a5568;
+    border: 2px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+    transform: translateY(-2px);
+}
+
+.btn-success {
+    background: var(--success-gradient);
+    color: white;
+    box-shadow: 0 10px 30px rgba(67, 233, 123, 0.3);
+}
+
+.btn-success:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(67, 233, 123, 0.4);
+    color: white;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ===== Animations ===== */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    .page-header {
+        padding: 2rem;
+    }
+    
+    .page-header h2 {
+        font-size: 2rem;
+    }
+    
+    .progress-steps {
+        padding: 0 1rem;
+    }
+    
+    .step-label {
+        font-size: 0.75rem;
+    }
+    
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .form-section {
+        padding: 1.5rem;
+    }
+    
+    .image-upload-container {
+        flex-direction: column;
+    }
+    
+    .form-navigation {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.2rem;
+    }
+    
+    .form-section {
+        padding: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="main-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2><i class="fas fa-user-edit mr-3"></i>Edit Profile</h2>
+        <p>Update your information in a few simple steps</p>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-container">
+        <div class="progress-steps">
+            <div class="progress-line">
+                <div class="progress-line-fill" id="progressFill"></div>
+            </div>
+            <div class="step-item" data-step="1">
+                <div class="step-circle active" id="step1Circle">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <div class="step-label">Photo</div>
+            </div>
+            <div class="step-item" data-step="2">
+                <div class="step-circle" id="step2Circle">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="step-label">Personal</div>
+            </div>
+            <div class="step-item" data-step="3">
+                <div class="step-circle" id="step3Circle">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <div class="step-label">Contact</div>
+            </div>
+            <div class="step-item" data-step="4">
+                <div class="step-circle" id="step4Circle">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="step-label">Address</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="form-container">
+        <form method="POST" enctype="multipart/form-data" id="profileForm">
+            {% csrf_token %}
+            
+            <!-- Step 1: Profile Picture -->
+            <div class="form-section active" id="step1">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div>
+                        <h3 class="section-title">Profile Picture</h3>
+                        <p class="section-subtitle">Upload a professional photo of yourself</p>
+                    </div>
+                </div>
+                
+                <div class="image-upload-container">
+                    <div class="image-upload-area">
+                        <input type="file" name="image" accept="image/*" id="imageInput">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                        <h5>Click to upload new photo</h5>
+                        <p class="text-muted">JPG, PNG or GIF (MAX. 5MB)</p>
+                    </div>
+                    <div class="image-preview">
+                        <img src="/media/{{ worker.image }}" alt="Profile Picture" id="previewImage">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Personal Details -->
+            <div class="form-section" id="step2">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h3 class="section-title">Personal Details</h3>
+                        <p class="section-subtitle">Tell us about yourself</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label required">Full Name</label>
+                            <input type="text" class="form-control" name="worker_name" value="{{ worker.worker_name }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label required">Gender</label>
+                            <select class="form-select" name="gender" required>
+                                <option value="Male" {% if worker.gender == "Male" %}selected{% endif %}>Male</option>
+                                <option value="Female" {% if worker.gender == "Female" %}selected{% endif %}>Female</option>
+                                <option value="Other" {% if worker.gender == "Other" %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label required">Date of Birth</label>
+                            <input type="date" class="form-control" name="dob" value="{{ worker.dob|date:'Y-m-d' }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label required">Aadhaar Number</label>
+                            <input type="text" class="form-control" name="aadhar_number" value="{{ worker.aadhar_number }}" pattern="[0-9]{12}" maxlength="12" required>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label class="form-label required">Languages Known</label>
+                            <input type="text" class="form-control" name="languages_known" value="{{ worker.languages_known }}" placeholder="e.g. English, Hindi, Tamil" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Contact Information -->
+            <div class="form-section" id="step3">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div>
+                        <h3 class="section-title">Contact Information</h3>
+                        <p class="section-subtitle">How can we reach you?</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label required">Email ID</label>
+                            <input type="email" class="form-control" name="email" value="{{ worker.email }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label required">Mobile Number</label>
+                            <input type="tel" class="form-control" name="mobile" value="{{ worker.mobile }}" pattern="[0-9]{10}" maxlength="10" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" name="phone" value="{{ worker.phone }}" pattern="[0-9]{10}" maxlength="10">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Address Information -->
+            <div class="form-section" id="step4">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div>
+                        <h3 class="section-title">Address Information</h3>
+                        <p class="section-subtitle">Where are you located?</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label class="form-label required">Street Address</label>
+                            <input type="text" class="form-control" name="address" value="{{ worker.address }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label required">City/Town</label>
+                            <input type="text" class="form-control" name="place" value="{{ worker.place }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label required">State</label>
+                            <input type="text" class="form-control" name="state" value="{{ worker.state }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label required">PIN Code</label>
+                            <input type="text" class="form-control" name="pincode" value="{{ worker.pincode }}" pattern="[0-9]{6}" maxlength="6" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Navigation -->
+            <div class="form-navigation">
+                <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">
+                    <i class="fas fa-arrow-left"></i>
+                    Previous
+                </button>
+                
+                <div class="d-flex gap-2">
+                    <a href="{% url 'worker_profile' %}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                    <button type="button" class="btn btn-primary" id="nextBtn">
+                        Next
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button type="submit" class="btn btn-success" id="submitBtn" style="display: none;">
+                        <i class="fas fa-save"></i>
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    function updateProgress() {
+        const progressPercent = ((currentStep - 1) / (totalSteps - 1)) * 100;
+        $('#progressFill').css('width', progressPercent + '%');
+
+        // Update step circles
+        for (let i = 1; i <= totalSteps; i++) {
+            const $stepItem = $(`.step-item[data-step="${i}"]`);
+            const $circle = $(`#step${i}Circle`);
+            
+            $stepItem.removeClass('active completed');
+            $circle.removeClass('active completed');
+            
+            if (i < currentStep) {
+                $stepItem.addClass('completed');
+                $circle.addClass('completed');
+                $circle.html('<i class="fas fa-check"></i>');
+            } else if (i === currentStep) {
+                $stepItem.addClass('active');
+                $circle.addClass('active');
+            } else {
+                // Reset to original icon
+                const icons = ['fa-camera', 'fa-user', 'fa-phone', 'fa-map-marker-alt'];
+                $circle.html(`<i class="fas ${icons[i-1]}"></i>`);
+            }
+        }
+    }
+
+    function showStep(step) {
+        $('.form-section').removeClass('active');
+        $(`#step${step}`).addClass('active');
+        
+        // Update navigation buttons
+        if (step === 1) {
+            $('#prevBtn').hide();
+        } else {
+            $('#prevBtn').show();
+        }
+        
+        if (step === totalSteps) {
+            $('#nextBtn').hide();
+            $('#submitBtn').show();
+        } else {
+            $('#nextBtn').show();
+            $('#submitBtn').hide();
+        }
+        
+        updateProgress();
+        
+        // Smooth scroll to top
+        $('html, body').animate({
+            scrollTop: $('.form-container').offset().top - 100
+        }, 500);
+    }
+
+    function validateStep(step) {
+        let isValid = true;
+        const $currentStep = $(`#step${step}`);
+        const $requiredFields = $currentStep.find('input[required], select[required]');
+        
+        $requiredFields.each(function() {
+            const $this = $(this);
+            
+            if (!$this.val() || !$this[0].checkValidity()) {
+                $this.addClass('is-invalid');
+                isValid = false;
+            } else {
+                $this.removeClass('is-invalid');
+            }
+        });
+        
+        return isValid;
+    }
+
+    // Step click navigation
+    $('.step-item').click(function() {
+        const targetStep = parseInt($(this).data('step'));
+        if (targetStep <= currentStep || validateStep(currentStep)) {
+            currentStep = targetStep;
+            showStep(currentStep);
+        }
+    });
+
+    // Navigation buttons
+    $('#nextBtn').click(function() {
+        if (validateStep(currentStep)) {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        }
+    });
+
+    $('#prevBtn').click(function() {
+        if (currentStep > 1) {
+            currentStep--;
+            showStep(currentStep);
+        }
+    });
+
+    // Image preview
+    $('#imageInput').change(function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $('#previewImage').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Form submission
+    $('#profileForm').submit(function(e) {
+        if (!validateStep(currentStep)) {
+            e.preventDefault();
+            return false;
+        }
+        
+        // Add loading state
+        $('#submitBtn').html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+        $('#submitBtn').prop('disabled', true);
+    });
+
+    // Initialize
+    updateProgress();
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}Employer Feedback - SafeTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .feedback-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border: 1px solid var(--glass-border);
+    }
+    
+    .feedback-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .feedback-date {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+    
+    .feedback-title {
+        font-weight: 600;
+        color: var(--text-main);
+        margin-bottom: 8px;
+    }
+    
+    .feedback-description {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+    
+    .emp-info {
+        color: var(--secondary-color);
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content" style="padding: 40px;">
+    <div class="page-header-accent" style="border-left-color: #10b981;">
+        <h2 class="h4 font-weight-bold">Employer Feedback</h2>
+        <p class="text-muted small">View performance reviews and ratings from your employers.</p>
+    </div>
+
+    {% if list %}
+        {% for i in list %}
+        <div class="feedback-card">
+            <div class="feedback-header">
+                <span class="emp-info">Employer ID: {{ i.emp_id }}</span>
+                <span class="feedback-date">{{ i.date }}</span>
+            </div>
+            <div class="feedback-title">{{ i.feedback_title }}</div>
+            <div class="feedback-description">{{ i.feedback_description }}</div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="glass-card" style="padding: 40px; text-align: center;">
+        <i class="fas fa-comments fa-3x mb-3" style="color: var(--text-muted);"></i>
+        <p style="color: var(--text-muted);">No feedback received yet. Complete jobs to receive employer reviews.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

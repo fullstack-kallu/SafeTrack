@@ -1,0 +1,39 @@
+{% extends 'agency/agency_base.html' %}
+{% load static %}
+
+{% block title %}Add Feedback{% endblock %}
+
+{% block content %}
+<div class="page-header-accent" style="border-left-color: #fbbf24;">
+	<h2 class="h4 font-weight-bold">Submit Worker Feedback</h2>
+	<p class="text-muted small">Provide feedback on worker performance and conduct.</p>
+</div>
+
+<div class="row justify-content-center">
+	<div class="col-lg-6">
+		<div class="glass-card">
+			<form action="/feedbackinsert/" method="get">
+				<input type="hidden" name="worker_id" value="{{ worker_id }}" required>
+
+				<div class="form-group mb-3">
+					<label class="font-weight-600 mb-2">Feedback Title</label>
+					<input type="text" name="title" class="form-control" placeholder="e.g. Excellent Performance"
+						required>
+				</div>
+
+				<div class="form-group mb-3">
+					<label class="font-weight-600 mb-2">Description</label>
+					<textarea name="description" id="description" class="form-control" rows="5"
+						placeholder="Provide detailed feedback about the worker's performance..." required></textarea>
+				</div>
+
+				<div class="text-right mt-4">
+					<button type="submit" class="btn-modern px-4 py-2">
+						<i class="fas fa-paper-plane mr-2"></i> POST FEEDBACK
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}

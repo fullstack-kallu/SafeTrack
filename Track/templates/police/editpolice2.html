@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+
+<head>
+    {% include "police/policeheder.html" %}
+    <title>SafeTrack.com | Edit Station Profile</title>
+    <style>
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .input-modern {
+            width: 100%;
+            padding: 12px 18px;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            background: #F8FAFC;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        .input-modern:focus {
+            border-color: var(--accent-blue);
+            background: white;
+            outline: none;
+            box-shadow: 0 0 0 5px rgba(49, 130, 206, 0.1);
+        }
+
+        textarea.input-modern {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn-update {
+            background: var(--primary-navy);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 10px 20px rgba(10, 31, 68, 0.2);
+        }
+
+        .btn-update:hover {
+            background: var(--accent-blue);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(49, 130, 206, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-content">
+        <div class="police-card" style="max-width: 800px; margin: 0 auto;">
+            <div class="card-header">
+                <h4><i class="fa-solid fa-pen-fancy"></i> Modify Operational Parameters</h4>
+                <div class="badge-modern bg-info">Edit Mode</div>
+            </div>
+
+            {% for i in list %}
+            <form action="/editpolice3/" method="get">
+                {% csrf_token %}
+                <input type="hidden" name="stationid" value="{{i.station_id}}" />
+
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Station Branch Name</label>
+                        <input type="text" name="branch" class="input-modern" value="{{i.branch}}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Direct Liaison Phone</label>
+                        <input type="text" name="phone" class="input-modern" value="{{i.phone}}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Emergency Mobile</label>
+                        <input type="text" name="mobile" class="input-modern" value="{{i.mobile}}" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Secure Communication Email</label>
+                        <input type="email" name="email" class="input-modern" value="{{i.email}}" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>Registered HQ Address</label>
+                        <textarea name="address" class="input-modern" required>{{i.address}}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Operational District</label>
+                        <input type="text" name="district" class="input-modern" value="{{i.district}}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Deployment City</label>
+                        <input type="text" name="city" class="input-modern" value="{{i.city}}" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label>State Jurisdiction</label>
+                        <input type="text" name="state" class="input-modern" value="{{i.state}}" required>
+                    </div>
+
+                    <div class="form-group full" style="text-align: center; margin-top: 20px;">
+                        <button type="submit" class="btn-update">Commit Changes to Repository</button>
+                    </div>
+                </div>
+            </form>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+
+</html>

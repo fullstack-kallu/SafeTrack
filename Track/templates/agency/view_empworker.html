@@ -1,0 +1,47 @@
+
+<html lang="en">
+  <head>
+    <title>view_worker</title>
+    
+  </head>
+  <body>
+    
+    
+<center>
+        <form action="" method="get" > 
+   
+              
+     <table class="gridtable" border="2"  align="center">
+<tr>
+<th>Name</th><th>Gender</th><th>DOB</th><th>Aadhar Number</th><th>Registration_date</th><th>Place</th><th>Address</th><th>Languages_known</th><th>Phone</th><th>Mobile</th><th>Email</th>
+{% for i in list %}
+<tr><td>{{i.worker_name}}</td>
+<td>{{i.gender}}</td>
+<td>{{i.dob}}</td>
+<td>{{i.aadhar_number}}</td>
+
+<td>{{i.regis_date}}</td>
+<td>{{i.place}}</td>
+<td>{{i.address}}</td>
+<td>{{i.languages_known}}</td>
+<td>{{i.phone}}</td>
+<td>{{i.mobile}}</td>
+<td>{{i.email}}</td>
+
+
+{% endfor %}
+</table>
+<BR><BR>
+
+</form>
+
+</head>
+
+
+         
+                   
+
+
+    
+  </body>
+</html>

@@ -1,0 +1,81 @@
+
+{% extends 'agency/agency_base.html' %}
+{% load static %}
+
+{% block title %}Delete Job Schedule - SafeTrack{% endblock %}
+
+</head>
+<body>
+
+	{% block content %}
+
+				
+<html lang="en">
+  <head>
+    <title>view_worker</title>
+    <style type="text/css">
+	.TFtable{
+		width:80%; 
+		border-collapse:collapse; 
+	}
+	.TFtable td{ 
+		padding:7px; border:#4e95f4 1px solid;
+	}
+	/* provide some minimal visual accomodation for IE8 and below */
+	.TFtable tr{
+		background: #b8d1f3;
+	}
+	/*  Define the background color for all the ODD background rows  */
+	.TFtable tr:nth-child(odd){ 
+		background: #D3D3D3;
+	}
+	/*  Define the background color for all the EVEN background rows  */
+	.TFtable tr:nth-child(even){
+		background: #FFFFFF;
+	}
+</style>
+  </head>
+  <body background="/static/files/images/whi.png" >
+   
+    
+<center>
+
+        <form action="" method="get" > 
+   
+              
+      <table  class="TFtable" >
+	 	  <th colspan="5"><th> </th><b><font size="4" color="black">Worker</TH></tr><br><br>
+<tr>
+<th>Photo</th><th>Name</th><th>Gender</th><th>DOB</th><th>Aadhar Number</th><th>Place</th><th>Address</th><th>Languages_known</th><th>Phone</th><th>Mobile</th><th>Email</th><th></th>
+{% for i in list %}
+<tr><td><img src="{{MEDIA_URL}}{{i.image}}" height="50" width="50"></td>
+<td>{{i.worker_name}}</td>
+<td>{{i.gender}}</td>
+<td>{{i.dob}}</td>
+<td>{{i.aadhar_number}}</td>
+
+
+<td>{{i.place}}</td>
+<td>{{i.address}}</td>
+<td>{{i.languages_known}}</td>
+<td>{{i.phone}}</td>
+<td>{{i.mobile}}</td>
+<td>{{i.email}}</td>
+<td><a href="/deletejobshedule2?worker_id={{i.worker_id}}"><FONT COLOR="RED">View Sheddule</td></tr>
+{% endfor %}
+</table>
+<BR><BR>
+
+</form>
+
+</head>
+
+
+         
+                
+
+
+    
+  </body>
+  {% endblock %}
+</html>

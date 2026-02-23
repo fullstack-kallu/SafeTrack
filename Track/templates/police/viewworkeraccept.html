@@ -1,0 +1,203 @@
+{% extends 'police/policeheder.html' %}
+{% load static %}
+
+{% block title %}Vetting Queue - Worker Approvals{% endblock %}
+
+{% block extra_css %}
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%);
+        padding: 30px;
+        border-radius: 16px;
+        margin-bottom: 30px;
+        color: white;
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .page-header p {
+        margin: 10px 0 0 0;
+        opacity: 0.8;
+    }
+
+    .worker-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+        transition: transform 0.2s;
+    }
+
+    .worker-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    }
+
+    .worker-info {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .worker-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 3px solid #e2e8f0;
+    }
+
+    .worker-details h4 {
+        margin: 0 0 5px 0;
+        color: #1e293b;
+        font-size: 1.2rem;
+    }
+
+    .worker-details p {
+        margin: 3px 0;
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-pending {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .btn-approve {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-approve:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        transform: scale(1.02);
+    }
+
+    .btn-reject {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-reject:hover {
+        background: linear-gradient(135deg, #dc2626, #b91c1c);
+        transform: scale(1.02);
+    }
+
+    .btn-noc {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-noc:hover {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #64748b;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="page-header">
+        <h2><i class="fas fa-user-check"></i> Vetting Queue</h2>
+        <p>Review and approve/reject worker registration requests</p>
+    </div>
+
+    {% if list %}
+        {% for worker in list %}
+        <div class="worker-card">
+            <div class="worker-info">
+                {% if worker.image %}
+                    <img src="/media/{{ worker.image }}" alt="{{ worker.worker_name }}" class="worker-image">
+                {% else %}
+                    <img src="{% static 'files/images/default-avatar.png' %}" alt="Default Avatar" class="worker-image">
+                {% endif %}
+                
+                <div class="worker-details">
+                    <h4>{{ worker.worker_name }}</h4>
+                    <p><i class="fas fa-venus-mars"></i> {{ worker.gender }} | <i class="fas fa-calendar-alt"></i> DOB: {{ worker.dob }}</p>
+                    <p><i class="fas fa-id-card"></i> Aadhar: {{ worker.aadhar_number }}</p>
+                    <p><i class="fas fa-map-marker-alt"></i> {{ worker.place }}, {{ worker.address }}</p>
+                    <p><i class="fas fa-phone"></i> {{ worker.phone }} | <i class="fas fa-mobile-alt"></i> {{ worker.mobile }}</p>
+                    <p><i class="fas fa-envelope"></i> {{ worker.email }}</p>
+                    <span class="status-badge status-pending">{{ worker.status }}</span>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="/approve?sid={{ worker.worker_id }}" class="btn-approve">
+                    <i class="fas fa-check"></i> Approve
+                </a>
+                <a href="/reject?sid={{ worker.worker_id }}" class="btn-reject">
+                    <i class="fas fa-times"></i> Reject
+                </a>
+                <a href="/viewnocaccept?worker_id={{ worker.worker_id }}" class="btn-noc">
+                    <i class="fas fa-file-shield"></i> View NOC
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>No Pending Requests</h3>
+            <p>There are no worker registration requests waiting for approval.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

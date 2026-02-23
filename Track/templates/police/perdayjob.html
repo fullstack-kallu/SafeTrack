@@ -1,0 +1,74 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}Job Schedule{% endblock %}
+
+{% block content %}
+<div class="page-header-accent">
+    <h2 class="h4 font-weight-bold">Daily Job Schedule</h2>
+    <p class="text-muted small">View your assigned tasks and working hours for today.</p>
+</div>
+
+<div class="glass-card">
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Schedule ID</th>
+                    <th>Job Details</th>
+                    <th>Timings</th>
+                    <th>Hours</th>
+                    <th>Salary Estimate</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in list %}
+                <tr>
+                    <td class="font-weight-bold text-primary">#{{ i.shedule_id }}</td>
+                    <td>
+                        <div class="font-weight-bold">{{ i.job_details }}</div>
+                        <div class="text-muted small">Emp ID: {{ i.emp_id }}</div>
+                    </td>
+                    <td>
+                        <div><i class="far fa-clock mr-1 text-secondary"></i> {{ i.time_from }}</div>
+                    </td>
+                    <td>{{ i.working_houres }} Hours</td>
+                    <td>
+                        <span class="text-success font-weight-bold">₹ {{ i.salary }}</span>
+                    </td>
+                    <td>
+                        <span class="badge badge-pill badge-primary">Assigned</span>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="fas fa-calendar-day fa-3x mb-3"></i>
+                        <p>No jobs scheduled for you today.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Extra Content: Schedule Info Notes -->
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="glass-card" style="border-left: 4px solid var(--secondary-color);">
+            <h4 class="h6 font-weight-bold"><i class="fas fa-info-circle mr-2"></i> Attendance Tip</h4>
+            <p class="small text-muted mb-0">Please report to your job site 15 minutes before the scheduled time for
+                security clearance.</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="glass-card" style="border-left: 4px solid #fbbf24;">
+            <h4 class="h6 font-weight-bold"><i class="fas fa-exclamation-triangle mr-2"></i> Schedule Conflict?</h4>
+            <p class="small text-muted mb-0">If you cannot attend a scheduled job, please notify your agency at least 4
+                hours in advance.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

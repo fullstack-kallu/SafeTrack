@@ -1,0 +1,117 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block page_title %}Security Analysis: Agency Individual Review{% endblock %}
+
+{% block main_content %}
+<div class="animate-fade-up" style="max-width: 900px; margin: 0 auto;">
+  <div class="admin-card">
+    <div
+      style="display: flex; align-items: center; gap: 30px; margin-bottom: 40px; padding-bottom: 25px; border-bottom: 1px solid #F1F5F9;">
+      <div
+        style="width: 80px; height: 80px; background: #E0F2FE; color: var(--admin-accent); border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+        <i class="fa-solid fa-building-shield fa-2x"></i>
+      </div>
+      <div>
+        <h4 style="margin: 0; font-weight: 800; font-size: 24px;">Verification Analysis</h4>
+        <p style="font-size: 14px; color: #64748B; margin: 5px 0;">Subject: <span
+            style="font-weight: 800; color: var(--admin-navy);">{{list.0.firm_name}}</span></p>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <span
+            style="background: #FEF3C7; color: #D97706; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">VETTING
+            IN PROGRESS</span>
+          <span
+            style="background: #F1F5F9; color: #64748B; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">CODE:
+            {{list.0.emp_id}}</span>
+        </div>
+      </div>
+    </div>
+
+    {% for i in list %}
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+      <!-- Data Grid 1 -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="info-group-admin">
+          <label>Legal Representative</label>
+          <p>{{i.name}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Corporate Identity</label>
+          <p>{{i.firm_name}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Security Identifier (Aadhar)</label>
+          <p style="font-family: monospace; font-weight: 700; letter-spacing: 1px;">{{i.aadhar_no}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Communication (Email)</label>
+          <p>{{i.email}}</p>
+        </div>
+      </div>
+
+      <!-- Data Grid 2 -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="info-group-admin">
+          <label>Geographic Hub (Place)</label>
+          <p>{{i.place}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Signal Channels</label>
+          <p>M: {{i.mobile}} <span style="opacity: 0.3; margin: 0 10px;">|</span> P: {{i.phone}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Address Coordinates</label>
+          <p style="line-height: 1.5;">{{i.emp_address}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Temporal Check (DOB)</label>
+          <p>{{i.dob}}</p>
+        </div>
+      </div>
+    </div>
+
+    <div
+      style="margin-top: 50px; padding-top: 30px; border-top: 1px solid #F1F5F9; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <a href="/acceptemprequest?empid={{i.emp_id}}" class="btn-admin btn-primary"
+        style="justify-content: center; padding: 18px; background: var(--admin-success);">
+        <i class="fa-solid fa-check-double"></i> AUTHORIZE ACCESS
+      </a>
+      <a href="/rejectemprequest?empid={{i.emp_id}}" class="btn-admin"
+        style="justify-content: center; padding: 18px; background: var(--admin-danger); color: white;">
+        <i class="fa-solid fa-ban"></i> REJECT PROTOCOL
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Security Warning -->
+  <div
+    style="background: #FFFBEB; border: 1px solid #FEF3C7; border-radius: 12px; padding: 15px 20px; display: flex; gap: 15px; margin-top: 20px;">
+    <i class="fa-solid fa-triangle-exclamation" style="color: #D97706; margin-top: 3px;"></i>
+    <div>
+      <p style="margin: 0; font-size: 13px; font-weight: 700; color: #92400E;">Integrity Check Required</p>
+      <p style="margin: 0; font-size: 12px; color: #D97706; opacity: 0.8;">Ensure all physical documents have been
+        cross-referenced with the digital signature before authorization.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .info-group-admin label {
+    font-size: 10px;
+    font-weight: 800;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  .info-group-admin p {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--admin-navy);
+    margin: 0;
+  }
+</style>
+{% endblock %}

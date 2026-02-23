@@ -1,0 +1,125 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}Edit Worker Details - SafeTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-form-container {
+        background-color: rgba(0, 0, 0, 0.8);
+        width: 500px;
+        height: auto;
+        padding: 30px;
+        border-radius: 10px;
+        margin: 40px auto;
+    }
+    
+    .gridtable {
+        width: 300px;
+        height: 400px;
+        color: white;
+        cellspacing: 10;
+    }
+    
+    .gridtable td {
+        color: white;
+    }
+    
+    .gridtable input, 
+    .gridtable textarea {
+        color: black !important;
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        width: 100%;
+    }
+    
+    .gridtable button {
+        padding: 10px 20px;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .gridtable button a {
+        color: black;
+        text-decoration: none;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="edit-form-container">
+        <form action="" method="get" style="width:auto">
+            {% csrf_token %}
+            <table class="gridtable" align="center">
+                <tr>
+                    <th colspan="2"><b><font size="4" color="white">Please edit here!!</font></b></th>
+                </tr>
+                {% for i in list %}
+                <input type="hidden" name="workerid" value="{{i.worker_id}}" />
+                <tr>
+                    <td>Name</td>
+                    <td><input type="text" name="name" value="{{i.worker_name}}" required></td>
+                </tr>
+                <tr>
+                    <td>Gender</td>
+                    <td>
+                        {% if i.gender == 'male' %}
+                        <input type="radio" name="gender" value="male" checked> male
+                        <input type="radio" name="gender" value="female"> female
+                        {% else %}
+                        <input type="radio" name="gender" value="male"> male
+                        <input type="radio" name="gender" value="female" checked> female
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>DOB</td>
+                    <td><input type="text" name="dob" value="{{i.dob}}" required></td>
+                </tr>
+                <tr>
+                    <td>Aadhar Number</td>
+                    <td><input type="text" name="aadhar_number" value="{{i.aadhar_number}}" required></td>
+                </tr>
+                <tr>
+                    <td>Place</td>
+                    <td><input type="text" name="place" value="{{i.place}}" required></td>
+                </tr>
+                <tr>
+                    <td>Address</td>
+                    <td><textarea name="address" id="address" required>{{i.address}}</textarea></td>
+                </tr>
+                <tr>
+                    <td>Languages Known</td>
+                    <td><input type="text" name="languages_known" value="{{i.languages_known}}" required></td>
+                </tr>
+                <tr>
+                    <td>Phone</td>
+                    <td><input type="text" name="phone" value="{{i.phone}}" required></td>
+                </tr>
+                <tr>
+                    <td>Mobile</td>
+                    <td><input type="text" name="mobile" value="{{i.mobile}}" required></td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td><input type="text" name="email" value="{{i.email}}" required></td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <button type="button"><a href="/acceptworkerrequest?worker_id={{i.worker_id}}">ACCEPT</a></button>
+                    </td>
+                    <td>
+                        <button type="button"><a href="/rejectworkerrequest?worker_id={{i.worker_id}}">REJECT</a></button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <BR><BR>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block page_title %}Law Enforcement Network{% endblock %}
+
+{% block main_content %}
+<div class="animate-fade-up">
+    <div class="admin-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <h4 style="margin: 0; font-weight: 800;"><i class="fa-solid fa-list-ul" style="margin-right: 10px;"></i>
+                    Registered Units</h4>
+                <p style="font-size: 13px; color: #64748B; margin: 5px 0 0 0;">Authorized police stations in the
+                    monitoring grid.</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" placeholder="Search station code..."
+                    style="padding: 10px 15px; border-radius: 10px; border: 1px solid #E2E8F0; font-size: 13px; outline: none;">
+                <button class="btn-admin btn-primary"><i class="fa-solid fa-download"></i> EXPORT</button>
+            </div>
+        </div>
+
+        <div class="data-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Branch Unit</th>
+                        <th>Location Path</th>
+                        <th>Contact Signal</th>
+                        <th>Security Email</th>
+                        <th style="text-align: center;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in list %}
+                    <tr>
+                        <td style="font-weight: 800; color: var(--admin-navy);">{{i.branch}}</td>
+                        <td>
+                            <div style="font-size: 14px;">{{i.district}}</div>
+                            <div style="font-size: 11px; opacity: 0.6;">{{i.state}}, {{i.city}}</div>
+                        </td>
+                        <td>
+                            <div style="font-family: monospace; font-weight: 700;">{{i.mobile}}</div>
+                            <div style="font-size: 11px; opacity: 0.6;">P: {{i.phone}}</div>
+                        </td>
+                        <td style="font-size: 13px;">{{i.email}}</td>
+                        <td style="text-align: center;">
+                            <span
+                                style="background: #DCFCE7; color: #10B981; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">CONNECTED</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

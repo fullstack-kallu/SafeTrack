@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+
+<head>
+    {% include "police/policeheder.html" %}
+    <title>SafeTrack.com | NOC intelligence Summary</title>
+</head>
+
+<body>
+
+    <div class="main-content">
+        <div class="police-card">
+            <div class="card-header">
+                <h4><i class="fa-solid fa-clipboard-list"></i> Classified Crime Data Summary</h4>
+                <div class="badge-modern bg-urgent">Intelligence Feed</div>
+            </div>
+
+            <p style="color: #718096; margin-bottom: 30px; font-size: 14px;">
+                granular timeline of criminal intelligence entries for the selected subject profile.
+            </p>
+
+            <div class="table-responsive">
+                <table class="police-table">
+                    <thead>
+                        <tr>
+                            <th>Verification Date</th>
+                            <th>Entry Classification</th>
+                            <th>Incident Narration</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in list %}
+                        <tr>
+                            <td style="font-weight: 800; color: var(--primary-navy); width: 200px;">
+                                <i class="fa-solid fa-calendar-check"
+                                    style="color: var(--accent-blue); margin-right: 8px;"></i> {{ i.date }}
+                            </td>
+                            <td>
+                                <span class="badge-modern"
+                                    style="background: #FEE2E2; color: #EF4444; font-size: 11px;">
+                                    {{ i.crime }}
+                                </span>
+                            </td>
+                            <td style="font-size: 14px; line-height: 1.6; color: #1E293B; text-align: justify;">
+                                {{ i.crime_details }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 40px; text-align: center;">
+                <a href="javascript:history.back()" class="badge-modern"
+                    style="background: var(--primary-navy); color: white; text-decoration: none; padding: 12px 25px; display: inline-flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-circle-left"></i> RETURN TO SECTOR OVERSIGHT
+                </a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

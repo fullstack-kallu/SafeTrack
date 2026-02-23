@@ -1,0 +1,144 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}SafeTrack.com | Job Application{% endblock %}
+
+{% block extra_css %}
+<style>
+    .application-wrapper {
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .form-card {
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        width: 100%;
+        max-width: 550px;
+        transition: 0.3s ease;
+    }
+
+    .form-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .form-header {
+        text-align: center;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        color: #2c3e50;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 6px;
+        color: #555;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 8px rgba(102, 126, 234, 0.4);
+        outline: none;
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .note-text {
+        font-size: 12px;
+        color: #888;
+        margin-top: 4px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #00b894, #00cec9);
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 30px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        transform: scale(1.05);
+        background: linear-gradient(135deg, #00cec9, #00b894);
+    }
+
+    @media (max-width: 768px) {
+        .application-wrapper {
+            padding: 1rem;
+        }
+
+        .form-card {
+            padding: 1.5rem;
+        }
+
+        .form-header {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="application-wrapper">
+
+    <div class="form-card">
+        <h2 class="form-header">
+            <i class="fa fa-pencil-square-o"></i> Submit Your Application
+        </h2>
+
+        <form action="/viewvacancyhome4/" method="get">
+            <input type="hidden" name="v_id" value="{{ vacancy_id }}">
+
+            <div class="form-group">
+                <label>Experience (Years)</label>
+                <input type="text" name="experience"
+                       class="form-control"
+                       placeholder="Enter years of experience (e.g., 2)"
+                       pattern="[0-9]+"
+                       required>
+                <div class="note-text">Enter only numbers.</div>
+            </div>
+
+            <div class="form-group">
+                <label>Qualification</label>
+                <textarea name="qualification"
+                          class="form-control"
+                          placeholder="Briefly list your relevant qualifications"
+                          required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                POST APPLICATION
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

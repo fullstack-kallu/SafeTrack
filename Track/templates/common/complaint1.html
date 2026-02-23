@@ -1,0 +1,131 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}View NOC History{% endblock %}
+
+{% block extra_css %}
+<style>
+    .table-container {
+        padding: 25px;
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        overflow-x: auto; 
+    }
+    
+    .table-header {
+        color: #2980b9; 
+        margin-bottom: 25px;
+        font-weight: 700;
+        font-size: 26px;
+        text-align: center;
+    }
+
+    .TFtable {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .TFtable th,
+    .TFtable td {
+        padding: 12px 15px;
+        border: none; 
+        border-bottom: 1px solid #eee;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .TFtable th {
+        background-color: #3498db;
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .TFtable tr:nth-child(odd) {
+        background-color: #f9f9f9; 
+    }
+    .TFtable tr:nth-child(even) {
+        background-color: #ffffff; 
+    }
+    
+    .TFtable tbody tr:last-child td {
+        border-bottom: none; 
+    }
+
+    .TFtable tr:hover {
+        background-color: #e8f0fe; 
+        cursor: default;
+    }
+    
+    .complaint-link {
+        display: inline-block;
+        padding: 6px 10px;
+        background-color: #c0392b;
+        color: white;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+        transition: background-color 0.3s;
+    }
+    
+    .complaint-link:hover {
+        background-color: #e74c3c;
+        color: white;
+    }
+    
+    .complaint-link i {
+        margin-right: 5px;
+    }
+    
+    .crime-cell.no-crime {
+        color: #27ae60;
+        font-weight: 600;
+    }
+    .crime-cell.has-crime {
+        color: #c0392b;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header-accent">
+    <h1><i class="fas fa-id-card-o"></i> Your NOC History</h1>
+    <p>View your NOC records and file complaints if needed</p>
+</div>
+
+<div class="table-container">
+    <table class="TFtable">
+        <thead>
+            <tr>
+                <th><i class="fa fa-calendar-alt"></i> Date</th>
+                <th><i class="fa fa-shield"></i> Crime Status</th>
+                <th><i class="fa fa-info-circle"></i> Crime Details</th>
+                <th><i class="fa fa-gavel"></i> Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in list %}
+            <tr>
+                <td>{{i.date}}</td>
+                
+                <td class="crime-cell {% if i.crime == 'NO CRIME RECORDED' %}no-crime{% else %}has-crime{% endif %}">
+                    {{i.crime}}
+                </td>
+                
+                <td>{{i.crime_details}}</td>
+                
+                <td>
+                    <a href="/addcomplaint3?noc_id={{i.noc_id}}" class="complaint-link" title="File a Complaint">
+                        <i class="fa fa-bullhorn"></i> Complaint
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

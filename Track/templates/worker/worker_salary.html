@@ -1,0 +1,406 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+{% block page_title %}Worker Salary Dashboard{% endblock %}
+
+{% block main_content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Salaries by Month</title>
+    <style>
+        :root {
+            --primary-color: #4a6bdf;
+            --secondary-color: #6c63ff;
+            --accent-color: #ff6b6b;
+            --success-color: #4CAF50;
+            --light-color: #f8f9fa;
+            --medium-color: #e9ecef;
+            --dark-color: #343a40;
+            --text-color: #333;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f5f7fb;
+            padding: 0;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        header {
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--dark-color);
+            font-weight: 600;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .filter-section {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            min-width: 120px;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+            font-size: 0.9rem;
+        }
+
+        select {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            background-color: white;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 107, 223, 0.2);
+        }
+
+        button, .action-button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        button:hover, .action-button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .action-button {
+            background-color: var(--success-color);
+        }
+
+        .action-button:hover {
+            background-color: #3d8b40;
+        }
+
+        .table-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tbody tr {
+            transition: var(--transition);
+        }
+
+        tbody tr:hover {
+            background-color: rgba(74, 107, 223, 0.05);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .salary-amount {
+            font-weight: 600;
+            color: var(--success-color);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(74, 107, 223, 0.1);
+        }
+
+        .icon {
+            display: inline-block;
+            width: 1.2rem;
+            height: 1.2rem;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .form-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .form-group {
+                width: 100%;
+            }
+
+            button, .action-button {
+                width: 100%;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 500px;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        @media print {
+            header, .filter-section, .actions, .navigation {
+                display: none;
+            }
+
+            body {
+                background-color: white;
+            }
+
+            .table-container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Worker Salary Dashboard</h1>
+            <div class="subtitle">Total Salary per Worker - {{ month }}/{{ year }}</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="filter-section">
+            <form method="get" action="">
+                <div class="form-container">
+                    <div class="form-group">
+                        <label for="month">Month:</label>
+                        <select name="month" id="month">
+                            {% for m in months %}
+                                <option value="{{ m }}" {% if m == month %}selected{% endif %}>{{ m }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="year">Year:</label>
+                        <select name="year" id="year">
+                            {% for y in years %}
+                                <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button type="submit">
+                        <span>🔍</span> Filter
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <div class="actions">
+            <a class="action-button" href="?month={{ month }}&year={{ year }}&export=csv">
+                <span>📊</span> Download CSV
+            </a>
+
+            <button class="action-button" onclick="window.print()">
+                <span>🖨️</span> Print
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Worker Name</th>
+                        <th>Total Salary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for worker in worker_salaries %}
+                    <tr>
+                        <td>{{ worker.worker_name }}</td>
+                        <td class="salary-amount">₹{{ worker.total_salary }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" class="no-data">No data found for this month.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <nav class="navigation">
+            <a href="{% url 'index' %}" class="nav-link">
+                <span>←</span> Back to Index
+            </a>
+            <a href="/homeadmin/" class="nav-link">
+                <span>🏠</span> Home
+            </a>
+        </nav>
+    </div>
+
+    <script>
+        // Add interactive features
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add animation to table rows
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach((row, index) => {
+                row.style.animation = `fadeIn 0.5s ease ${index * 0.05}s both`;
+            });
+
+            // Add print functionality
+            const printButton = document.querySelector('button[onclick="window.print()"]');
+            printButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.print();
+            });
+        });
+
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
+{% endblock %}

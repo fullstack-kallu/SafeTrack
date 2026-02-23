@@ -1,0 +1,92 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block page_title %}Personnel Registry Intelligence{% endblock %}
+
+{% block main_content %}
+<div class="animate-fade-up">
+    <div class="admin-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <h4 style="margin: 0; font-weight: 800;"><i class="fa-solid fa-users-viewfinder"
+                        style="margin-right: 10px;"></i> Master Worker Database</h4>
+                <p style="font-size: 13px; color: #64748B; margin: 5px 0 0 0;">Unified monitoring repository for all
+                    registered migrant professionals.</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="workerSearch" placeholder="Scan Aadhar or Name..."
+                    style="padding: 10px 15px; border-radius: 10px; border: 1px solid #E2E8F0; font-size: 13px; outline: none; width: 250px;">
+                <button class="btn-admin btn-primary"><i class="fa-solid fa-magnifying-glass"></i> SCAN</button>
+            </div>
+        </div>
+
+        <div class="data-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Subject Profile</th>
+                        <th>Biometric Identifier</th>
+                        <th>Designation Details</th>
+                        <th>Communication Channel</th>
+                        <th style="text-align: center;">Registry Status</th>
+                    </tr>
+                </thead>
+                <tbody id="workerTableBody">
+                    {% for i in list %}
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <img src="/media/{{i.image}}"
+                                    style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 2px solid #E2E8F0;">
+                                <div>
+                                    <div style="font-weight: 800; color: var(--admin-navy);">{{i.worker_name}}</div>
+                                    <div style="font-size: 11px; opacity: 0.6;">{{i.gender|capfirst}} • {{i.dob}}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-family: monospace; font-weight: 700; letter-spacing: 1px;">
+                                {{i.aadhar_number}}</div>
+                            <div style="font-size: 11px; opacity: 0.6;">Reg: {{i.regis_date}}</div>
+                        </td>
+                        <td>
+                            <div style="font-size: 14px;">{{i.place}}</div>
+                            <div style="font-size: 11px; opacity: 0.6;">Addr: {{i.address|truncatechars:20}}</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 700;">{{i.mobile}}</div>
+                            <div style="font-size: 11px; opacity: 0.6;">{{i.email}}</div>
+                        </td>
+                        <td style="text-align: center;">
+                            {% if i.status == 'approved' %}
+                            <span
+                                style="background: #DCFCE7; color: #10B981; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">ACTIVE</span>
+                            {% elif i.status == 'pending' %}
+                            <span
+                                style="background: #FEF3C7; color: #D97706; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">PENDING</span>
+                            {% else %}
+                            <span
+                                style="background: #FEE2E2; color: #EF4444; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">REJECTED</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    $(document).ready(function () {
+        $("#workerSearch").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#workerTableBody tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %}

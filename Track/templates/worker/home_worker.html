@@ -1,0 +1,73 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}Worker Home{% endblock %}
+
+{% block extra_css %}
+<style>
+    h1, h2, h3, h4, h5, h6, p, .lead { font-size: 16px !important; }
+    .h1, .h2, .h3, .h4, .h5, .h6 { font-size: 16px !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="d-flex justify-content-between align-items-center mb-5">
+	<div>
+		<h1 class="h3 font-weight-bold mb-1">Worker Portal</h1>
+		<p class="text-muted">Your safe and secure way to find work.</p>
+	</div>
+	<div class="glass-card p-2 d-flex align-items-center" style="margin-bottom: 0;">
+		<i class="fas fa-hard-hat mr-2 text-secondary"></i> Verified Worker
+	</div>
+</header>
+
+<!-- Modern Slider -->
+<div class="modern-slider glass-card">
+	<img src="/static/files/images/01-slide.jpg" alt="Worker Portal">
+	<div class="slider-content">
+		<h2 class="h1 font-weight-bold text-white">Your Career, Protected</h2>
+		<p class="lead text-light">Access verified jobs and safety certificates.</p>
+	</div>
+</div>
+
+<!-- Dashboard Stats -->
+<div class="dashboard-grid">
+	<div class="glass-card stat-card">
+		<div class="stat-icon bg-secondary text-white">
+			<i class="fas fa-search-dollar"></i>
+		</div>
+		<div>
+			<div class="text-muted small">Job Opportunities</div>
+			<div class="h4 font-weight-bold mb-0">Explore Now</div>
+		</div>
+	</div>
+	<div class="glass-card stat-card">
+		<div class="stat-icon bg-info text-white">
+			<i class="fas fa-certificate"></i>
+		</div>
+		<div>
+			<div class="text-muted small">Safety NOC</div>
+			<div class="h4 font-weight-bold mb-0">Verified Status</div>
+		</div>
+	</div>
+	<div class="glass-card stat-card">
+		<div class="stat-icon bg-warning text-dark">
+			<i class="fas fa-star"></i>
+		</div>
+		<div>
+			<div class="text-muted small">Your Rating</div>
+			<div class="h4 font-weight-bold mb-0">View Feedback</div>
+		</div>
+	</div>
+</div>
+
+<!-- Notes Section -->
+<div class="glass-card worker-accent">
+	<h3 class="h5 font-weight-bold mb-3"><i class="fas fa-info-circle mr-2"></i> Safety Guidelines</h3>
+	<div class="notes-container">
+		<p class="mb-2"><strong>Important:</strong> Always keep your ID Card with you while on duty.</p>
+		<p class="mb-0"><strong>Safety:</strong> Verify your NOC certificate before applying for high-security roles.
+		</p>
+	</div>
+</div>
+{% endblock %}

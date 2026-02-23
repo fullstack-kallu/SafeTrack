@@ -1,0 +1,154 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block page_title %}Security Protocol: Worker Registration{% endblock %}
+
+{% block main_content %}
+<div class="animate-fade-up">
+    <div class="admin-card">
+        <div style="text-align: center; margin-bottom: 40px;">
+            <div
+                style="width: 80px; height: 80px; background: #DBEAFE; color: var(--admin-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                <i class="fa-solid fa-user-plus fa-2x"></i>
+            </div>
+            <h4 style="margin: 0; font-weight: 800;">Initiate Personnel Registry</h4>
+            <p style="font-size: 13px; color: #64748B;">Execute standard onboarding protocol for new migrant
+                professionals.</p>
+        </div>
+
+        <form action="/regworkerinsert/" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <!-- Column 1 -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="form-group-admin">
+                        <label>Biometric Image Capture</label>
+                        <input type="file" name="image" required style="padding: 8px;">
+                    </div>
+
+                    <div class="form-group-admin">
+                        <label>Personnel Full Name</label>
+                        <input type="text" name="worker_name" required placeholder="Subject Lexical Name">
+                    </div>
+
+                    <div class="form-group-admin">
+                        <label>Gender Identification</label>
+                        <div
+                            style="display: flex; gap: 30px; padding: 12px; border: 1px solid #E2E8F0; border-radius: 12px; background: #F8FAFC;">
+                            <label
+                                style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #1E293B; text-transform: none; font-weight: 500;">
+                                <input type="radio" name="gender" value="Male" required style="width: auto; margin: 0;">
+                                Male
+                            </label>
+                            <label
+                                style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #1E293B; text-transform: none; font-weight: 500;">
+                                <input type="radio" name="gender" value="Female" style="width: auto; margin: 0;"> Female
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group-admin">
+                        <label>Temporal Cycle (DOB)</label>
+                        <input type="date" name="dob" required>
+                    </div>
+
+                    <div class="form-group-admin">
+                        <label>Chrono-Count (Age)</label>
+                        <input type="number" name="age" min="18" max="65" required placeholder="18-65">
+                    </div>
+                </div>
+
+                <!-- Column 2 -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="form-group-admin">
+                        <label>Security Identifier (Aadhar)</label>
+                        <input type="text" name="aadhar_number" maxlength="12" required placeholder="12-digit code">
+                    </div>
+
+                    <div class="form-group-admin">
+                        <label>Linguistic Intelligence</label>
+                        <input type="text" name="languages_known" required placeholder="Languages known">
+                    </div>
+
+                    <div class="form-group-admin">
+                        <label>Geographic Node (Place)</label>
+                        <input type="text" name="place" required placeholder="Location hub">
+                    </div>
+
+                    <div class="form-group-admin">
+                        <label>Signal Channel (Mobile)</label>
+                        <input type="text" name="mobile" maxlength="10" required placeholder="10-digit signal">
+                    </div>
+
+                    <div class="form-group-admin">
+                        <label>Intelligence Node (Email)</label>
+                        <input type="email" name="email" required placeholder="subject@node.com">
+                    </div>
+                </div>
+
+                <!-- Full Width -->
+                <div style="grid-column: 1 / span 2; display: flex; flex-direction: column; gap: 20px;">
+                    <div class="form-group-admin">
+                        <label>Coordinate Residency (Address)</label>
+                        <textarea name="address" required rows="2"
+                            placeholder="Primary residential coordinates"></textarea>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div class="form-group-admin">
+                            <label>Access Credential (Password)</label>
+                            <input type="password" name="paswd" required>
+                        </div>
+                        <div class="form-group-admin">
+                            <label>Verify Credential</label>
+                            <input type="password" required>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 10px;">
+                        <button type="submit" class="btn-admin btn-primary"
+                            style="width: 100%; justify-content: center; padding: 18px; font-size: 16px;">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> AUTHORIZE REGISTRATION
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .form-group-admin {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group-admin label {
+        font-size: 11px;
+        font-weight: 800;
+        color: #94A3B8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .form-group-admin input,
+    .form-group-admin textarea {
+        padding: 12px 18px;
+        border-radius: 12px;
+        border: 1px solid #E2E8F0;
+        outline: none;
+        background: #F8FAFC;
+        font-size: 14px;
+        transition: var(--transition);
+    }
+
+    .form-group-admin input:focus,
+    .form-group-admin textarea:focus {
+        border-color: var(--admin-accent);
+        background: white;
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.08);
+    }
+</style>
+{% endblock %}

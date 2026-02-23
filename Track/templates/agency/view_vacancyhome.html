@@ -1,0 +1,54 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}Available Vacancies{% endblock %}
+
+{% block content %}
+<div class="page-header-accent">
+    <h2 class="h4 font-weight-bold">Browse Job Openings</h2>
+    <p class="text-muted small">Find verified job opportunities tailored for you.</p>
+</div>
+
+<div class="glass-card">
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Firm Name</th>
+                    <th>Job Title</th>
+                    <th>Positions</th>
+                    <th>Location</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in list %}
+                <tr>
+                    <td>{{ i.date }}</td>
+                    <td>
+                        <div class="font-weight-bold">{{ i.firm_name }}</div>
+                        <div class="text-muted small">{{ i.name }}</div>
+                    </td>
+                    <td><span class="badge badge-secondary">{{ i.vacancy }}</span></td>
+                    <td>{{ i.vacancy_no }}</td>
+                    <td>{{ i.place }}</td>
+                    <td>
+                        <a href="/insertworkerdetails?v_id={{ i.vacancy_id }}" class="btn-modern btn-sm">
+                            <i class="fas fa-eye mr-1"></i> VIEW & APPLY
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="fas fa-search fa-3x mb-3"></i>
+                        <p>No active vacancies found at the moment.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

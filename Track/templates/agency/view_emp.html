@@ -1,0 +1,57 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block page_title %}Vetting Node: Agency Approvals{% endblock %}
+
+{% block main_content %}
+<div class="animate-fade-up">
+    <div class="admin-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <h4 style="margin: 0; font-weight: 800;"><i class="fa-solid fa-handshake-alt"
+                        style="margin-right: 10px;"></i> Pending Registration Queue</h4>
+                <p style="font-size: 13px; color: #64748B; margin: 5px 0 0 0;">New agencies awaiting security clearance
+                    and operational authorization.</p>
+            </div>
+        </div>
+
+        <div class="data-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Corporate Entity</th>
+                        <th>Legal Representative</th>
+                        <th>Identifier (Aadhar)</th>
+                        <th>Signal Protocol (Mobile)</th>
+                        <th>Registry Status</th>
+                        <th style="text-align: center;">Vetting Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in list %}
+                    <tr>
+                        <td>
+                            <div style="font-weight: 800; color: var(--admin-navy);">{{i.firm_name}}</div>
+                            <div style="font-size: 11px; opacity: 0.6;">{{i.place}}</div>
+                        </td>
+                        <td>{{i.name}}</td>
+                        <td style="font-family: monospace; font-weight: 700;">{{i.aadhar_no}}</td>
+                        <td>{{i.mobile}}</td>
+                        <td>
+                            <span
+                                style="background: #FEF3C7; color: #D97706; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800; text-transform: uppercase;">{{i.status}}</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <a href="/viewacceptemprequest?emp_id={{i.emp_id}}" class="btn-admin btn-primary"
+                                style="padding: 6px 15px; font-size: 11px;">
+                                <i class="fa-solid fa-shield-check"></i> REVIEW REQUEST
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

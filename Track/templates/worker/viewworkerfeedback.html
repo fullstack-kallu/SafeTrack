@@ -1,0 +1,44 @@
+
+<html lang="en">
+  <head>
+    <title>view_feedback</title>
+    
+  </head>
+  <body>
+    
+    
+<center>
+        <form action="" method="get" > 
+   
+              
+     <table class="gridtable" border="2"  align="center">
+<tr>
+<th>Name</th><th>Gender</th><th>Address</th><th>Date</th><th>Feedbck title</th><th>Feedbck Description</th><th>Mobile</th><th>Email</th>
+{% for i in list %}
+<tr><td>{{i.worker_name}}</td>
+<td>{{i.gender}}</td>
+<td>{{i.address}}</td>
+<td>{{i.date}}</td>
+<td>{{i.feedback_title}}</td>
+<td>{{i.feedback_description}}</td>
+
+<td>{{i.mobile}}</td>
+<td>{{i.email}}</td>
+
+
+{% endfor %}
+</table>
+<BR><BR>
+
+</form>
+
+</head>
+
+
+         
+                   
+
+
+    
+  </body>
+</html>

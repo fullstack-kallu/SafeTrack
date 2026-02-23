@@ -1,0 +1,60 @@
+{% extends 'agency/agency_base.html' %}
+{% load static %}
+
+{% block title %}Update Profile{% endblock %}
+
+{% block content %}
+<div class="page-header-accent">
+    <h2 class="h4 font-weight-bold">Update Agency Details</h2>
+    <p class="text-muted small">Select your profile to edit and update information.</p>
+</div>
+
+<div class="glass-card">
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Firm Name</th>
+                    <th>Aadhaar</th>
+                    <th>Contact</th>
+                    <th>Location</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in list %}
+                <tr>
+                    <td>
+                        <div class="font-weight-600">{{ i.name }}</div>
+                        <div class="text-muted small">{{ i.gender }}</div>
+                    </td>
+                    <td class="font-weight-600">{{ i.firm_name }}</td>
+                    <td>{{ i.aadhar_no }}</td>
+                    <td>
+                        <div class="small">{{ i.mobile }}</div>
+                        <div class="text-muted small text-lowercase">{{ i.email }}</div>
+                    </td>
+                    <td>
+                        <div>{{ i.place }}</div>
+                        <div class="text-muted small">{{ i.emp_address|truncatewords:5 }}</div>
+                    </td>
+                    <td>
+                        <a href="/edit_employer?empid={{ i.emp_id }}" class="btn-modern btn-sm">
+                            <i class="fas fa-edit mr-1"></i> EDIT
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">
+                        <i class="fas fa-user-slash fa-2x mb-2 d-block"></i>
+                        <p class="mb-0">No profile found.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

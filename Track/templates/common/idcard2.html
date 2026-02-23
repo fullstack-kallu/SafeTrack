@@ -1,0 +1,174 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}Worker ID Card{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Printing Layout Styles */
+    .id-card-container {
+        display: flex;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+
+    #DivIdToPrint {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        width: 400px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+    }
+
+    .card-banner {
+        background: var(--secondary-color);
+        padding: 1.5rem;
+        text-align: center;
+        color: rgb(17, 10, 216);
+    }
+
+    .card-banner h2 {
+        font-family: 'Audiowide', cursive;
+        font-size: 1.2rem;
+        margin: 0;
+        letter-spacing: 2px;
+    }
+
+    .card-body {
+        padding: 2rem;
+        color: #1f2937;
+    }
+
+    .worker-profile-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        display: block;
+        margin: -60px auto 1.5rem;
+        background: white;
+    }
+
+    .worker-info-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .worker-info-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px dashed #e5e7eb;
+        font-size: 16px;
+    }
+
+    .worker-info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #6b7280;
+    }
+
+    .info-value {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .card-footer {
+        background: #f3f4f6;
+        padding: 1rem;
+        text-align: center;
+        font-size: 0.75rem;
+        color: #9ca3af;
+    }
+
+    @media print {
+
+        .sidebar,
+        .page-header-accent,
+        .no-print,
+        .main-content header {
+            display: none !important;
+        }
+
+        .main-content {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        #DivIdToPrint {
+            box-shadow: none !important;
+            border: 1px solid #ccc !important;
+            width: 100% !important;
+            max-width: 400px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header-accent">
+    <h2 class="h4 font-weight-bold">Digital Identity Card</h2>
+    <p class="text-muted small">Your official verified worker ID for security access.</p>
+</div>
+
+<div class="id-card-container animate-page">
+    <div id="DivIdToPrint">
+        <div class="card-banner">
+            <h2>COPTRACK OFFICIAL</h2>
+            <div class="small">Security Verified Professional</div>
+        </div>
+
+        <div class="card-body">
+            {% for i in worker %}
+            <img src="/media/{{i.image}}" class="worker-profile-img" alt="{{i.worker_name}}">
+
+            <div class="text-center mb-4">
+                <h3 class="h4 font-weight-bold mb-0">{{ i.worker_name }}</h3>
+                <div class="badge badge-pill badge-success">ST-VERIFIED-{{ i.aadhar_number|slice:":4" }}</div>
+            </div>
+
+            <ul class="worker-info-list">
+                <li class="worker-info-item">
+                    <span class="info-label">Aadhaar No</span>
+                    <span class="info-value">{{ i.aadhar_number }}</span>
+                </li>
+                <li class="worker-info-item">
+                    <span class="info-label">Gender</span>
+                    <span class="info-value">{{ i.gender }}</span>
+                </li>
+                <li class="worker-info-item">
+                    <span class="info-label">Location</span>
+                    <span class="info-value">{{ i.place }}</span>
+                </li>
+                <li class="worker-info-item">
+                    <span class="info-label">Contact</span>
+                    <span class="info-value">{{ i.mobile }}</span>
+                </li>
+                <li class="worker-info-item">
+                    <span class="info-label">Languages</span>
+                    <span class="info-value">{{ i.languages_known }}</span>
+                </li>
+            </ul>
+            {% endfor %}
+        </div>
+
+        <div class="card-footer">
+            <i class="fas fa-shield-alt mr-1"></i> Valid only with active NOC certificate.
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4 no-print">
+    <button type="button" class="btn-modern btn-lg px-5" onclick="window.print();">
+        <i class="fas fa-print mr-2"></i> Print Official ID Card
+    </button>
+</div>
+{% endblock %}

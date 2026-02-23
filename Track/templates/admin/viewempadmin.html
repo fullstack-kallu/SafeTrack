@@ -1,0 +1,56 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block page_title %}Agency Management Hub{% endblock %}
+
+{% block main_content %}
+<div class="animate-fade-up">
+    <div class="admin-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <h4 style="margin: 0; font-weight: 800;"><i class="fa-solid fa-briefcase"
+                        style="margin-right: 10px;"></i> Registered Agencies</h4>
+                <p style="font-size: 13px; color: #64748B; margin: 5px 0 0 0;">Corporate entities and placement offices
+                    in the network.</p>
+            </div>
+            <button class="btn-admin btn-primary"><i class="fa-solid fa-plus"></i> NEW AGENCY</button>
+        </div>
+
+        <div class="data-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Agency Enterprise</th>
+                        <th>Legal Representative</th>
+                        <th>Registry Code</th>
+                        <th>Contact mobile</th>
+                        <th style="text-align: center;">Vetting Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in list %}
+                    <tr>
+                        <td>
+                            <div style="font-weight: 800; color: var(--admin-navy);">{{i.agency_name}}</div>
+                            <div style="font-size: 11px; opacity: 0.6;">D: {{i.district}}</div>
+                        </td>
+                        <td>{{i.owner_name}}</td>
+                        <td style="font-family: monospace; font-weight: 700;">{{i.registry_number}}</td>
+                        <td>{{i.mobile}}</td>
+                        <td style="text-align: center;">
+                            {% if i.status == 'approved' %}
+                            <span
+                                style="background: #DCFCE7; color: #10B981; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">VERIFIED</span>
+                            {% else %}
+                            <span
+                                style="background: #FEF3C7; color: #D97706; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">{{i.status|upper}}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

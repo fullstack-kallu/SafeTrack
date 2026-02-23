@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Agency Dashboard{% endblock %} | SafeTrack</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;800" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/modern_ui.css' %}">
+    
+    <!-- Global Font Scaling -->
+    <link rel="stylesheet" href="{% static 'files/css/global_fonts.css' %}">
+
+    {% block extra_css %}{% endblock %}
+
+<style>
+        /* Increased sidebar font sizes */
+        .nav-link {
+            font-size: 1.85rem !important;
+        }
+        .submenu-link {
+            font-size: 1.85rem !important;
+        }
+        .sidebar-logo {
+            font-size: 2rem !important;
+        }
+
+        .page-header-accent {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background-color: #f9fafb;
+            color: var(--text-main);
+            font-weight: 600;
+            padding: 1.5rem 1rem;
+            text-transform: uppercase;
+            font-size: 16px;
+            border-bottom: 2px solid var(--border-color);
+            text-align: left;
+        }
+
+        .data-table tr {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .data-table td {
+            padding: 0.75rem 1rem;
+            color: var(--text-main);
+        }
+
+        .btn-modern {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            border: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-modern:hover {
+            background: var(--primary-hover);
+            color: white;
+        }
+
+        input,
+        select,
+        textarea {
+            background: #ffffff !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-main) !important;
+            border-radius: 6px !important;
+            padding: 0.625rem !important;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none !important;
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileMenu()"></div>
+    <button class="mobile-toggle" onclick="toggleMobileMenu()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <a href="/homeemp/" class="sidebar-logo">
+                <i class="fas fa-shield-alt"></i> SafeTrack
+            </a>
+
+            <ul class="nav-links">
+                <li class="nav-item">
+                    <a href="/homeemp/" class="nav-link {% if request.path == '/homeemp/' %}active{% endif %}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/viewmyworker/"
+                        class="nav-link {% if '/viewmyworker/' in request.path %}active{% endif %}">
+                        <i class="fas fa-users-cog"></i> My Workers
+                    </a>
+                </li>
+
+                <li class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+                    <div class="nav-link">
+                        <i class="fas fa-briefcase"></i> Vacancies <i class="fas fa-chevron-down ms-auto"
+                            style="font-size: 0.7rem; margin-left: auto;"></i>
+                    </div>
+                    <ul class="submenu">
+                        <li><a href="/addvacancy/" class="submenu-link">Post Vacancy</a></li>
+                        <li><a href="/viewvacancy/" class="submenu-link">View Vacancy</a></li>
+                        <li><a href="/editvacancy1/" class="submenu-link">Edit Vacancy</a></li>
+                        <li><a href="/deletevacancy1/" class="submenu-link">Delete Vacancy</a></li>
+                        <li><a href="/viewappliedvacancy/" class="submenu-link">Applied Vacancy</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+                    <div class="nav-link">
+                        <i class="fas fa-comments"></i> Feedback <i class="fas fa-chevron-down ms-auto"
+                            style="font-size: 0.7rem; margin-left: auto;"></i>
+                    </div>
+                    <ul class="submenu">
+                        <li><a href="/view_feedbackworker/" class="submenu-link">Add Feedback</a></li>
+                        <li><a href="/viewfeedback/" class="submenu-link">View Feedback</a></li>
+                        <li><a href="/editfeedbackworker1/" class="submenu-link">Edit Feedback</a></li>
+                        <li><a href="/deletefeedback1/" class="submenu-link">Delete Feedback</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+                    <div class="nav-link">
+                        <i class="fas fa-id-card"></i> My Details <i class="fas fa-chevron-down ms-auto"
+                            style="font-size: 0.7rem; margin-left: auto;"></i>
+                    </div>
+                    <ul class="submenu">
+                        <li><a href="/viewemydetails/" class="submenu-link">View Details</a></li>
+                        <li><a href="/vieweditemp/" class="submenu-link">Update Details</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+                    <div class="nav-link">
+                        <i class="fas fa-calendar-alt"></i> Schedules <i class="fas fa-chevron-down ms-auto"
+                            style="font-size: 0.7rem; margin-left: auto;"></i>
+                    </div>
+                    <ul class="submenu">
+                        <li><a href="/viewmyworker_jobsheddule/" class="submenu-link">Add Schedules</a></li>
+                        <li><a href="/viewjobshedule/" class="submenu-link">View Schedules</a></li>
+                        <li><a href="/deletejobshedule1/" class="submenu-link">Delete Schedules</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item has-submenu" onclick="toggleSubmenu(this)">
+                    <div class="nav-link">
+                        <i class="fas fa-cog"></i> Settings <i class="fas fa-chevron-down ms-auto"
+                            style="font-size: 0.7rem; margin-left: auto;"></i>
+                    </div>
+                    <ul class="submenu">
+                        <li><a href="/password/" class="submenu-link">Change Password</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item mt-auto">
+                    <a href="/home/" class="nav-link text-danger">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script>
+        function toggleMobileMenu() {
+            document.querySelector('.sidebar').classList.toggle('mobile-open');
+            document.getElementById('sidebarOverlay').classList.toggle('show');
+        }
+
+        function toggleSubmenu(element) {
+            element.classList.toggle('open');
+            const icon = element.querySelector('.fa-chevron-down');
+            if (icon) {
+                icon.style.transform = element.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+                icon.style.transition = 'transform 0.3s';
+            }
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <link href="{% static 'http://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,800' %}" rel='stylesheet' type='text/css'>
+    <link href="{% static 'http://fonts.googleapis.com/css?family=Audiowide' %}" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/simple-line-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'files/rs-plugin/css/settings.css' %}">
+
+    <title>View Worker Records</title>
+
+    <style type="text/css">
+        /* Base page styling to ensure content centers cleanly */
+        body {
+            background-color: #f4f7f6 !important; /* Lighter background */
+            font-family: 'Open Sans', sans-serif;
+            min-height: 100vh;
+        }
+        
+        /* Area to hold and center the table content below the fixed header */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 10px;
+        }
+
+        /* --- Table Styling (TFtable) --- */
+        .TFtable {
+            width: 98%; /* Maximizing width for many columns */
+            max-width: 1600px;
+            border-collapse: collapse;
+            margin: 20px auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow */
+            border-radius: 8px;
+            overflow: hidden; 
+            background-color: white;
+            border: 1px solid #ddd;
+        }
+
+        /* Table Title Header */
+        .table-title-header {
+            background: #004d99; /* Deep Police Blue */
+            color: white;
+            padding: 18px 10px;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        /* Column Headers */
+        .TFtable th {
+            background: #007bff; /* Primary Blue for headers */
+            color: white;
+            padding: 12px 8px;
+            font-weight: 600;
+            font-size: 13px; 
+            text-align: left;
+            border-bottom: 3px solid #004d99; /* Separator line */
+            vertical-align: middle;
+        }
+        
+        /* Table Data Cells */
+        .TFtable td { 
+            padding: 10px 8px; 
+            border-bottom: 1px solid #eee; /* Very subtle row separator */
+            text-align: left;
+            vertical-align: middle;
+            color: #333;
+            font-size: 13px;
+        }
+
+        /* Zebra Striping */
+        .TFtable tbody tr:nth-child(odd){ 
+            background: #ffffff;
+        }
+        .TFtable tbody tr:nth-child(even){
+            background: #f8faff; /* Very light blue tint */
+        }
+
+        /* Hover effect for rows */
+        .TFtable tbody tr:hover {
+            background-color: #eaf5ff; /* Slightly darker light blue on hover */
+            cursor: default;
+        }
+
+        /* Worker Image Styling */
+        .worker-photo {
+            border-radius: 50%; 
+            object-fit: cover;
+            border: 2px solid #007bff; /* Border matching theme color */
+        }
+        
+        /* Action Link Button Styling */
+        .action-link {
+            display: inline-block;
+            padding: 6px 10px;
+            background-color: #17a2b8; /* Info/Cyan for secondary actions */
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 12px;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+        .action-link:hover {
+            background-color: #138496;
+        }
+        
+        /* Centering content in key columns */
+        .center-content {
+            text-align: center !important;
+        }
+
+    </style>
+</head>
+
+<body>
+    
+    <div class="sidebar-menu-container" id="sidebar-menu-container">
+        <div class="sidebar-menu-push">
+            <div class="sidebar-menu-overlay"></div>
+            <div class="sidebar-menu-inner">
+                <header class="site-header">
+                    <div id="main-header" class="main-header header-sticky">
+                        <div class="inner-header clearfix">
+                            <div class="logo">
+                                <a href="">SafeTrack.com</a>
+                            </div>
+                            <div class="header-right-toggle pull-right hidden-md hidden-lg">
+                                <a href="{% static 'javascript:void(0)' %}" class="side-menu-button"><i class="fa fa-bars"></i></a>
+                            </div>
+                            <nav class="main-navigation pull-right hidden-xs hidden-sm">
+                                <ul>
+                                    <li><a href="/homepolice/">Home</a></li>
+                                    <li><a href="#" class="has-submenu">My details</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="/viewpolice/">View my details</a></li>
+                                            <li><a href="/editpolice1/">Edit my details</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#" class="has-submenu">NOC</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="/viewnoc1/">View NOC</a></li>
+                                            <li><a href="/noc_insert1/">Add NOC</a></li>
+                                            <li><a href="/editnoc1/">Edit NOC</a></li>
+                                            <li><a href="/deletenoc1/">Delete NOC</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#" class="has-submenu">Worker</a>
+                                        <ul class="sub-menu">
+                                            <li><a href="/viewpoliceworker/">View worker</a></li>
+                                            <li><a href="/viewworkeraccept/">Approve/Reject</a></li>
+                                            <li><a href="/viewfeedbackworker1/">Feedback</a></li>
+                                            <li><a href="/viewworkercomplaint/">Complaints</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="/view_workershedduledetails1/">Sheddules</a></li>
+                                    <li><a href="/home/">Logout</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </header> 
+                
+                <br><br><br><br><br><br>
+
+                <div class="content-area">
+                    <form action="" method="get" > 
+                        <table class="TFtable">
+                            <thead>
+                                <tr>
+                                    <th colspan="13" class="table-title-header">
+                                        Worker Details
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th class="center-content">Photo</th>
+                                    <th>Name</th>
+                                    <th>Gender</th>
+                                    <th>DOB</th>
+                                    <th>Aadhar Number</th>
+                                    <th>Registration Date</th>
+                                    <th>Place</th>
+                                    <th>Address</th>
+                                    <th>Languages Known</th>
+                                    <th>Phone</th>
+                                    <th>Mobile</th>
+                                    <th>Email</th>
+                                    <th class="center-content">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for i in list %}
+                                <tr>
+                                    <td class="center-content">
+                                        <img src="/media/{{i.image}}" height="50" width="50" class="worker-photo">
+                                    </td>
+                                    <td>{{i.worker_name}}</td>
+                                    <td>{{i.gender}}</td>
+                                    <td>{{i.dob}}</td>
+                                    <td>{{i.aadhar_number}}</td>
+                                    <td>{{i.regis_date}}</td>
+                                    <td>{{i.place}}</td>
+                                    <td>{{i.address}}</td>
+                                    <td>{{i.languages_known}}</td>
+                                    <td>{{i.phone}}</td>
+                                    <td>{{i.mobile}}</td>
+                                    <td>{{i.email}}</td>
+                                    
+                                    <td class="center-content">
+                                        <a href="/viewfeedbackworker3?worker_id={{i.worker_id}}" class="action-link">View Feedback</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <BR><BR>
+                    </form>
+                </div>
+                
+            </div> </div> </div> </body>
+</html>

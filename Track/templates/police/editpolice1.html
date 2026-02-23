@@ -1,0 +1,65 @@
+{% extends "police/policeheder.html" %}
+{% load static %}
+
+{% block title %}SafeTrack.com | Edit Station Profiles{% endblock %}
+
+{% block content %}
+    <div class="main-content">
+        <div class="police-card">
+            <div class="card-header">
+                <h4><i class="fa-solid fa-user-gear"></i> Update Selection</h4>
+                <div class="badge-modern bg-urgent">Authorized Access Only</div>
+            </div>
+
+            <p style="color: #718096; margin-bottom: 30px; font-size: 14px;">
+                Secure interface for modifying station intelligence parameters and contact protocols. Select the station
+                branch to initialize the update sequence.
+            </p>
+
+            <div class="table-responsive">
+                <table class="police-table">
+                    <thead>
+                        <tr>
+                            <th>Branch Identifier</th>
+                            <th>District / Zone</th>
+                            <th>Active City</th>
+                            <th>Primary Mobile</th>
+                            <th>Auth Status</th>
+                            <th style="text-align: center;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in list %}
+                        <tr>
+                            <td style="font-weight: 700; color: var(--primary-navy);">{{i.branch}}</td>
+                            <td>{{i.district}}</td>
+                            <td>{{i.city}}</td>
+                            <td>{{i.mobile}}</td>
+                            <td><span class="badge-modern" style="background:#DCFCE7; color:#22C55E;">Verified</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="/editpolice2?stationid={{i.station_id}}" class="badge-modern"
+                                    style="background: var(--primary-navy); color: white; text-decoration: none; padding: 8px 15px; display: inline-flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid fa-pen-to-square"></i> INITIALIZE
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Animated Helper Character Section -->
+        <div
+            style="display: flex; align-items: center; gap: 30px; margin-top: 40px; padding: 20px; background: rgba(255,255,255,0.5); border-radius: 20px;">
+            <img src="https://images.unsplash.com/photo-1610056494052-6a4f83a8368c?auto=format&fit=crop&w=150"
+                style="width: 100px; height: 100px; border-radius: 50%; border: 4px solid white; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+            <div>
+                <h5 style="font-weight: 800; color: var(--primary-navy); margin-bottom: 5px;">Security Advisory</h5>
+                <p style="font-size: 13px; color: #718096; margin: 0;">"Always ensure your branch contact details are
+                    up-to-date. This information is shared with regional command for emergency coordination."</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

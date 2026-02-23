@@ -1,0 +1,138 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block title %}Change Password - SafeTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Change Password Specific Styles */
+    .password-hero {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .password-hero h1 {
+        font-weight: 700;
+        color: #1a365d;
+        margin-bottom: 10px;
+    }
+
+    .password-hero p {
+        color: #4a5568;
+    }
+
+    .password-form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .password-form-card h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1a365d;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .form-group-password {
+        margin-bottom: 20px;
+    }
+
+    .form-group-password label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #4a5568;
+        font-size: 14px;
+    }
+
+    .form-group-password input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+
+    .form-group-password input:focus {
+        outline: none;
+        border-color: #3182ce;
+        box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    }
+
+    .btn-password {
+        background: linear-gradient(90deg, #3182ce, #1a365d);
+        color: white;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        width: 100%;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px;
+    }
+
+    .btn-password:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(49, 130, 206, 0.3);
+    }
+
+    .password-note {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 13px;
+        color: #718096;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<div class="password-hero">
+    <h1>Change Password</h1>
+    <p>Update your account password</p>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <div class="password-form-card">
+            <h2><i class="fas fa-lock"></i> Update Your Password</h2>
+
+            <form action="/changepassword/" method="get">
+                {% csrf_token %}
+
+                <div class="form-group-password">
+                    <label>Username / Email</label>
+                    <input type="text" name="user" placeholder="Enter your username" required>
+                </div>
+
+                <div class="form-group-password">
+                    <label>Old Password</label>
+                    <input type="password" name="opass" placeholder="Enter old password" required>
+                </div>
+
+                <div class="form-group-password">
+                    <label>New Password</label>
+                    <input type="password" name="npass" placeholder="Enter new password" required>
+                </div>
+
+                <div class="form-group-password">
+                    <label>Confirm New Password</label>
+                    <input type="password" name="rpass" placeholder="Re-enter new password" required>
+                </div>
+
+                <button type="submit" class="btn-password">Change Password</button>
+
+                <p class="password-note">Make sure your new password is strong and different from old ones.</p>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

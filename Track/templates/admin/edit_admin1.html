@@ -1,0 +1,47 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block page_title %}Administrative Node Identification{% endblock %}
+
+{% block main_content %}
+<div class="animate-fade-up">
+  <div class="admin-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+      <div>
+        <h4 style="margin: 0; font-weight: 800;"><i class="fa-solid fa-user-lock" style="margin-right: 10px;"></i>
+          Privileged Account Registry</h4>
+        <p style="font-size: 13px; color: #64748B; margin: 5px 0 0 0;">Selection list for administrative account
+          configuration.</p>
+      </div>
+    </div>
+
+    <div class="data-table-container">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Privileged User</th>
+            <th>Protocol mobile</th>
+            <th>Email Node</th>
+            <th style="text-align: center;">Amendment Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in list %}
+          <tr>
+            <td style="font-weight: 800; color: var(--admin-navy);">{{i.name}}</td>
+            <td style="font-family: monospace; font-weight: 700;">{{i.mobile}}</td>
+            <td>{{i.email}}</td>
+            <td style="text-align: center;">
+              <a href="/edit_admin2?admin_id={{i.admin_id}}" class="btn-admin btn-primary"
+                style="padding: 6px 15px; font-size: 11px;">
+                <i class="fa-solid fa-key"></i> MODIFY
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}SafeTrack{% endblock %}</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --primary-blue: #1a365d;
+            --light-blue: #3182ce;
+            --accent-orange: #ff7e00;
+            --white: #ffffff;
+            --text-gray: #4a5568;
+            --base-font-size: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a365d 0%, #2c5282 50%, #2d3748 100%);
+            font-size: var(--base-font-size);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #1e3c72, #2a5298);
+            color: white;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            will-change: transform;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .sidebar-header h3 {
+            font-family: 'Audiowide', cursive;
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .sidebar-header small {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .sidebar-menu li a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active {
+            background: rgba(255,255,255,0.15);
+            border-left: 3px solid var(--accent-orange);
+        }
+
+        .sidebar-menu li a i {
+            margin-right: 10px;
+        }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            min-height: 100vh;
+            transition: 0.3s;
+        }
+
+        .page-content {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 30px;
+            min-height: calc(100vh - 40px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        /* ========== MENU TOGGLE ========== */
+        .menu-toggle {
+            display: none;
+        }
+
+        /* ========== OVERLAY ========== */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* ========== TABLE HEADERS ========== */
+        table th {
+            font-size: 16px;
+        }
+
+        /* ========== MOBILE VIEW ========== */
+        @media (max-width: 768px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                width: 240px;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 15px;
+            }
+
+            .page-content {
+                padding: 20px;
+                border-radius: 0;
+            }
+
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 15px;
+                left: 15px;
+                z-index: 1101;
+                background: var(--primary-blue);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 14px;
+                cursor: pointer;
+                font-size: 18px;
+            }
+        }
+
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- MENU BUTTON -->
+    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>SafeTrack</h3>
+            <small>Safety & Monitoring</small>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li><a href="/home/" class="{% if request.path == '/home/' %}active{% endif %}"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/aboutus/" class="{% if request.path == '/aboutus/' %}active{% endif %}"><i class="fas fa-info-circle"></i> About</a></li>
+            <li><a href="/emp/" class="{% if request.path == '/emp/' %}active{% endif %}"><i class="fas fa-briefcase"></i> Employer</a></li>
+            <li><a href="/police/" class="{% if request.path == '/police/' %}active{% endif %}"><i class="fas fa-shield-alt"></i> Police</a></li>
+            <li><a href="/login/" class="{% if request.path == '/login/' %}active{% endif %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            <li><a href="/contactus/" class="{% if request.path == '/contactus/' %}active{% endif %}"><i class="fas fa-envelope"></i> Contact</a></li>
+        </ul>
+    </div>
+
+    <!-- OVERLAY -->
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="page-content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menuToggle');
+
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(event.target) &&
+                    !menuToggle.contains(event.target)) {
+                    closeSidebar();
+                }
+            }
+        });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

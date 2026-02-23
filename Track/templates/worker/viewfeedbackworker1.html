@@ -1,0 +1,129 @@
+{% extends 'agency/agency_base.html' %}
+{% load static %}
+
+{% block title %}View Employer Feedback - SafeTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .content-area {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+    }
+
+    .TFtable {
+        width: 95%;
+        max-width: 1400px;
+        border-collapse: collapse;
+        margin: 20px auto;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden; 
+        background-color: white;
+    }
+
+    .TFtable thead tr:first-child th {
+        background: #1e3a8a;
+        color: white;
+        padding: 18px 10px;
+        font-size: 20px;
+        text-align: center;
+    }
+
+    .TFtable th {
+        background: #2563eb;
+        color: white;
+        padding: 12px 10px;
+        font-weight: 600;
+        font-size: 14px;
+        text-align: left;
+        border-bottom: 2px solid #1e3a8a;
+    }
+    
+    .TFtable td { 
+        padding: 10px; 
+        border-bottom: 1px solid #e0e0e0;
+        text-align: left;
+        vertical-align: middle;
+        color: #333;
+        font-size: 13px;
+    }
+
+    .TFtable tr:nth-child(odd){ 
+        background: #ffffff;
+    }
+    .TFtable tr:nth-child(even){
+        background: #f8f8ff;
+    }
+
+    .TFtable tr:hover {
+        background-color: #e6f7ff;
+        cursor: default;
+    }
+    
+    .action-link {
+        display: inline-block;
+        padding: 6px 10px;
+        background-color: #f97316;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 12px;
+        transition: background-color 0.2s;
+        white-space: nowrap;
+    }
+    .action-link:hover {
+        background-color: #ea580c;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="content-area">
+        <form action="" method="get"> 
+            <table class="TFtable">
+                <thead>
+                    <tr>
+                        <th colspan="11">Employer Details</th>
+                    </tr>
+                    <tr>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Firm Name</th>
+                        <th>Aadhar Number</th>
+                        <th>DOB</th>
+                        <th>Address</th>
+                        <th>Place</th>
+                        <th>Phone</th>
+                        <th>Mobile</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in list %}
+                    <tr>
+                        <td>{{i.name}}</td>
+                        <td>{{i.gender}}</td>
+                        <td>{{i.firm_name}}</td>
+                        <td>{{i.aadhar_no}}</td>
+                        <td>{{i.dob}}</td>
+                        <td>{{i.emp_address}}</td>
+                        <td>{{i.place}}</td>
+                        <td>{{i.phone}}</td>
+                        <td>{{i.mobile}}</td>
+                        <td>{{i.email}}</td>
+                        <td>
+                            <a href="/viewfeedbackworker2?emp_id={{i.emp_id}}" class="action-link">View Worker</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>
+{% endblock %}

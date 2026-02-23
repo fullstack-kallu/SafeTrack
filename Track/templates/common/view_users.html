@@ -1,0 +1,179 @@
+<html lang="">
+<html lang="en-US">
+{% load  static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+	<title>SafeTrack.com</title>
+
+
+	<link href="{% static 'http://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,800' %}" rel='stylesheet' type='text/css'>
+	<link href="{% static 'http://fonts.googleapis.com/css?family=Audiowide' %}" rel='stylesheet' type='text/css'>
+
+	<link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
+	<link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
+	<link rel="stylesheet" href="{% static 'files/css/simple-line-icons.css' %}">
+	<link rel="stylesheet" href="{% static 'files/css/font-awesome.min.css' %}">
+	<link rel="stylesheet" href="{% static 'files/css/style.css' %}">
+	<link rel="stylesheet" href="{% static 'files/rs-plugin/css/settings.css' %}">
+
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+	<![endif]-->
+
+</head>
+   <body background="/static/files/images/whi.png" >
+
+	
+	<div class="sidebar-menu-container" id="sidebar-menu-container">
+
+		<div class="sidebar-menu-push">
+
+			<div class="sidebar-menu-overlay"></div>
+
+			<div class="sidebar-menu-inner">
+
+				<header class="site-header">
+					<div id="main-header" class="main-header header-sticky">
+						<div class="inner-header clearfix">
+							<div class="logo">
+								<a href="">SafeTrack.com</a>
+							</div>
+							<div class="header-right-toggle pull-right hidden-md hidden-lg">
+								<a href="{% static 'javascript:void(0)' %}" class="side-menu-button"><i class="fa fa-bars"></i></a>
+							</div>
+							<nav class="main-navigation pull-right hidden-xs hidden-sm">
+								<ul>
+									<li><a href="/homeworker/">Home</a></li>
+									<li><a href="/viewemydetailsworker/" >My details</a>
+										
+									</li>
+									<li><a href="/idcard/">ID Card</a></li>
+									<li><a href="#" class="has-submenu">Job</a>
+										<ul class="sub-menu">
+									<li><a href="/perdayjob/" >Job Sheddule</a>
+									<li><a href="/viewvacancyhome/">Vacancy</a>
+									<li><a href="/searchvaccancy/"> Search Vacancy</a>
+									</ul>	
+									</li>
+											
+											
+									<li><a href="/viewfeedbackworkerhome/" >Feedback</a>
+										
+											
+											<!--<li><a href="/viewfeedbackemp/">View feedback</a></li>
+											<li><a href="/view_feedbackemp/">Add feedback</a></li>
+											<li><a href="/viewfeedbackworkerhome/">View emp feedback</a></li>-->
+										
+									</li>
+									<li><a href="#" class="has-submenu">NOC</a>
+										<ul class="sub-menu">
+											
+											<li><a href="/viewnoc/">View NOC</a></li>
+											<li><a href="/addcomplaint/">Complaint</a></li>
+											
+										</ul>
+									</li>
+								<!-- href="#" class="has-submenu">Insurence</a>
+										<ul class="sub-menu">
+											
+											<li><a href="/insurencejoin1/">New join</a></li>
+											<li><a href="">View my scheme</a></li>
+											<li><a href="">Stop my scheme</a></li>
+										</ul>
+									</li>-->
+									
+									<li><a href="/home/">Logout </a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</header>
+				<br><br><br><br><br><br><br>
+
+<html lang="en">
+  <head>
+    <title>view_vacancy</title>
+    <style type="text/css">
+	.TFtable{
+		width:60%; 
+		border-collapse:collapse; 
+	}
+	.TFtable td{ 
+		padding:7px; border:#4e95f4 1px solid;
+	}
+	/* provide some minimal visual accomodation for IE8 and below */
+	.TFtable tr{
+		background: #b8d1f3;
+	}
+	/*  Define the background color for all the ODD background rows  */
+	.TFtable tr:nth-child(odd){ 
+		background: #D3D3D3;
+	}
+	/*  Define the background color for all the EVEN background rows  */
+	.TFtable tr:nth-child(even){
+		background: #FFFFFF;
+	}
+</style>
+  </head>
+   <body background="/static/files/images/whi.png" >
+   
+    
+<center>
+
+	<form   method="get" action="{% url 'view1' %}"  >
+     <table id="table"  align="center" style="background-color:white;color:#000000">
+	   <th colspan="5"><th> </th><font size="9" color="black">Search vacancies</TH></tr>
+     <tr>
+          <tr><td><input type="text" name="search" id="search" onkeyup="searchOpen()" placeholder="Search vacancies"></td><tr>
+         </tr>
+     </tr>
+     </table></form>
+    
+ <table id="table_id"  class="TFtable" >
+	  <tr>
+        <th>Date</th><th>Vacancy</th><th>Number of vacancy</th><th>About job</th><th></th>
+{% for i in list %}
+<tr><td>{{i.date}}</td>
+
+<td>{{i.vacancy}}</td>
+<td>{{i.vacancy_no}}</td>
+<td>{{i.description}}</td>
+
+<td><a href="/viewvacancyhome3?vacancy_id={{i.vacancy_id}}"><font color="red">APPLY</td>
+
+{% endfor %}
+ </table>
+    </div>
+</center>
+  </section>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script>
+ function searchOpen() {
+        var url = '/view1/';
+        var a =($('#search').val());
+         <!--alert($(this).val());-->
+         $.ajax({
+             url: url,
+             data: {
+                 'search1': a
+             },
+             success: function (data) {
+                 $("#table_id").html(data)
+             }
+         });
+
+
+ }
+
+function searchResult(data) {
+    $( "#table1" ).autocomplete ({
+        source: data
+    });
+}
+  </script>
+
+</body>
+</html>

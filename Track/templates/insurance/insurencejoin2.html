@@ -1,0 +1,47 @@
+
+<html lang="en">
+  <head>
+    <title>life insurence</title>
+    
+  </head>
+  <body>
+    
+    
+<center>
+        <form action="/insurencejoin2/" method="get" > 
+   
+              
+     <table border="0" class="gridtable"  align="center">
+<tr>
+
+<th colspan="4">Life Insurence</th></tr>
+<input type="hidden" name="worker_id" value="worker_id">
+<input type="hidden" name="myworker_id" value="myworker_id">
+<input type="hidden" name="emp_id" value="emp_id">
+<tr><td>Insurence type</td><td><input type="text" name="insurence_type" value="Life Insurence"  required></td> </tr>
+<tr><td>Period</td><td><select><option value="Below 6 month" name="period" checked>Below 6 month</option>
+							<option value="1 year" name="period">1 year</option>
+							<option value="Above 1 year" name="period">Above 1 year</option></select></td></tr>
+<tr><td>Insurence rupee(min 100/month)</td><td><input type="text" name="insurence_rupee" pattern="[0-9]+" required></td> </tr>
+<tr><td>Currently insured</td><td><select>
+							<option value="Yes" name="insured" checked>Yes</option>
+							<option value="No" name="insured">No</option></select></td></tr>
+<tr><td>If yes!! Add details</td><td><textarea name="details" pattern="[a-zA-Z0]+" required></textarea></td></tr>
+<tr><td>Nominee name</td><td><input type="text" name="name"  required></td> </tr><br><br>
+							
+<tr><td colspan="2" align="center"><input type="submit" name="submit" value="POST" ></td></tr> 
+</table>
+<BR><BR>
+
+</form>
+
+</head>
+
+
+         
+                   
+
+
+    
+  </body>
+</html>

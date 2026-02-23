@@ -1,0 +1,160 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}My NOC Certificate{% endblock %}
+
+{% block extra_head %}
+<style>
+    .certificate-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    #DivIdToPrint {
+        background: white;
+        padding: 50px;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        border: 1px solid #E2E8F0;
+        color: #1a202c;
+    }
+
+    .cert-header {
+        text-align: center;
+        margin-bottom: 40px;
+        border-bottom: 2px solid #F1F5F9;
+        padding-bottom: 20px;
+    }
+
+    .cert-title {
+        background: #2d3748;
+        color: white;
+        padding: 5px 25px;
+        border-radius: 50px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    .meta-table {
+        width: 100%;
+        margin: 30px 0;
+    }
+
+    .meta-table td {
+        padding: 12px;
+        border-bottom: 1px solid #F8FAFC;
+    }
+
+    .cert-label {
+        font-size: 11px;
+        font-weight: 800;
+        color: #94A3B8;
+        text-transform: uppercase;
+        width: 180px;
+    }
+
+    .cert-value {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1a202c;
+    }
+
+    .cert-body {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #475569;
+        margin: 30px 0;
+        text-align: justify;
+    }
+
+    @media print {
+
+        .sidebar,
+        .btn-modern,
+        .page-header-accent,
+        .cert-actions {
+            display: none !important;
+        }
+
+        .main-content {
+            margin-left: 0 !important;
+            padding: 0 !important;
+        }
+
+        #DivIdToPrint {
+            box-shadow: none !important;
+            border: 2px solid #EEE !important;
+            padding: 20px !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header-accent">
+    <h2 class="h4 font-weight-bold">Police Clearance Certificate</h2>
+    <p class="text-muted small">Your verified background check and NOC document.</p>
+</div>
+
+<div class="certificate-container animate-page">
+    <div id="DivIdToPrint">
+        {% for i in list %}
+        <div class="cert-header">
+            <img src="{% static 'files/images/emblam.png' %}" style="width: 60px; margin-bottom: 15px;">
+            <h3 style="font-weight: 800; color: #1a202c; margin-bottom: 5px;">POLICE CLEARANCE CERTIFICATE</h3>
+            <div class="mb-3"><span class="cert-title">Verified by SafeTrack Network</span></div>
+        </div>
+
+        <table class="meta-table">
+            <tr>
+                <td class="cert-label">Subject Name</td>
+                <td class="cert-value">{{i.worker_name}}</td>
+            </tr>
+            <tr>
+                <td class="cert-label">Identification</td>
+                <td class="cert-value" style="letter-spacing: 1px;">{{i.aadhar_number}}</td>
+            </tr>
+            <tr>
+                <td class="cert-label">Vetting Date</td>
+                <td class="cert-value">{{i.date}}</td>
+            </tr>
+            <tr>
+                <td class="cert-label">Screening Status</td>
+                <td class="cert-value"><span class="text-danger">{{i.crime}}</span></td>
+            </tr>
+        </table>
+
+        <div class="cert-body">
+            <p>
+                This is to certify that the subject <strong>{{i.worker_name}}</strong> is registered under the
+                SafeTrack Migrant Monitoring Network. Background intelligence screening results are recorded above.
+            </p>
+            <p>
+                This document is a digital reproduction of official police clearance records and is valid for
+                employment vetting purposes within the designated operational sectors.
+            </p>
+        </div>
+
+        <div
+            style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; padding-top: 20px; border-top: 1px solid #F1F5F9;">
+            <div style="font-family: monospace; font-size: 11px; color: #94A3B8;">
+                AUTH_CODE: <span style="color: #64748B;">ST-{{ i.aadhar_number|slice:":4" }}-{{ i.noc_id }}</span><br>
+                NODE_SYNC: OK
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 12px; font-weight: 700; color: #1a202c;">Digitally Signed</div>
+                <div style="font-size: 10px; color: #94A3B8;">Director General of Police</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center mt-5 cert-actions">
+        <button class="btn-modern btn-lg px-5" onclick="window.print()">
+            <i class="fas fa-file-pdf mr-2"></i> DOWNLOAD OFFICIAL PDF
+        </button>
+    </div>
+</div>
+{% endblock %}

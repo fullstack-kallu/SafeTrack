@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en-US">
+{% load static %}
+
+<head>
+    {% include "police/policeheder.html" %}
+    <title>SafeTrack.com | NOC Monitoring Hub</title>
+</head>
+
+<body>
+
+    <div class="main-content">
+        <div class="police-card">
+            <div class="card-header">
+                <h4><i class="fa-solid fa-file-invoice"></i> Certificate Oversight</h4>
+                <div class="badge-modern bg-info">Active NOC Registry</div>
+            </div>
+
+            <p style="color: #718096; margin-bottom: 30px; font-size: 14px;">
+                Central dashboard for monitoring issued No Objection Certificates. Select a profile to view granular
+                intelligence data and certificate details.
+            </p>
+
+            <div class="table-responsive">
+                <table class="police-table">
+                    <thead>
+                        <tr>
+                            <th>Unit</th>
+                            <th>Intelligence Profile</th>
+                            <th>Identity Protocol (Aadhar)</th>
+                            <th>Place of Origin</th>
+                            <th>Primary Contact</th>
+                            <th>Languages</th>
+                            <th style="text-align: center;">View Document</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in list %}
+                        <tr>
+                            <td>
+                                <img src="/media/{{i.image}}"
+                                    style="width:45px; height:45px; border-radius:12px; border:2px solid #E2E8F0; object-fit: cover;">
+                            </td>
+                            <td>
+                                <div style="font-weight: 700; color: var(--primary-navy);">{{i.worker_name}}</div>
+                                <div style="font-size: 11px; opacity: 0.7;">Verified Sector: {{i.place}}</div>
+                            </td>
+                            <td><span style="font-family: monospace; font-weight: 700;">{{i.aadhar_number}}</span></td>
+                            <td>{{i.place}}</td>
+                            <td>{{i.mobile}}</td>
+                            <td><span class="badge-modern"
+                                    style="background:#F1F5F9; color:#475569; font-size:10px;">{{i.languages_known}}</span>
+                            </td>
+                            <td style="text-align: center;">
+                                <a href="/viewnoc2?worker_id={{i.worker_id}}" class="badge-modern"
+                                    style="background: var(--primary-navy); color: white; text-decoration: none; padding: 10px 18px; display: inline-flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid fa-file-shield"></i> VIEW DATA
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Animated Character Helper -->
+        <div style="display: flex; align-items: center; gap: 20px; margin-top: 30px; opacity: 0.8;">
+            <div
+                style="background: var(--accent-blue); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">
+                <i class="fa-solid fa-magnifying-glass-chart"></i>
+            </div>
+            <p style="margin: 0; font-size: 12px; color: #718096;">
+                "Data updated in real-time from regional station nodes."
+            </p>
+        </div>
+    </div>
+
+</body>
+
+</html>

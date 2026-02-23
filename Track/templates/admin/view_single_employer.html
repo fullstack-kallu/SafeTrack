@@ -1,0 +1,116 @@
+{% extends "admin/admin_base.html" %}
+{% load static %}
+
+{% block page_title %}Employer Details{% endblock %}
+
+{% block main_content %}
+<div class="animate-fade-up" style="max-width: 900px; margin: 0 auto;">
+  <div class="admin-card">
+    <div style="display: flex; align-items: center; gap: 30px; margin-bottom: 40px; padding-bottom: 25px; border-bottom: 1px solid #F1F5F9;">
+      <div style="width: 80px; height: 80px; background: #E0F2FE; color: var(--admin-accent); border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+        <i class="fa-solid fa-building fa-2x"></i>
+      </div>
+      <div>
+        <h4 style="margin: 0; font-weight: 800; font-size: 24px;">Employer/Agency Details</h4>
+        <p style="font-size: 14px; color: #64748B; margin: 5px 0;">Company: <span style="font-weight: 800; color: var(--admin-navy);">{{list.0.firm_name}}</span></p>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+          {% if list.0.status == 'Active' %}
+          <span style="background: #DCFCE7; color: #10B981; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">ACTIVE</span>
+          {% elif list.0.status == 'pending' %}
+          <span style="background: #FEF3C7; color: #D97706; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">PENDING</span>
+          {% else %}
+          <span style="background: #FEE2E2; color: #EF4444; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">{{list.0.status|upper}}</span>
+          {% endif %}
+          <span style="background: #F1F5F9; color: #64748B; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">ID: {{list.0.emp_id}}</span>
+        </div>
+      </div>
+    </div>
+
+    {% for i in list %}
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+      <!-- Data Grid 1 -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="info-group-admin">
+          <label>Owner/Representative Name</label>
+          <p>{{i.name}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Gender</label>
+          <p>{{i.gender}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Company/Firm Name</label>
+          <p>{{i.firm_name}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Aadhar Number</label>
+          <p style="font-family: monospace; font-weight: 700; letter-spacing: 1px;">{{i.aadhar_no}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Email Address</label>
+          <p>{{i.email}}</p>
+        </div>
+      </div>
+
+      <!-- Data Grid 2 -->
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="info-group-admin">
+          <label>Date of Birth</label>
+          <p>{{i.dob}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Place/Location</label>
+          <p>{{i.place}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Contact Numbers</label>
+          <p>Mobile: {{i.mobile}} <span style="opacity: 0.3; margin: 0 10px;">|</span> Phone: {{i.phone}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Address</label>
+          <p style="line-height: 1.5;">{{i.emp_address}}</p>
+        </div>
+        <div class="info-group-admin">
+          <label>Registration Status</label>
+          <p>
+            {% if i.status == 'Active' %}
+            <span style="background: #DCFCE7; color: #10B981; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">ACTIVE</span>
+            {% elif i.status == 'pending' %}
+            <span style="background: #FEF3C7; color: #D97706; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">PENDING</span>
+            {% else %}
+            <span style="background: #FEE2E2; color: #EF4444; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">{{i.status|upper}}</span>
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Back Button -->
+  <div style="margin-top: 20px;">
+    <a href="/admin_view_all_employers/" class="btn-admin" style="display: inline-flex; padding: 12px 25px; background: #64748B; color: white; text-decoration: none; border-radius: 8px;">
+      <i class="fa-solid fa-arrow-left"></i> BACK TO LIST
+    </a>
+  </div>
+</div>
+
+<style>
+  .info-group-admin label {
+    font-size: 10px;
+    font-weight: 800;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  .info-group-admin p {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--admin-navy);
+    margin: 0;
+  }
+</style>
+{% endblock %}

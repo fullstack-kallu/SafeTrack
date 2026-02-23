@@ -1,0 +1,508 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block title %}Home - SafeTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Home Page Specific Styles */
+    .home-hero {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .home-hero h1 {
+        font-weight: 700;
+        color: #1a365d;
+        margin-bottom: 15px;
+    }
+
+    .home-hero p {
+        max-width: 700px;
+        margin: 0 auto;
+        font-size: 18px;
+        line-height: 1.6;
+        color: #4a5568;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #1a365d;
+        position: relative;
+        font-weight: 700;
+    }
+
+    .section-title:after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 3px;
+        background: #ff7e00;
+        margin: 10px auto 0;
+        border-radius: 2px;
+    }
+
+    /* Stats */
+    .stat-box {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #1a365d 0%, #3182ce 100%);
+        border-radius: 10px;
+        color: white;
+        margin-bottom: 15px;
+    }
+
+    .stat-box h3 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .stat-box p {
+        margin: 0;
+        font-size: 14px;
+        opacity: 0.9;
+    }
+
+    /* Features */
+    .feature-box {
+        text-align: center;
+        padding: 25px 15px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .feature-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .feature-box i {
+        font-size: 36px;
+        color: #3182ce;
+        margin-bottom: 15px;
+    }
+
+    .feature-box h4 {
+        color: #1a365d;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .feature-box p {
+        color: #4a5568;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    /* Modules */
+    .module-box {
+        text-align: center;
+        padding: 30px 20px;
+        background: linear-gradient(135deg, #1a365d 0%, #2a5298 100%);
+        border-radius: 10px;
+        color: white;
+        margin-bottom: 20px;
+    }
+
+    .module-box i {
+        font-size: 40px;
+        margin-bottom: 15px;
+    }
+
+    .module-box h4 {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .module-box p {
+        font-size: 13px;
+        opacity: 0.9;
+        margin: 0;
+    }
+
+    /* Process Steps */
+    .step {
+        text-align: center;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .step-number {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #ff7e00 0%, #f6d55c 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 700;
+        color: white;
+        margin: 0 auto 15px;
+    }
+
+    .step h4 {
+        color: #1a365d;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .step p {
+        color: #4a5568;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    /* Testimonials */
+    .testimonial {
+        margin-bottom: 20px;
+    }
+
+    .testimonial-content {
+        background: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        height: 100%;
+    }
+
+    .testimonial-content p {
+        font-style: italic;
+        color: #4a5568;
+        margin-bottom: 15px;
+    }
+
+    .testimonial-author strong {
+        display: block;
+        color: #1a365d;
+    }
+
+    .testimonial-author span {
+        font-size: 13px;
+        color: #718096;
+    }
+
+    /* Contact */
+    .contact-info {
+        margin-bottom: 20px;
+    }
+
+    .contact-info p {
+        margin-bottom: 10px;
+        color: #4a5568;
+    }
+
+    .contact-info i {
+        color: #3182ce;
+        margin-right: 10px;
+        width: 20px;
+    }
+
+    .contact-form .form-group {
+        margin-bottom: 15px;
+    }
+
+    .contact-form input,
+    .contact-form textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+
+    .contact-form input:focus,
+    .contact-form textarea:focus {
+        outline: none;
+        border-color: #3182ce;
+    }
+
+    .home-footer {
+        text-align: center;
+        color: #4a5568;
+        padding: 20px 0;
+        margin-top: 20px;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .btn-home {
+        background: linear-gradient(90deg, #3182ce, #1a365d);
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s;
+        margin-top: 15px;
+    }
+
+    .btn-home:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(49, 130, 206, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<div class="home-hero">
+    <h1>SafeTrack - Migrant Safety & Monitoring System</h1>
+    <p>
+        A centralized digital platform to ensure migrant worker safety,
+        crime monitoring, and legal employment through department coordination.
+    </p>
+    <a href="/login/" class="btn-home">Get Started</a>
+</div>
+
+<!-- STATISTICS -->
+<div class="info-card" style="margin-bottom: 25px;">
+    <h3 class="section-title">Impact Statistics</h3>
+    <div class="row">
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-box">
+                <h3>15,000+</h3>
+                <p>Registered Workers</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-box">
+                <h3>200+</h3>
+                <p>Partner Employers</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-box">
+                <h3>45</h3>
+                <p>Police Stations</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-box">
+                <h3>32%</h3>
+                <p>Crime Reduction</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FEATURES -->
+<div class="info-card" style="margin-bottom: 25px;">
+    <h3 class="section-title">Core Features</h3>
+    <div class="row">
+        <div class="col-md-4 col-sm-6">
+            <div class="feature-box">
+                <i class="fas fa-id-card"></i>
+                <h4>Worker Registration</h4>
+                <p>Secure registration using valid identity proofs and biometric verification for enhanced security.</p>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="feature-box">
+                <i class="fas fa-map-marker-alt"></i>
+                <h4>Real-Time Tracking</h4>
+                <p>Track worker activity and movement securely with GPS technology and regular check-in systems.</p>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="feature-box">
+                <i class="fas fa-shield-alt"></i>
+                <h4>Crime Monitoring</h4>
+                <p>Police verification and complaint handling through a secure digital platform with instant alerts.</p>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="feature-box">
+                <i class="fas fa-file-alt"></i>
+                <h4>Document Management</h4>
+                <p>Digital storage of all important documents including work permits, contracts, and identification.</p>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="feature-box">
+                <i class="fas fa-bell"></i>
+                <h4>Emergency Alerts</h4>
+                <p>Instant notification system for emergencies with location sharing and quick response coordination.</p>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6">
+            <div class="feature-box">
+                <i class="fas fa-comments"></i>
+                <h4>Communication Hub</h4>
+                <p>Direct messaging between workers, employers, and authorities for efficient problem resolution.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODULES -->
+<div class="info-card" style="margin-bottom: 25px;">
+    <h3 class="section-title">System Modules</h3>
+    <div class="row">
+        <div class="col-md-3 col-sm-6">
+            <div class="module-box">
+                <i class="fas fa-user-cog"></i>
+                <h4>Admin</h4>
+                <p>Central control and system management</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="module-box">
+                <i class="fas fa-shield-alt"></i>
+                <h4>Police Station</h4>
+                <p>Verification and law enforcement</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="module-box">
+                <i class="fas fa-briefcase"></i>
+                <h4>Employer</h4>
+                <p>Registration and job management</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="module-box">
+                <i class="fas fa-users"></i>
+                <h4>Workers</h4>
+                <p>Personal dashboard and reporting</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="info-card" style="margin-bottom: 25px;">
+    <h3 class="section-title">How It Works</h3>
+    <div class="row">
+        <div class="col-md-3 col-sm-6">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h4>Registration</h4>
+                <p>Workers register with valid ID and biometric data at authorized centers</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="step">
+                <div class="step-number">2</div>
+                <h4>Verification</h4>
+                <p>Police verify background and criminal history through centralized database</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="step">
+                <div class="step-number">3</div>
+                <h4>Employment</h4>
+                <p>Verified workers are connected with registered employers for legal employment</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="step">
+                <div class="step-number">4</div>
+                <h4>Monitoring</h4>
+                <p>Continuous tracking and reporting ensure worker safety and compliance</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="info-card" style="margin-bottom: 25px;">
+    <h3 class="section-title">Success Stories</h3>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="testimonial">
+                <div class="testimonial-content">
+                    <p>"SafeTrack helped me find legitimate employment and ensured my safety throughout my stay. The tracking feature gave my family peace of mind."</p>
+                    <div class="testimonial-author">
+                        <strong>Rajesh Kumar</strong>
+                        <span>Migrant Worker</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="testimonial">
+                <div class="testimonial-content">
+                    <p>"As an employer, this system has streamlined our hiring process and ensured we're compliant with all regulations. It's a win-win for everyone."</p>
+                    <div class="testimonial-author">
+                        <strong>Anita Sharma</strong>
+                        <span>Construction Company Owner</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="testimonial">
+                <div class="testimonial-content">
+                    <p>"The centralized database has reduced our verification time by 70% and improved coordination between departments significantly."</p>
+                    <div class="testimonial-author">
+                        <strong>Inspector R. Singh</strong>
+                        <span>Local Police Station</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ABOUT -->
+<div class="info-card" style="margin-bottom: 25px;">
+    <h3 class="section-title">About SafeTrack</h3>
+    <div class="row">
+        <div class="col-md-6">
+            <p>SafeTrack is a comprehensive digital platform designed to address the challenges faced by migrant workers and the agencies that support them. Our system bridges the gap between workers, employers, and law enforcement to create a safer, more transparent environment.</p>
+            <p>Launched in 2023, SafeTrack has already registered over 15,000 workers and partnered with more than 200 employers across the region. Our innovative approach has led to a 32% reduction in migrant-related crimes and improved working conditions for thousands.</p>
+        </div>
+        <div class="col-md-6">
+            <h4 style="color: #1a365d; font-weight: 600; margin-bottom: 10px;">Our Mission</h4>
+            <p style="margin-bottom: 15px;">To ensure the safety, dignity, and legal employment of all migrant workers through technology-driven solutions and inter-departmental coordination.</p>
+
+            <h4 style="color: #1a365d; font-weight: 600; margin-bottom: 10px;">Our Vision</h4>
+            <p>To create a nationwide ecosystem where migrant workers can thrive in safe, legal employment with full protection of their rights.</p>
+        </div>
+    </div>
+</div>
+
+<!-- CONTACT -->
+<div class="info-card" style="margin-bottom: 25px;">
+    <h3 class="section-title">Get In Touch</h3>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="contact-info">
+                <h4 style="color: #1a365d; font-weight: 600; margin-bottom: 15px;">Contact Information</h4>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Safety Street, Protection City, 12345</p>
+                <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                <p><i class="fas fa-envelope"></i> info@safetrack.org</p>
+                <p><i class="fas fa-clock"></i> Monday - Friday: 9:00 AM - 6:00 PM</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <form class="contact-form">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Your Name">
+                </div>
+                <div class="form-group">
+                    <input type="email" class="form-control" placeholder="Your Email">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" rows="4" placeholder="Your Message"></textarea>
+                </div>
+                <button type="submit" class="btn-home">Send Message</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="home-footer">
+    <p>© 2025 SafeTrack | All Rights Reserved</p>
+</div>
+{% endblock %}

@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Worker Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6bdf;
+            --secondary-color: #6c63ff;
+            --accent-color: #ff6b6b;
+            --success-color: #4CAF50;
+            --light-color: #f8f9fa;
+            --medium-color: #e9ecef;
+            --dark-color: #343a40;
+            --text-color: #333;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: linear-gradient(135deg, #f5f7fb 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--dark-color);
+            font-weight: 500;
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .form-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 20px;
+            transition: var(--transition);
+        }
+
+        .form-container:hover {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--medium-color);
+        }
+
+        .form-header i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-right: 15px;
+        }
+
+        .form-header h2 {
+            color: var(--dark-color);
+            font-weight: 500;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .required {
+            color: var(--accent-color);
+            margin-left: 4px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: 'Roboto', sans-serif;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 107, 223, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .nav-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(74, 107, 223, 0.1);
+        }
+
+        .notification {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            display: none;
+        }
+
+        .success {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .error {
+            background-color: rgba(255, 107, 107, 0.1);
+            color: var(--accent-color);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Add Worker Details</h1>
+            <p class="subtitle">Vacancy ID: {{ vacancy_id }}</p>
+        </header>
+
+        <div id="notification" class="notification"></div>
+
+        <div class="form-container">
+            <div class="form-header">
+                <i class="fas fa-user-plus"></i>
+                <h2>Please Add Worker Information</h2>
+            </div>
+
+            <form action="/insertworkerdetails/" method="get" id="workerForm">
+                <input type="hidden" name="v_id" value="{{ vacancy_id }}">
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="experience">Experience (in years)<span class="required">*</span></label>
+                            <input type="text" id="experience" name="experience" pattern="[0-9]+" required placeholder="e.g., 5">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="qualification">Qualification<span class="required">*</span></label>
+                    <textarea id="qualification" name="qualification" pattern="[a-zA-Z]+" required placeholder="Describe the required qualifications..."></textarea>
+                </div>
+
+                <div class="button-container">
+                    <button type="submit" name="submit">
+                        <i class="fas fa-paper-plane"></i>
+                        Submit Details
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="navigation">
+            <a href="#" class="nav-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Vacancies
+            </a>
+            <a href="#" class="nav-link">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('workerForm');
+            const notification = document.getElementById('notification');
+            
+            // Form validation
+            form.addEventListener('submit', function(event) {
+                const experience = document.getElementById('experience').value;
+                const qualification = document.getElementById('qualification').value;
+                
+                if (!experience || !qualification) {
+                    event.preventDefault();
+                    showNotification('Please fill in all required fields.', 'error');
+                    return false;
+                }
+                
+                if (isNaN(experience) || experience < 0) {
+                    event.preventDefault();
+                    showNotification('Experience must be a positive number.', 'error');
+                    return false;
+                }
+                
+                // Show success message
+                showNotification('Worker details submitted successfully!', 'success');
+            });
+            
+            function showNotification(message, type) {
+                notification.textContent = message;
+                notification.className = 'notification ' + type;
+                notification.style.display = 'block';
+                
+                // Hide after 5 seconds
+                setTimeout(function() {
+                    notification.style.display = 'none';
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>
+                   
+
+
+    
+  </body>
+</html>

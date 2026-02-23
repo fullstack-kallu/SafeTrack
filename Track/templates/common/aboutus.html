@@ -1,0 +1,396 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block title %}About Us - SafeTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* About Page Specific Styles */
+    .about-hero {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .about-hero h1 {
+        font-weight: 700;
+        color: #1a365d;
+        margin-bottom: 20px;
+    }
+
+    .about-hero p {
+        max-width: 700px;
+        margin: 0 auto;
+        font-size: 18px;
+        line-height: 1.6;
+        color: #4a5568;
+    }
+
+    /* Section */
+    .section-title {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #1a365d;
+        position: relative;
+        font-weight: 700;
+    }
+
+    .section-title:after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 3px;
+        background: #ff7e00;
+        margin: 10px auto 0;
+        border-radius: 2px;
+    }
+
+    /* Timeline */
+    .timeline {
+        position: relative;
+        margin: 40px 0;
+    }
+
+    .timeline:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 2px;
+        height: 100%;
+        background: #e2e8f0;
+        transform: translateX(-50%);
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 40px;
+    }
+
+    .timeline-content {
+        position: relative;
+        width: 45%;
+        padding: 20px;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .timeline-item:nth-child(odd) .timeline-content {
+        margin-left: auto;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        background: #ff7e00;
+        border-radius: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+    }
+
+    .timeline-date {
+        position: absolute;
+        top: 20px;
+        width: 45%;
+        font-weight: 600;
+        color: #3182ce;
+    }
+
+    .timeline-item:nth-child(odd) .timeline-date {
+        left: 0;
+        text-align: right;
+    }
+
+    .timeline-item:nth-child(even) .timeline-date {
+        right: 0;
+    }
+
+    /* Team */
+    .team-member {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .team-member img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 4px solid #fff;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .team-member h4 {
+        color: #1a365d;
+        margin-bottom: 5px;
+    }
+
+    .team-member p {
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    .team-member .social-links a {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        background: #f0f0f0;
+        border-radius: 50%;
+        color: #3182ce;
+        margin: 0 5px;
+        transition: all 0.3s;
+    }
+
+    .team-member .social-links a:hover {
+        background: #3182ce;
+        color: #fff;
+    }
+
+    /* Values */
+    .value-box {
+        background: #fff;
+        padding: 25px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+        height: 100%;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .value-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .value-box i {
+        font-size: 36px;
+        color: #ff7e00;
+        margin-bottom: 15px;
+    }
+
+    .value-box h4 {
+        color: #1a365d;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .value-box p {
+        color: #4a5568;
+        font-size: 14px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .timeline:before {
+            left: 30px;
+        }
+        
+        .timeline-content {
+            width: calc(100% - 60px);
+            margin-left: 60px !important;
+        }
+        
+        .timeline-dot {
+            left: 30px;
+        }
+        
+        .timeline-date {
+            position: relative;
+            width: 100%;
+            margin-bottom: 10px;
+            text-align: left !important;
+        }
+    }
+
+    .about-footer {
+        text-align: center;
+        color: #4a5568;
+        padding: 20px 0;
+        margin-top: 30px;
+        border-top: 1px solid #e2e8f0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<div class="about-hero">
+    <h1>About SafeTrack</h1>
+    <p>
+        A comprehensive digital platform designed to ensure the safety, security, and well-being of migrant workers through innovative technology and inter-departmental coordination.
+    </p>
+</div>
+
+<!-- MISSION & VISION -->
+<div class="row" style="margin-bottom: 30px;">
+    <div class="col-md-6">
+        <div class="value-box">
+            <i class="fas fa-bullseye"></i>
+            <h4>Our Mission</h4>
+            <p>To ensure the safety, dignity, and legal employment of all migrant workers through technology-driven solutions and inter-departmental coordination. We strive to create a transparent ecosystem that protects worker rights while streamlining administrative processes.</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="value-box">
+            <i class="fas fa-eye"></i>
+            <h4>Our Vision</h4>
+            <p>To create a nationwide ecosystem where migrant workers can thrive in safe, legal employment with full protection of their rights. We envision a future where all migrant workers are registered, tracked, and protected through a unified digital platform.</p>
+        </div>
+    </div>
+</div>
+
+<!-- OUR STORY -->
+<div class="info-card" style="margin-bottom: 30px;">
+    <h3 class="section-title">Our Story</h3>
+    <div class="row">
+        <div class="col-md-6">
+            <p>SafeTrack was founded in 2023 by a team of social workers, technologists, and law enforcement professionals who recognized the growing challenges faced by migrant workers. With increasing migration and rising concerns about worker safety and crime rates, there was a clear need for a comprehensive solution.</p>
+            <p>Our initial pilot program in three districts showed remarkable results - a 32% reduction in migrant-related crimes and improved working conditions for over 5,000 registered workers. Encouraged by this success, we expanded our platform to cover the entire state.</p>
+        </div>
+        <div class="col-md-6">
+            <img src="https://picsum.photos/seed/migrantstory/600/400.jpg" alt="Migrant Workers" class="img-responsive" style="border-radius: 10px; max-width: 100%;">
+        </div>
+    </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="info-card" style="margin-bottom: 30px;">
+    <h3 class="section-title">Our Journey</h3>
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-date">January 2023</div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <h4>Project Inception</h4>
+                <p>SafeTrack concept developed with initial funding from the state government's social welfare department.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-date">June 2023</div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <h4>Pilot Launch</h4>
+                <p>Successfully launched in three districts with 15 police stations and 50 employers participating.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-date">December 2023</div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <h4>Statewide Expansion</h4>
+                <p>Expanded to cover all districts with over 15,000 registered workers and 200+ employers.</p>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-date">March 2024</div>
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+                <h4>National Recognition</h4>
+                <p>Awarded "Best Digital Initiative for Migrant Welfare" by the National Council for Labor Welfare.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CORE VALUES -->
+<div class="info-card" style="margin-bottom: 30px;">
+    <h3 class="section-title">Our Core Values</h3>
+    <div class="row">
+        <div class="col-md-3 col-sm-6">
+            <div class="value-box">
+                <i class="fas fa-shield-alt"></i>
+                <h4>Safety First</h4>
+                <p>Worker safety is our top priority in all aspects of our platform and operations.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="value-box">
+                <i class="fas fa-eye"></i>
+                <h4>Transparency</h4>
+                <p>We believe in complete transparency in all processes and data management.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="value-box">
+                <i class="fas fa-handshake"></i>
+                <h4>Collaboration</h4>
+                <p>We foster collaboration between workers, employers, and government agencies.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="value-box">
+                <i class="fas fa-lightbulb"></i>
+                <h4>Innovation</h4>
+                <p>We continuously innovate to improve our platform and address emerging challenges.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TEAM -->
+<div class="info-card" style="margin-bottom: 30px;">
+    <h3 class="section-title">Our Leadership Team</h3>
+    <div class="row">
+        <div class="col-md-3 col-sm-6">
+            <div class="team-member">
+                <img src="https://picsum.photos/seed/teammember1/300/300.jpg" alt="Team Member">
+                <h4>Dr. Rajesh Nair</h4>
+                <p>Founder & CEO</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="team-member">
+                <img src="https://picsum.photos/seed/teammember2/300/300.jpg" alt="Team Member">
+                <h4>Anita Sharma</h4>
+                <p>Chief Technology Officer</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="team-member">
+                <img src="https://picsum.photos/seed/teammember3/300/300.jpg" alt="Team Member">
+                <h4>Inspector R. Singh</h4>
+                <p>Director of Security</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="team-member">
+                <img src="https://picsum.photos/seed/teammember4/300/300.jpg" alt="Team Member">
+                <h4>Priya Menon</h4>
+                <p>Head of Operations</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<div class="about-footer">
+    <p>© 2025 SafeTrack | All Rights Reserved</p>
+</div>
+{% endblock %}

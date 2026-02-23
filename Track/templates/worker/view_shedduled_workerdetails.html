@@ -1,0 +1,38 @@
+
+<html lang="en">
+  <head>
+    <title>view_vacancy</title>
+    
+  </head>
+  <body>
+    
+    
+<center>
+       
+   
+              
+     <table class="gridtable" border="2"  align="center">
+<tr>
+<th>Qualification</th><th>Experience</th>
+{% for i in list %}
+<tr><td>{{i.qualification}}</td>
+<td>{{i.experience}}</td>
+
+<td><a href="/viewworker?worker_id={{i.worker_id}}">VIEW DETAILS</td>
+
+{% endfor %}
+</table>
+<BR><BR>
+
+
+
+</head>
+
+
+         
+                   
+
+
+    
+  </body>
+</html>

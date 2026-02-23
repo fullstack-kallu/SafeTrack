@@ -1,0 +1,84 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}View Workers - SafeTrack{% endblock %}
+
+{% block extra_css %}
+<style>
+    .TFtable {
+        width: 80%;
+        border-collapse: collapse;
+    }
+    .TFtable td {
+        padding: 7px;
+        border: #4e95f4 1px solid;
+    }
+    .TFtable tr {
+        background: #b8d1f3;
+    }
+    .TFtable tr:nth-child(odd) {
+        background: #D3D3D3;
+    }
+    .TFtable tr:nth-child(even) {
+        background: #FFFFFF;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content" style="padding: 40px;">
+    <center>
+        <form action="" method="get">
+            <table class="TFtable">
+                <tr>
+                    <th colspan="14"><b><font size="4" color="black">Worker Details</font></b></th>
+                </tr>
+                <tr>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>DOB</th>
+                    <th>Aadhar Number</th>
+                    <th>Registration Date</th>
+                    <th>Place</th>
+                    <th>Address</th>
+                    <th>Languages Known</th>
+                    <th>Phone</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                    <th>NOC Link</th>
+                </tr>
+                {% for i in list %}
+                <tr>
+                    <td><img src="/media/{{i.image}}" height="50" width="50"></td>
+                    <td>{{i.worker_name}}</td>
+                    <td>{{i.gender}}</td>
+                    <td>{{i.dob}}</td>
+                    <td>{{i.aadhar_number}}</td>
+                    <td>{{i.regis_date}}</td>
+                    <td>{{i.place}}</td>
+                    <td>{{i.address}}</td>
+                    <td>{{i.languages_known}}</td>
+                    <td>{{i.phone}}</td>
+                    <td>{{i.mobile}}</td>
+                    <td>{{i.email}}</td>
+                    <td>
+                        {% if i.status == 'Pending' %} 
+                            <a href="/approve?sid={{i.worker_id}}" style="color: red;">approve</a> |
+                            <a href="/reject?sid={{i.worker_id}}" style="color: red;">Reject</a>
+                        {% else %}
+                            {{ i.status }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="/viewnocaccept?worker_id={{i.worker_id}}" style="color: red;">NOC</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            <BR><BR>
+        </form>
+    </center>
+</div>
+{% endblock %}
