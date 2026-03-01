@@ -4,62 +4,207 @@
 {% block title %}Delete Feedback{% endblock %}
 
 {% block content %}
-<div class="page-header-accent" style="border-left-color: #dc3545;">
-	<h2 class="h4 font-weight-bold">Delete Worker Feedback</h2>
-	<p class="text-muted small">Select feedback entries to permanently remove them from the system.</p>
+
+<style>
+
+.feedback-container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 40px auto;
+}
+
+.feedback-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.feedback-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #dc3545;
+}
+
+.feedback-header p {
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+/* Card */
+.feedback-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+/* Worker Header Section */
+.worker-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.worker-section img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 15px;
+}
+
+.worker-name {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.worker-gender {
+    font-size: 13px;
+    color: #7f8c8d;
+}
+
+/* Vertical Table */
+.feedback-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.feedback-table th {
+    width: 180px;
+    text-align: left;
+    padding: 10px;
+    background: #f8f9fa;
+    font-size: 14px;
+    font-weight: 600;
+    color: #34495e;
+}
+
+.feedback-table td {
+    padding: 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #555;
+}
+
+.feedback-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Delete Button */
+.delete-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #dc3545;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: 0.3s ease;
+}
+
+.delete-btn:hover {
+    background: #b02a37;
+}
+
+/* Empty Message */
+.empty-box {
+    text-align: center;
+    padding: 40px 0;
+    color: #6c757d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .feedback-card {
+        padding: 18px;
+    }
+
+    .feedback-table th {
+        width: 130px;
+        font-size: 13px;
+    }
+
+    .feedback-table td {
+        font-size: 13px;
+    }
+
+    .feedback-header h2 {
+        font-size: 18px;
+    }
+
+    .worker-section img {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+</style>
+
+<div class="feedback-container">
+
+    <div class="feedback-header">
+        <h2>Delete Worker Feedback</h2>
+        <p>Select feedback entries to permanently remove them from the system</p>
+    </div>
+
+    {% for i in list %}
+    <div class="feedback-card">
+
+        <!-- Worker Info -->
+        <div class="worker-section">
+            <img src="/media/{{ i.image }}" alt="{{ i.worker_name }}">
+            <div>
+                <div class="worker-name">{{ i.worker_name }}</div>
+                <div class="worker-gender">{{ i.gender }}</div>
+            </div>
+        </div>
+
+        <!-- Vertical Format -->
+        <table class="feedback-table">
+            <tr>
+                <th>Date</th>
+                <td>{{ i.date }}</td>
+            </tr>
+            <tr>
+                <th>Feedback Title</th>
+                <td>{{ i.feedback_title }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ i.feedback_description }}</td>
+            </tr>
+            <tr>
+                <th>Mobile</th>
+                <td>{{ i.mobile }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ i.email }}</td>
+            </tr>
+            <tr>
+                <th>Action</th>
+                <td>
+                    <a href="/deletefeedback2?feedback_id={{ i.feedback_id }}"
+                       class="delete-btn">
+                       <i class="fas fa-trash-alt"></i> Delete
+                    </a>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    {% empty %}
+    <div class="feedback-card empty-box">
+        <i class="fas fa-check-circle fa-2x text-success"></i>
+        <p>No feedback entries to delete.</p>
+    </div>
+    {% endfor %}
+
 </div>
 
-<div class="glass-card">
-	<div class="table-responsive">
-		<table class="data-table">
-			<thead>
-				<tr>
-					<th>Worker Info</th>
-					<th>Date</th>
-					<th>Feedback</th>
-					<th>Contact</th>
-					<th>Action</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for i in list %}
-				<tr>
-					<td>
-						<div class="d-flex align-items-center">
-							<img src="/media/{{ i.image }}" alt="{{ i.worker_name }}"
-								style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 2px solid #e5e7eb; margin-right: 12px;">
-							<div>
-								<div class="font-weight-600">{{ i.worker_name }}</div>
-								<div class="text-muted small">{{ i.gender }}</div>
-							</div>
-						</div>
-					</td>
-					<td>{{ i.date }}</td>
-					<td>
-						<div class="font-weight-600 text-secondary">{{ i.feedback_title }}</div>
-						<div class="small text-muted">{{ i.feedback_description|truncatewords:10 }}</div>
-					</td>
-					<td>
-						<div class="small">{{ i.mobile }}</div>
-						<div class="text-muted small text-lowercase">{{ i.email }}</div>
-					</td>
-					<td>
-						<a href="/deletefeedback2?feedback_id={{ i.feedback_id }}" class="btn-modern btn-sm"
-							style="background-color: #dc3545;">
-							<i class="fas fa-trash-alt mr-1"></i> DELETE
-						</a>
-					</td>
-				</tr>
-				{% empty %}
-				<tr>
-					<td colspan="5" class="text-center py-4 text-muted">
-						<i class="fas fa-check-circle fa-2x mb-2 d-block text-success"></i>
-						<p class="mb-0">No feedback entries to delete.</p>
-					</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
-</div>
 {% endblock %}

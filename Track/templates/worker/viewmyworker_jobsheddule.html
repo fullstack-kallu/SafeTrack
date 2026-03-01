@@ -2,134 +2,140 @@
 {% load static %}
 
 {% block title %}Active Worker Profiles - SafeTrack{% endblock %}
-
 {% block extra_css %}
 <style>
-    .page-wrapper {
-        padding: 2rem;
+
+.page-wrapper {
+    padding: 2rem;
+}
+
+/* Card */
+.table-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+/* Header */
+.table-title-header {
+    background: linear-gradient(135deg, #4e73df, #224abe);
+    color: white;
+    padding: 1.5rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+/* Desktop Table */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-table thead {
+    background: #343a40;
+}
+
+.custom-table th {
+    color: white;
+    padding: 12px 10px;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.custom-table td {
+    padding: 12px 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.custom-table tbody tr:nth-child(even) {
+    background: #f8f9fc;
+}
+
+.custom-table tbody tr:hover {
+    background: #eef2ff;
+}
+
+/* Worker Photo */
+.worker-photo {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #4e73df;
+}
+
+/* Action Button */
+.action-btn {
+    background: linear-gradient(135deg, #f6c23e, #e0a800);
+    color: #343a40;
+    padding: 6px 12px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: 0.3s ease;
+}
+
+.action-btn:hover {
+    transform: scale(1.05);
+}
+
+/* ============ MOBILE CARD VIEW ============ */
+@media (max-width: 768px) {
+
+    .custom-table thead {
+        display: none;
     }
 
-    /* Card Container */
-    .table-card {
-        background: #ffffff;
-        border-radius: 20px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.08);
-        overflow: hidden;
-        transition: 0.3s ease;
-    }
-
-    .table-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 25px 60px rgba(0,0,0,0.12);
-    }
-
-    /* Header */
-    .table-title-header {
-        background: linear-gradient(135deg, #4e73df, #224abe);
-        color: white;
-        padding: 1.5rem;
-        font-size: 1.8rem;
-        font-weight: 700;
-        text-align: center;
-        letter-spacing: 0.5px;
-    }
-
-    /* Responsive Wrapper */
-    .table-responsive {
-        overflow-x: auto;
-    }
-
-    /* Table */
-    .custom-table {
+    .custom-table,
+    .custom-table tbody,
+    .custom-table tr,
+    .custom-table td {
+        display: block;
         width: 100%;
-        border-collapse: collapse;
-        min-width: 1100px;
     }
 
-    .custom-table thead th {
-        background: #343a40;
-        color: white;
-        padding: 12px 10px;
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        white-space: nowrap;
+    .custom-table tr {
+        background: #fff;
+        margin-bottom: 15px;
+        padding: 15px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     }
 
     .custom-table td {
-        padding: 12px 10px;
-        font-size: 14px;
-        border-bottom: 1px solid #eee;
-        vertical-align: middle;
+        border: none;
+        padding: 6px 0;
+        font-size: 13px;
     }
 
-    .custom-table tbody tr:nth-child(even) {
-        background: #f8f9fc;
-    }
-
-    .custom-table tbody tr:hover {
-        background: #eef2ff;
-        transition: 0.2s ease;
-    }
-
-    /* Worker Photo */
-    .worker-photo {
-        width: 55px;
-        height: 55px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 3px solid #4e73df;
-    }
-
-    /* Action Button */
-    .action-btn {
-        background: linear-gradient(135deg, #f6c23e, #e0a800);
-        color: #343a40;
-        padding: 6px 12px;
-        border-radius: 30px;
-        font-size: 12px;
+    .custom-table td::before {
+        content: attr(data-label);
         font-weight: 600;
-        text-decoration: none;
-        display: inline-block;
-        transition: 0.3s ease;
-        white-space: nowrap;
+        display: block;
+        font-size: 12px;
+        color: #555;
+        margin-bottom: 2px;
     }
 
-    .action-btn:hover {
-        background: linear-gradient(135deg, #e0a800, #f6c23e);
-        transform: scale(1.05);
+    .worker-photo {
+        width: 45px;
+        height: 45px;
+        margin-bottom: 8px;
     }
 
-    /* Mobile Responsive */
-    @media (max-width: 768px) {
-
-        .page-wrapper {
-            padding: 1rem;
-        }
-
-        .table-title-header {
-            font-size: 1.4rem;
-        }
-
-        .custom-table thead th,
-        .custom-table td {
-            font-size: 12px;
-            padding: 8px;
-        }
-
-        .worker-photo {
-            width: 40px;
-            height: 40px;
-        }
-
-        .action-btn {
-            font-size: 11px;
-            padding: 5px 8px;
-        }
+    .table-title-header {
+        font-size: 1.2rem;
     }
+
+}
+
 </style>
 {% endblock %}
-
 {% block content %}
 <div class="page-wrapper">
 
@@ -139,53 +145,82 @@
             Active Worker Profiles 🧑‍🔧
         </div>
 
-        <div class="table-responsive">
-            <table class="custom-table">
-                <thead>
-                    <tr>
-                        <th>Photo</th>
-                        <th>Name</th>
-                        <th>Gender</th>
-                        <th>DOB</th>
-                        <th>Aadhar No.</th>
-                        <th>Place</th>
-                        <th>Address</th>
-                        <th>Languages</th>
-                        <th>Phone</th>
-                        <th>Mobile</th>
-                        <th>Email</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>DOB</th>
+                    <th>Aadhar</th>
+                    <th>Place</th>
+                    <th>Address</th>
+                    <th>Languages</th>
+                    <th>Phone</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
 
-                <tbody>
-                    {% for i in list %}
-                    <tr>
-                        <td>
-                            <img src="/media/{{i.image}}" class="worker-photo">
-                        </td>
-                        <td>{{ i.worker_name }}</td>
-                        <td>{{ i.gender }}</td>
-                        <td>{{ i.dob }}</td>
-                        <td>{{ i.aadhar_number }}</td>
-                        <td>{{ i.place }}</td>
-                        <td>{{ i.address }}</td>
-                        <td>{{ i.languages_known }}</td>
-                        <td>{{ i.phone }}</td>
-                        <td>{{ i.mobile }}</td>
-                        <td>{{ i.email }}</td>
-                        <td>
-                            <a href="/jobsheddule1?worker_id={{i.worker_id}}" 
-                               class="action-btn">
-                                ADD ATTENDANCE
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
+            <tbody>
+                {% for i in list %}
+                <tr>
 
-            </table>
-        </div>
+                    <td data-label="Photo">
+                        <img src="/media/{{i.image}}" class="worker-photo">
+                    </td>
+
+                    <td data-label="Name">
+                        {{ i.worker_name }}
+                    </td>
+
+                    <td data-label="Gender">
+                        {{ i.gender }}
+                    </td>
+
+                    <td data-label="DOB">
+                        {{ i.dob }}
+                    </td>
+
+                    <td data-label="Aadhar">
+                        {{ i.aadhar_number }}
+                    </td>
+
+                    <td data-label="Place">
+                        {{ i.place }}
+                    </td>
+
+                    <td data-label="Address">
+                        {{ i.address|truncatewords:6 }}
+                    </td>
+
+                    <td data-label="Languages">
+                        {{ i.languages_known }}
+                    </td>
+
+                    <td data-label="Phone">
+                        {{ i.phone }}
+                    </td>
+
+                    <td data-label="Mobile">
+                        {{ i.mobile }}
+                    </td>
+
+                    <td data-label="Email">
+                        {{ i.email }}
+                    </td>
+
+                    <td data-label="Action">
+                        <a href="/jobsheddule1?worker_id={{i.worker_id}}" class="action-btn">
+                            ADD ATTENDANCE
+                        </a>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
     </div>
 

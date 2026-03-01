@@ -4,53 +4,232 @@
 {% block page_title %}Agency Management Hub{% endblock %}
 
 {% block main_content %}
-<div class="animate-fade-up">
-    <div class="admin-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+
+<div class="agency-wrapper">
+
+    <div class="agency-card">
+
+        <!-- Header Section -->
+        <div class="agency-header">
             <div>
-                <h4 style="margin: 0; font-weight: 800;"><i class="fa-solid fa-briefcase"
-                        style="margin-right: 10px;"></i> Registered Agencies</h4>
-                <p style="font-size: 13px; color: #64748B; margin: 5px 0 0 0;">Corporate entities and placement offices
-                    in the network.</p>
+                <h2><i class="fa-solid fa-briefcase"></i> Registered Agencies</h2>
+                <p>Corporate entities and placement offices in the network.</p>
             </div>
-            <button class="btn-admin btn-primary"><i class="fa-solid fa-plus"></i> NEW AGENCY</button>
+
+            <button class="btn-modern">
+                <i class="fa-solid fa-plus"></i> New Agency
+            </button>
         </div>
 
-        <div class="data-table-container">
-            <table class="admin-table">
+        <!-- Table Section -->
+        <div class="table-responsive">
+            <table class="agency-table">
                 <thead>
                     <tr>
                         <th>Agency Enterprise</th>
                         <th>Legal Representative</th>
                         <th>Registry Code</th>
-                        <th>Contact mobile</th>
-                        <th style="text-align: center;">Vetting Status</th>
+                        <th>Contact Mobile</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     {% for i in list %}
                     <tr>
                         <td>
-                            <div style="font-weight: 800; color: var(--admin-navy);">{{i.agency_name}}</div>
-                            <div style="font-size: 11px; opacity: 0.6;">D: {{i.district}}</div>
+                            <div class="agency-name">{{i.agency_name}}</div>
+                            <div class="agency-district">District: {{i.district}}</div>
                         </td>
+
                         <td>{{i.owner_name}}</td>
-                        <td style="font-family: monospace; font-weight: 700;">{{i.registry_number}}</td>
+
+                        <td class="mono">{{i.registry_number}}</td>
+
                         <td>{{i.mobile}}</td>
-                        <td style="text-align: center;">
+
+                        <td>
                             {% if i.status == 'approved' %}
-                            <span
-                                style="background: #DCFCE7; color: #10B981; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">VERIFIED</span>
+                                <span class="badge success">Verified</span>
                             {% else %}
-                            <span
-                                style="background: #FEF3C7; color: #D97706; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">{{i.status|upper}}</span>
+                                <span class="badge warning">{{i.status|upper}}</span>
                             {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="empty-row">
+                            No agencies registered yet.
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
     </div>
+
 </div>
+
+
+<style>
+
+/* Wrapper */
+.agency-wrapper{
+    padding:30px;
+    max-width:1200px;
+    margin:0 auto;
+}
+
+/* Card */
+.agency-card{
+    background:white;
+    padding:35px;
+    border-radius:20px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.06);
+    font-size:16px; /* 🔥 Base font size */
+}
+
+/* Header */
+.agency-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.agency-header h2{
+    font-size:24px;
+    font-weight:800;
+    margin:0;
+}
+
+.agency-header p{
+    font-size:14px;
+    color:#64748B;
+    margin-top:6px;
+}
+
+/* Button */
+.btn-modern{
+    background:#2563eb;
+    color:white;
+    padding:12px 20px;
+    border:none;
+    border-radius:10px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn-modern:hover{
+    background:#1d4ed8;
+    transform:translateY(-2px);
+}
+
+/* Table */
+.table-responsive{
+    overflow-x:auto;
+}
+
+.agency-table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:800px;
+}
+
+.agency-table thead{
+    background:#f8fafc;
+}
+
+.agency-table th{
+    text-align:left;
+    padding:15px;
+    font-size:14px;
+    font-weight:800;
+    text-transform:uppercase;
+    color:#334155;
+}
+
+.agency-table td{
+    padding:16px 15px;
+    border-bottom:1px solid #f1f5f9;
+    font-size:15px;
+}
+
+.agency-table tbody tr:hover{
+    background:#f1f5ff;
+    transition:0.2s;
+}
+
+/* Agency name styling */
+.agency-name{
+    font-weight:800;
+    color:#0f172a;
+}
+
+.agency-district{
+    font-size:13px;
+    color:#64748B;
+    margin-top:3px;
+}
+
+/* Mono text */
+.mono{
+    font-family:monospace;
+    font-weight:700;
+}
+
+/* Badges */
+.badge{
+    padding:6px 14px;
+    border-radius:50px;
+    font-size:12px;
+    font-weight:800;
+}
+
+.success{
+    background:#dcfce7;
+    color:#16a34a;
+}
+
+.warning{
+    background:#fef3c7;
+    color:#d97706;
+}
+
+/* Empty row */
+.empty-row{
+    text-align:center;
+    padding:40px;
+    color:#64748B;
+}
+
+/* Responsive */
+@media(max-width:768px){
+
+    .agency-wrapper{
+        padding:15px;
+    }
+
+    .agency-card{
+        padding:20px;
+    }
+
+    .agency-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .btn-modern{
+        width:100%;
+    }
+
+}
+
+</style>
+
 {% endblock %}

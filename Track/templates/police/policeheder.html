@@ -3,294 +3,426 @@
 {% load static %}
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<title>{% block title %}SafeTrack{% endblock %}</title>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css?family=Audiowide" rel='stylesheet' type='text/css'>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>{% block title %}SafeTrack{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Audiowide" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-	<style>
-		:root {
-			--primary-navy: #0A1F44;
-			--secondary-blue: #14213D;
-			--accent-blue: #3182CE;
-			--active-blue: #3B82F6;
-			--white: #FFFFFF;
-			--bg-light: #EBF1F7;
-			--sidebar-width: 250px;
-			--transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-		}
+    <style>
+        :root {
+            --primary-navy: #0A1F44;
+            --secondary-blue: #14213D;
+            --accent-blue: #3182CE;
+            --active-blue: #3B82F6;
+            --white: #FFFFFF;
+            --bg-light: #EBF1F7;
+            --sidebar-width: 250px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-		body {
-			font-family: 'Inter', sans-serif;
-			background: linear-gradient(135deg, #F0F4F8 0%, #D9E2EC 100%);
-			margin: 0;
-			overflow-x: hidden;
-			color: #1E293B;
-		}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #F0F4F8 0%, #D9E2EC 100%);
+            margin: 0;
+            overflow-x: hidden;
+            color: #1E293B;
+        }
 
-		/* ========== SIDEBAR ========== */
-		.sidebar {
-			position: fixed;
-			width: var(--sidebar-width);
-			height: 100vh;
-			background: linear-gradient(180deg, #101F41 0%, #0B1428 100%);
-			color: var(--white);
-			z-index: 2000;
-			padding: 20px 0;
-			transition: var(--transition);
-			display: flex;
-			flex-direction: column;
-		}
+        /* Mobile Toggle Button */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 3000;
+            background: linear-gradient(135deg, #101F41 0%, #0B1428 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
 
-		/* Starfield Background Effect */
-		.sidebar::before {
-			content: "";
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			background-image:
-				radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0, 0, 0, 0)),
-				radial-gradient(1px 1px at 40px 70px, #ffffff, rgba(0, 0, 0, 0)),
-				radial-gradient(1px 1px at 50px 160px, #ffffff, rgba(0, 0, 0, 0)),
-				radial-gradient(2px 2px at 80px 120px, #ffffff, rgba(0, 0, 0, 0)),
-				radial-gradient(1px 1px at 110px 210px, #ffffff, rgba(0, 0, 0, 0));
-			background-size: 200px 300px;
-			opacity: 0.1;
-			pointer-events: none;
-		}
+        .mobile-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
 
-		.sidebar-header {
-			padding: 10px 25px 30px;
-			display: flex;
-			align-items: center;
-			gap: 12px;
-		}
+        .mobile-toggle i {
+            font-size: 18px;
+        }
 
-		.sidebar-header .logo-container {
-			background: linear-gradient(135deg, #3B82F6, #1D4ED8);
-			padding: 8px;
-			border-radius: 10px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
-		}
+        /* Overlay for mobile */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
 
-		.sidebar-header h3 {
-			font-family: 'Inter', sans-serif;
-			font-weight: 800;
-			font-size: 30px;
-			margin: 0;
-			letter-spacing: -0.5px;
-			color: var(--white);
-		}
+        .overlay.active {
+            display: block;
+            opacity: 1;
+        }
 
-		.sidebar-menu {
-			list-style: none;
-			padding: 0;
-			flex-grow: 1;
-		}
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(180deg, #101F41 0%, #0B1428 100%);
+            color: var(--white);
+            z-index: 2000;
+            padding: 20px 0;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
 
-		.sidebar-menu li {
-			position: relative;
-			margin-bottom: 5px;
-		}
+        /* Starfield Background Effect */
+        .sidebar::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0, 0, 0, 0)),
+                radial-gradient(1px 1px at 40px 70px, #ffffff, rgba(0, 0, 0, 0)),
+                radial-gradient(1px 1px at 50px 160px, #ffffff, rgba(0, 0, 0, 0)),
+                radial-gradient(2px 2px at 80px 120px, #ffffff, rgba(0, 0, 0, 0)),
+                radial-gradient(1px 1px at 110px 210px, #ffffff, rgba(0, 0, 0, 0));
+            background-size: 200px 300px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
 
-		.sidebar-menu li a {
-			display: flex;
-			align-items: center;
-			padding: 12px 25px;
-			color: rgba(255, 255, 255, 0.6);
-			text-decoration: none;
-			transition: var(--transition);
-			font-size: 16px;
-			font-weight: 500;
-		}
+        .sidebar-header {
+            padding: 10px 25px 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-		.sidebar-menu li a:hover {
-			color: var(--white);
-			background: rgba(255, 255, 255, 0.05);
-		}
+        .sidebar-header .logo-container {
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            padding: 8px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
 
-		.sidebar-menu li.active a {
-			color: var(--white);
-			background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0) 100%);
-		}
+        .sidebar-header h3 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 30px;
+            margin: 0;
+            letter-spacing: -0.5px;
+            color: var(--white);
+        }
 
-		.sidebar-menu li.active::before {
-			content: "";
-			position: absolute;
-			left: 0;
-			top: 50%;
-			transform: translateY(-50%);
-			width: 4px;
-			height: 24px;
-			background: #3B82F6;
-			border-radius: 0 4px 4px 0;
-			box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-		}
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            flex-grow: 1;
+        }
 
-		.sidebar-menu i {
-			margin-right: 15px;
-			font-size: 16px;
-			width: 20px;
-			text-align: center;
-			opacity: 0.8;
-		}
+        .sidebar-menu li {
+            position: relative;
+            margin-bottom: 5px;
+        }
 
-		.submenu {
-			background: rgba(0, 0, 0, 0.2);
-			list-style: none;
-			padding: 0;
-			display: none;
-		}
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 16px;
+            font-weight: 500;
+        }
 
-		.sidebar-menu li:hover .submenu {
-			display: block;
-		}
+        .sidebar-menu li a:hover {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.05);
+        }
 
-		.submenu a {
-			padding-left: 65px !important;
-			font-size: 13px;
-			opacity: 0.8;
-		}
+        .sidebar-menu li.active a {
+            color: var(--white);
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0) 100%);
+        }
 
-		/* ========== MAIN LAYOUT ========== */
-		.main-content {
-			margin-left: var(--sidebar-width);
-			padding: 40px;
-			min-height: 100vh;
-			animation: fadeInUp 0.6s ease-out;
-		}
+        .sidebar-menu li.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: #3B82F6;
+            border-radius: 0 4px 4px 0;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
 
-		@keyframes fadeInUp {
-			from {
-				opacity: 0;
-				transform: translateY(20px);
-			}
+        .sidebar-menu i {
+            margin-right: 15px;
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+            opacity: 0.8;
+        }
 
-			to {
-				opacity: 1;
-				transform: translateY(0);
-			}
-		}
+        .menu-category {
+            padding: 10px 25px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }
 
-		/* Universal Card/Table styling for police module */
-		.police-card {
-			background: var(--white);
-			border-radius: 20px;
-			padding: 35px;
-			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-			margin-bottom: 30px;
-		}
+        .submenu {
+            background: rgba(0, 0, 0, 0.2);
+            list-style: none;
+            padding: 0;
+            display: none;
+        }
 
-		.police-table {
-			width: 100%;
-			border-collapse: separate;
-			border-spacing: 0 8px;
-		}
+        .sidebar-menu li:hover .submenu {
+            display: block;
+        }
 
-		.police-table th {
-			background: #F8FAFC;
-			color: var(--primary-navy);
-			text-transform: uppercase;
-			font-size: 16px;
-			font-weight: 800;
-			letter-spacing: 1px;
-			padding: 15px 20px;
-			border: none;
-		}
+        .submenu a {
+            padding-left: 65px !important;
+            font-size: 13px;
+            opacity: 0.8;
+        }
 
-		.police-table td {
-			background: var(--white);
-			padding: 15px 20px;
-			border-top: 1px solid #F1F5F9;
-			border-bottom: 1px solid #F1F5F9;
-			font-size: 14px;
-			color: #4A5568;
-		}
+        /* ========== MAIN LAYOUT ========== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            min-height: 100vh;
+            animation: fadeInUp 0.6s ease-out;
+            transition: margin-left 0.3s ease;
+        }
 
-		.police-table tr td:first-child {
-			border-left: 1px solid #F1F5F9;
-			border-radius: 12px 0 0 12px;
-		}
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
 
-		.police-table tr td:last-child {
-			border-right: 1px solid #F1F5F9;
-			border-radius: 0 12px 12px 0;
-		}
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-		/* Responsive */
-		@media (max-width: 992px) {
-			.sidebar {
-				transform: translateX(-100%);
-			}
+        /* Universal Card/Table styling for police module */
+        .police-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
 
-			.main-content {
-				margin-left: 0;
-				padding: 20px;
-			}
+        .police-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
 
-			.mobile-toggle {
-				display: block !important;
-			}
-		}
-	</style>
-	{% block extra_css %}{% endblock %}
+        .police-table th {
+            background: #F8FAFC;
+            color: var(--primary-navy);
+            text-transform: uppercase;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            padding: 15px 20px;
+            border: none;
+        }
+
+        .police-table td {
+            background: var(--white);
+            padding: 15px 20px;
+            border-top: 1px solid #F1F5F9;
+            border-bottom: 1px solid #F1F5F9;
+            font-size: 14px;
+            color: #4A5568;
+        }
+
+        .police-table tr td:first-child {
+            border-left: 1px solid #F1F5F9;
+            border-radius: 12px 0 0 12px;
+        }
+
+        .police-table tr td:last-child {
+            border-right: 1px solid #F1F5F9;
+            border-radius: 0 12px 12px 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .mobile-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 80px 20px 40px;
+            }
+
+            /* Ensure sidebar is scrollable on mobile */
+            .sidebar {
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            /* Adjust sidebar width for smaller screens */
+            .sidebar {
+                width: 280px;
+            }
+
+            /* Adjust main content padding for smaller screens */
+            .police-card {
+                padding: 20px;
+                border-radius: 15px;
+            }
+
+            .police-table {
+                font-size: 12px;
+            }
+
+            .police-table th {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            .police-table td {
+                padding: 10px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 70px 15px 30px;
+            }
+
+            .sidebar {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .police-card {
+                padding: 15px;
+                border-radius: 10px;
+            }
+
+            .police-table {
+                border-spacing: 0 4px;
+            }
+
+            .police-table th {
+                font-size: 10px;
+                padding: 8px;
+            }
+
+            .police-table td {
+                padding: 8px;
+                font-size: 11px;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
 </head>
 
 <body>
+<!-- Mobile Toggle Button -->
+<button class="mobile-toggle" id="mobileToggle">
+    <i class="fa-solid fa-bars"></i>
+</button>
+
+<!-- Overlay for mobile -->
+<div class="overlay" id="overlay"></div>
+
 <!-- SIDEBAR -->
-<div class="sidebar">
-	<div class="sidebar-header">
-		<i class="fa-solid fa-shield-halved fa-2x" style="color:var(--accent-blue)"></i>
-		<h3>safeTrack</h3>
-	</div>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <i class="fa-solid fa-shield-halved fa-2x" style="color:var(--accent-blue)"></i>
+        <h3>safeTrack</h3>
+    </div>
 
-	<ul class="sidebar-menu">
-		<li><a href="/homepolice/"><i class="fa-solid fa-gauge-high"></i> <span>Dashboard</span></a></li>
+    <ul class="sidebar-menu">
+        <li><a href="/homepolice/"><i class="fa-solid fa-gauge-high"></i> <span>Dashboard</span></a></li>
 
-		<li class="menu-category">Intelligence</li>
-		<li>
-			<a href="#"><i class="fa-solid fa-id-card-clip"></i> <span>My Profile</span> <i
-					class="fa-solid fa-chevron-right pull-right" style="font-size:10px; margin-top:5px"></i></a>
-			<ul class="submenu">
-				<li><a href="/viewpolice/">View Details</a></li>
-				<li><a href="/editpolice1/">Edit Profile</a></li>
-			</ul>
-		</li>
-		<li>
-			<a href="#"><i class="fa-solid fa-file-shield"></i> <span>NOC Hub</span> <i
-					class="fa-solid fa-chevron-right pull-right" style="font-size:10px; margin-top:5px"></i></a>
-			<ul class="submenu">
-				<li><a href="/viewnoc1/">View All NOC</a></li>
-				<li><a href="/noc_insert1/">Issue New NOC</a></li>
-				<li><a href="/editnoc1/">Manage Existing</a></li>
-			</ul>
-		</li>
+        <li class="menu-category">Intelligence</li>
+        <li>
+            <a href="#"><i class="fa-solid fa-id-card-clip"></i> <span>My Profile</span> <i
+                    class="fa-solid fa-chevron-right pull-right" style="font-size:10px; margin-top:5px"></i></a>
+            <ul class="submenu">
+                <li><a href="/viewpolice/">View Details</a></li>
+                <li><a href="/editpolice1/">Edit Profile</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href="#"><i class="fa-solid fa-file-shield"></i> <span>NOC Hub</span> <i
+                    class="fa-solid fa-chevron-right pull-right" style="font-size:10px; margin-top:5px"></i></a>
+            <ul class="submenu">
+                <li><a href="/viewnoc1/">View All NOC</a></li>
+                <li><a href="/noc_insert1/">Issue New NOC</a></li>
+                <li><a href="/editnoc1/">Manage Existing</a></li>
+            </ul>
+        </li>
 
-		<li class="menu-category">Registry</li>
-		<li>
-			<a href="#"><i class="fa-solid fa-users-gear"></i> <span>Worker Ops</span> <i
-					class="fa-solid fa-chevron-right pull-right" style="font-size:10px; margin-top:5px"></i></a>
-			<ul class="submenu">
-				<li><a href="/viewpoliceworker/">View Database</a></li>
-				<li><a href="/viewworkeraccept/">Vetting Queue</a></li>
-				<li><a href="/viewworkercomplaint/">Incident Reports</a></li>
-			</ul>
-		</li>
-		<li><a href="/view_workershedduledetails1/"><i class="fa-solid fa-calendar-check"></i> <span>Deployment
-					Logs</span></a></li>
+        <li class="menu-category">Registry</li>
+        <li>
+            <a href="#"><i class="fa-solid fa-users-gear"></i> <span>Worker Ops</span> <i
+                    class="fa-solid fa-chevron-right pull-right" style="font-size:10px; margin-top:5px"></i></a>
+            <ul class="submenu">
+                <li><a href="/viewpoliceworker/">View Database</a></li>
+                <li><a href="/viewworkeraccept/">Vetting Queue</a></li>
+                <li><a href="/viewworkercomplaint/">Incident Reports</a></li>
+            </ul>
+        </li>
+        <li><a href="/view_workershedduledetails1/"><i class="fa-solid fa-calendar-check"></i> <span>Deployment
+                    Logs</span></a></li>
 
-		<li class="menu-category">System</li>
-		<li><a href="/password/"><i class="fa-solid fa-lock-open"></i> <span>Auth Settings</span></a></li>
-		<li><a href="/home/"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout Terminal</span></a></li>
-	</ul>
+        <li class="menu-category">System</li>
+        
+        <li><a href="/home/"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout Terminal</span></a></li>
+    </ul>
 </div>
 
 <!-- MAIN CONTENT -->
@@ -298,6 +430,71 @@
 {% endblock %}
 
 <!-- SCRIPTS -->
+<script>
+    // Mobile sidebar toggle functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileToggle = document.getElementById('mobileToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        
+        // Toggle sidebar
+        mobileToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            
+            // Change icon based on sidebar state
+            const icon = this.querySelector('i');
+            if (sidebar.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+        
+        // Close sidebar when clicking on overlay
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            
+            // Reset icon
+            const icon = mobileToggle.querySelector('i');
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        });
+        
+        // Close sidebar when clicking on a menu item (optional)
+        const menuItems = document.querySelectorAll('.sidebar-menu a');
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Only close on mobile
+                if (window.innerWidth <= 992) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                    
+                    // Reset icon
+                    const icon = mobileToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 992) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                
+                // Reset icon
+                const icon = mobileToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+    });
+</script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>

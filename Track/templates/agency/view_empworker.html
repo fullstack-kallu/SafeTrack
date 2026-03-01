@@ -1,47 +1,156 @@
+{% extends "agency/agency_base.html" %}
+{% load static %}
 
-<html lang="en">
-  <head>
-    <title>view_worker</title>
-    
-  </head>
-  <body>
-    
-    
-<center>
-        <form action="" method="get" > 
-   
-              
-     <table class="gridtable" border="2"  align="center">
-<tr>
-<th>Name</th><th>Gender</th><th>DOB</th><th>Aadhar Number</th><th>Registration_date</th><th>Place</th><th>Address</th><th>Languages_known</th><th>Phone</th><th>Mobile</th><th>Email</th>
-{% for i in list %}
-<tr><td>{{i.worker_name}}</td>
-<td>{{i.gender}}</td>
-<td>{{i.dob}}</td>
-<td>{{i.aadhar_number}}</td>
+{% block title %}My Workers{% endblock %}
 
-<td>{{i.regis_date}}</td>
-<td>{{i.place}}</td>
-<td>{{i.address}}</td>
-<td>{{i.languages_known}}</td>
-<td>{{i.phone}}</td>
-<td>{{i.mobile}}</td>
-<td>{{i.email}}</td>
+{% block extra_css %}
+<style>
+  .worker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
 
+  .worker-card-item {
+    background: var(--card-bg, white);
+    border: 1px solid var(--glass-border, #eef2f6);
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
 
-{% endfor %}
-</table>
-<BR><BR>
+  .worker-card-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  }
 
-</form>
+  .worker-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+  }
 
-</head>
+  .worker-avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
 
+  .worker-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-main, #1e293b);
+    margin: 0;
+  }
 
-         
-                   
+  .worker-gender {
+    font-size: 0.78rem;
+    color: var(--text-muted, #64748b);
+    margin: 0;
+  }
 
+  .worker-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    font-size: 0.85rem;
+  }
 
-    
-  </body>
-</html>
+  .worker-detail-row:last-child {
+    border-bottom: none;
+  }
+
+  .detail-label {
+    color: var(--text-muted, #64748b);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .detail-value {
+    color: var(--text-main, #1e293b);
+    font-weight: 600;
+    text-align: right;
+    max-width: 55%;
+    word-break: break-word;
+  }
+
+  .page-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header-accent animate-page">
+  <h2 class="h4 font-weight-bold mb-1">
+    <i class="fas fa-users me-2"></i> My Workers
+  </h2>
+  <p class="text-muted small mb-0">All workers currently assigned to your agency.</p>
+</div>
+
+{% if list %}
+<div class="worker-grid">
+  {% for i in list %}
+  <div class="worker-card-item">
+    <div class="worker-card-header">
+      <div class="worker-avatar">
+        {{ i.worker_name|first|upper }}
+      </div>
+      <div>
+        <p class="worker-name">{{ i.worker_name }}</p>
+        <p class="worker-gender">{{ i.gender|capfirst }}</p>
+      </div>
+    </div>
+
+    <div class="worker-detail-row">
+      <span class="detail-label">Date of Birth</span>
+      <span class="detail-value">{{ i.dob }}</span>
+    </div>
+    <div class="worker-detail-row">
+      <span class="detail-label">Aadhar No.</span>
+      <span class="detail-value">{{ i.aadhar_number }}</span>
+    </div>
+    <div class="worker-detail-row">
+      <span class="detail-label">Location</span>
+      <span class="detail-value">{{ i.place }}</span>
+    </div>
+    <div class="worker-detail-row">
+      <span class="detail-label">Mobile</span>
+      <span class="detail-value">{{ i.mobile }}</span>
+    </div>
+    <div class="worker-detail-row">
+      <span class="detail-label">Email</span>
+      <span class="detail-value">{{ i.email }}</span>
+    </div>
+    <div class="worker-detail-row">
+      <span class="detail-label">Languages</span>
+      <span class="detail-value">{{ i.languages_known }}</span>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="text-center py-5">
+  <i class="fas fa-users-slash fa-3x mb-3 text-muted"></i>
+  <h4 class="text-muted">No workers found in your agency.</h4>
+</div>
+{% endif %}
+{% endblock %}

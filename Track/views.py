@@ -12,15 +12,132 @@ from Track.forms import (
     workerform, WorkerForm, LoginForm, EmpForm, PoliceStationForm,
     VacancyForm, FeedbackForm, ComplaintForm, AdminForm
 )
+from django.db.models import Q
 from Track.models import (
     tbl_worker, tbl_login, tbl_admin, tbl_emp, 
-    tbl_policestation, tbl_vacancy, tbl_myworker, tbl_noc
+    tbl_policestation, tbl_vacancy, tbl_myworker, tbl_noc,
+    tbl_workerdetails, tbl_feedback, tbl_workershedule
 )
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 from datetime import date
 from django.db import IntegrityError
+import datetime
 now=str(date.today())
+
+
+def send_salary_notification_email(worker_email, worker_name, salary_amount, month_year):
+    """
+    Send salary notification email to worker using EmailMultiAlternatives with HTML format.
+    
+    Args:
+        worker_email: Worker's email address
+        worker_name: Worker's name
+        salary_amount: Salary amount
+        month_year: Month and year string (e.g., 'January 2026')
+    
+    Returns:
+        bool: True if email sent successfully, False otherwise
+    """
+    try:
+        subject = 'Salary Payment Confirmation - SafeMigrate'
+        
+        # Plain text version
+        text_content = f"""
+Dear {worker_name},
+
+Your salary has been successfully processed and confirmed.
+
+Details:
+- Salary Amount: Rs. {salary_amount}
+- Month/Year: {month_year}
+
+This is a professional confirmation that your salary payment has been processed. 
+If you have any questions, please contact your employer.
+
+Best regards,
+SafeMigrate Team
+        """
+        
+        # HTML version
+        html_content = f"""
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+        .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+        .header {{ background-color: #4CAF50; color: white; padding: 20px; text-align: center; }}
+        .content {{ padding: 20px; background-color: #f9f9f9; }}
+        .details {{ margin: 20px 0; padding: 15px; background-color: white; border-left: 4px solid #4CAF50; }}
+        .detail-row {{ margin: 10px 0; }}
+        .label {{ font-weight: bold; color: #555; }}
+        .value {{ color: #333; }}
+        .footer {{ text-align: center; padding: 20px; color: #777; font-size: 12px; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Salary Payment Confirmation</h1>
+        </div>
+        <div class="content">
+            <p>Dear <strong>{worker_name}</strong>,</p>
+            <p>Your salary has been successfully processed and confirmed. Please find the details below:</p>
+            
+            <div class="details">
+                <div class="detail-row">
+                    <span class="label">Worker Name:</span>
+                    <span class="value">{worker_name}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Salary Amount:</span>
+                    <span class="value">Rs. {salary_amount}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="label">Month/Year:</span>
+                    <span class="value">{month_year}</span>
+                </div>
+            </div>
+            
+            <p>This is a professional confirmation that your salary payment has been processed. 
+            If you have any questions or concerns, please contact your employer.</p>
+            
+            <p>Thank you for your hard work!</p>
+            
+            <p>Best regards,<br>
+            <strong>SafeMigrate Team</strong></p>
+        </div>
+        <div class="footer">
+            <p>This is an automated email. Please do not reply to this message.</p>
+        </div>
+    </div>
+</body>
+</html>
+        """
+        
+        # Create email with both plain text and HTML versions
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body=text_content,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[worker_email]
+        )
+        
+        # Attach HTML content
+        email.attach_alternative(html_content, 'text/html')
+        
+        # Send the email
+        email.send(fail_silently=False)
+        
+        print(f"Salary notification email sent successfully to {worker_email}")
+        return True
+        
+    except Exception as e:
+        print(f"Error sending salary notification email: {str(e)}")
+        return False
 
 def searchlogin(request):
 	"""Authenticate user using custom tbl_login table"""
@@ -46,13 +163,13 @@ def searchlogin(request):
 			
 			user_type = login_user.user_type
 			if user_type == 'admin':
-				return render(request, 'admin/home_admin.html')
+				return redirect('/homeadmin/')
 			elif user_type == 'employer':
-				return render(request, 'agency/home_emp.html')
+				return redirect('/homeemp/')
 			elif user_type == 'police':
-				return render(request, 'police/home_police.html')
+				return redirect('/homepolice/')
 			elif user_type == 'worker':
-				return render(request, 'worker/home_worker.html')
+				return redirect('/homeworker/')
 			else:
 				html = "<script>alert('Invalid user type');window.location='/login/';</script>"
 				return HttpResponse(html)
@@ -62,6 +179,46 @@ def searchlogin(request):
 	except Exception as e:
 		html = f"<script>alert('Login error: {str(e)}');window.location='/login/';</script>"
 		return HttpResponse(html)
+
+def homeemp(request):
+	if 'u_id' not in request.session or request.session.get('user_type') != 'employer':
+		return HttpResponse("<script>alert('Please login as Agency first');window.location='/login/';</script>")
+	return render(request, 'agency/home_emp.html')
+
+def homeworker(request):
+	if 'u_id' not in request.session or request.session.get('user_type') != 'worker':
+		return HttpResponse("<script>alert('Please login as Worker first');window.location='/login/';</script>")
+	return render(request, 'worker/home_worker.html')
+
+def homepolice(request):
+	if 'u_id' not in request.session or request.session.get('user_type') != 'police':
+		return HttpResponse("<script>alert('Please login as Police Station first');window.location='/login/';</script>")
+	return render(request, 'police/home_police.html')
+
+def homeadmin(request):
+	"""Admin view: Dashboard with analytics using ORM"""
+	try:
+		if 'u_id' not in request.session:
+			return redirect('/login/')
+			
+		worker_count = tbl_worker.objects.count()
+		agency_count = tbl_emp.objects.filter(status='true').count()
+		pending_agencies = tbl_login.objects.filter(user_type='employer', status='false').count()
+		police_count = tbl_policestation.objects.count()
+		
+		# Get recent registrations (simulated for now with order_by ID)
+		recent_workers = tbl_worker.objects.all().order_by('-worker_id')[:5]
+		
+		context = {
+			'worker_count': worker_count,
+			'agency_count': agency_count,
+			'pending_agencies': pending_agencies,
+			'police_count': police_count,
+			'recent_workers': recent_workers,
+		}
+		return render(request, 'admin/home_admin.html', context)
+	except Exception as e:
+		return render(request, 'admin/home_admin.html', {'error': str(e)})
 def logout(request):
 	try:
 		del request.session['u_id']
@@ -417,7 +574,7 @@ def insertworkerdetails(request):
 			return HttpResponse(html)
 
 		# Show the form with vacancy_id
-		return render(request,'worker/addworkerdetails.html',{'vacancy_id':vacancy_id})
+		return render(request,'agency/view_vacancyhome3.html',{'vacancy_id':vacancy_id})
 # views.py
 
 # views.py
@@ -540,19 +697,38 @@ def reject(request):
   return HttpResponse(msg)
 		
 def viewworkeraccept(request):
-	cursor=connection.cursor()
-	list=[]
-	sql="select * from tbl_login where user_type='worker' and status='false'"
-	cursor.execute(sql)
-	result1=cursor.fetchall()
-	for row1 in result1:
-		sql6="select * from tbl_worker where worker_id='%s'"%(row1[3])
-		cursor.execute(sql6)
-		result=cursor.fetchall()
-		for row in result:
-			dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'regis_date':row[6],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12],'status':row[14]}
-			list.append(dict)
-	return render(request,'police/viewworkeraccept.html',{'list':list})
+	"""View worker registration requests for police approval using ORM for stability"""
+	try:
+		# Get all workers with status='false' from tbl_login
+		worker_logins = tbl_login.objects.filter(user_type='worker', status='false')
+		worker_list = []
+		
+		for login in worker_logins:
+			try:
+				worker = tbl_worker.objects.get(worker_id=login.u_id)
+				worker_list.append({
+					'worker_id': worker.worker_id,
+					'image': worker.image,
+					'worker_name': worker.worker_name,
+					'gender': worker.gender,
+					'dob': worker.dob,
+					'aadhar_number': worker.aadhar_number,
+					'regis_date': worker.regis_date,
+					'place': worker.place,
+					'address': worker.address,
+					'languages_known': worker.languages_known,
+					'phone': worker.phone,
+					'mobile': worker.mobile,
+					'email': worker.email,
+					'status': worker.status
+				})
+			except tbl_worker.DoesNotExist:
+				continue
+				
+		return render(request, 'police/viewworkeraccept.html', {'list': worker_list})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homepolice/';</script>"
+		return HttpResponse(html)
 def viewnocaccept(request):
 	"""View NOC records for a specific worker using ORM"""
 	try:
@@ -583,16 +759,36 @@ def viewnocaccept(request):
 		html = f"<script>alert('Error: {str(e)}');window.location='/viewworkeraccept/';</script>"
 		return HttpResponse(html)
 def viewacceptworkerrequest(request):
-		cursor=connection.cursor()
-		worker_id=request.GET['worker_id']
-		sql1="select * from tbl_worker where worker_id='%s'" %(worker_id)
-		cursor.execute(sql1)
-		result=cursor.fetchall()
-		list=[]
-		for row in result:
-			dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'regis_date':row[6],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12],'status':row[14]}
-			list.append(dict)
-		return render(request,'worker/view_individual_worker.html',{'list':list})
+	"""View individual worker request details using ORM"""
+	try:
+		worker_id = request.GET.get('worker_id')
+		if not worker_id:
+			return HttpResponse("<script>alert('Worker ID missing');window.location='/viewworkeraccept/';</script>")
+			
+		worker = tbl_worker.objects.get(worker_id=worker_id)
+		dict_data = {
+			'worker_id': worker.worker_id,
+			'image': worker.image,
+			'worker_name': worker.worker_name,
+			'gender': worker.gender,
+			'dob': worker.dob,
+			'aadhar_number': worker.aadhar_number,
+			'regis_date': worker.regis_date,
+			'place': worker.place,
+			'address': worker.address,
+			'languages_known': worker.languages_known,
+			'phone': worker.phone,
+			'mobile': worker.mobile,
+			'email': worker.email,
+			'status': worker.status
+		}
+		return render(request, 'worker/view_individual_worker.html', {'list': [dict_data]})
+	except tbl_worker.DoesNotExist:
+		html = "<script>alert('Worker not found');window.location='/viewworkeraccept/';</script>"
+		return HttpResponse(html)
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/viewworkeraccept/';</script>"
+		return HttpResponse(html)
 def acceptworkerrequest(request):
 		worker_id=request.GET['worker_id']
 		cursor=connection.cursor()
@@ -613,19 +809,38 @@ def rejectworkerrequest(request):
 		html="<script>alert('successfully Rejected! ');window.location='/homepolice/';</script>"
 		return HttpResponse(html)
 def vieweditemp(request):
-		cursor=connection.cursor()
-		sql="select * from tbl_login where user_type='employer' and u_id='%s'"%(request.session['u_id'])
-		list=[]
-		cursor.execute(sql)
-		result1=cursor.fetchall()
-		for row1 in result1:
-				sql1="select * from tbl_emp where emp_id='%s'"%(row1[3])
-				cursor.execute(sql1)
-				result=cursor.fetchall()
-				for row in result:
-					dict={'emp_id':row[0],'name':row[1],'gender':row[2],'firm_name':row[3],'aadhar_no':row[4],'dob':row[5],'emp_address':row[6],'place':row[7],'phone':row[8],'mobile':row[9],'email':row[10],'password':row[11],'status':row[12]}
-					list.append(dict)
-		return render(request,'agency/edit_view_emp.html',{'list':list})
+	"""Agency view: View profile details for editing using ORM"""
+	try:
+		u_id = request.session.get('u_id')
+		if not u_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
+			
+		# Fetch employer details directly using the u_id from session
+		# This is safer than the double lookup in tbl_login
+		employer = tbl_emp.objects.get(emp_id=u_id)
+		
+		dict_data = {
+			'emp_id': employer.emp_id,
+			'name': employer.name,
+			'gender': employer.gender,
+			'firm_name': employer.firm_name,
+			'aadhar_no': employer.aadhar_no,
+			'dob': employer.dob,
+			'emp_address': employer.emp_address,
+			'place': employer.place,
+			'phone': employer.phone,
+			'mobile': employer.mobile,
+			'email': employer.email,
+			'password': employer.pswd,
+			'status': employer.status
+		}
+		return render(request, 'agency/edit_view_emp.html', {'list': [dict_data]})
+	except tbl_emp.DoesNotExist:
+		html = "<script>alert('Employer record not found');window.location='/login/';</script>"
+		return HttpResponse(html)
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+		return HttpResponse(html)
 def edit_employer(request):
 		cursor=connection.cursor()
 		emp_id=request.GET['empid']
@@ -658,27 +873,51 @@ def update_employer(request):
 		
 		return HttpResponse(html)
 def viewworkerdetails(request):
-		cursor=connection.cursor()
-		list=[]
-		
-		sql1="select * from tbl_workerdetails"
-		cursor.execute(sql1)
-		result=cursor.fetchall()
-		for row1 in result:
-			dict={'worker_id':row1[0],'vacancy_id':row1[1],'qualification':row1[2],'experience':row1[3]}
-			list.append(dict)
-		return render(request,'worker/view_shedduled_workerdetails.html',{'list':list})
+	"""View all worker application details using ORM for stability"""
+	try:
+		details = tbl_workerdetails.objects.all().order_by('detail_id')
+		list_data = []
+		for detail in details:
+			dict_data = {
+				'worker_id': detail.worker_id,
+				'vacancy_id': detail.vacancy_id,
+				'qualification': detail.qualification,
+				'experience': detail.experience
+			}
+			list_data.append(dict_data)
+		return render(request, 'worker/view_shedduled_workerdetails.html', {'list': list_data})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+		return HttpResponse(html)
 def viewworker(request):
-		cursor=connection.cursor()
-		worker_id=request.GET['worker_id']
-		list=[]
-		sql1="select * from tbl_worker where worker_id='%s'"%(worker_id)
-		cursor.execute(sql1)
-		result=cursor.fetchall()
-		for row1 in result:
-			dict={'worker_id':row1[0],'name':row1[1],'gender':row1[2],'dob':row1[3],'aadhar_number':row1[4],'regis_date':row1[5],'place':row1[6],'address':row1[7],'languages_known':row1[8],'phone':row1[9],'mobile':row1[10],'email':row1[11]}
-			list.append(dict)
-		return render(request,'worker/viewsheduledworker2.html',{'list':list})
+	"""View scheduled worker details using ORM for index stability"""
+	try:
+		worker_id = request.GET.get('worker_id')
+		if not worker_id:
+			return HttpResponse("<script>alert('Worker ID missing');window.location='/viewworkerdetails/';</script>")
+			
+		worker = tbl_worker.objects.get(worker_id=worker_id)
+		dict_data = {
+			'worker_id': worker.worker_id,
+			'name': worker.worker_name,
+			'gender': worker.gender,
+			'dob': worker.dob,
+			'aadhar_number': worker.aadhar_number,
+			'regis_date': worker.regis_date,
+			'place': worker.place,
+			'address': worker.address,
+			'languages_known': worker.languages_known,
+			'phone': worker.phone,
+			'mobile': worker.mobile,
+			'email': worker.email
+		}
+		return render(request, 'worker/viewsheduledworker2.html', {'list': [dict_data]})
+	except tbl_worker.DoesNotExist:
+		html = "<script>alert('Worker not found');window.location='/viewworkerdetails/';</script>"
+		return HttpResponse(html)
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/viewworkerdetails/';</script>"
+		return HttpResponse(html)
 def feedbackinsert(request):
 		#now=datetime.datetime.today()
 		Emp_id=request.session['u_id']
@@ -695,50 +934,94 @@ def addfeedback(request):
 		worker_id=request.GET['worker_id']
 		return render(request,'agency/feedback.html',{'worker_id':worker_id})
 def viewemydetails(request):
-		cursor=connection.cursor()
-		sql="select * from tbl_login where user_type='employer' and u_id='%s'"%(request.session['u_id'])
-		list=[]
-		cursor.execute(sql)
-		result1=cursor.fetchall()
-		for row1 in result1:
-				sql1="select * from tbl_emp where emp_id='%s'"%(row1[3])
-				cursor.execute(sql1)
-				result=cursor.fetchall()
-				for row in result:
-					dict={'emp_id':row[0],'name':row[1],'gender':row[2],'firm_name':row[3],'aadhar_no':row[4],'dob':row[5],'emp_address':row[6],'place':row[7],'phone':row[8],'mobile':row[9],'email':row[10],'password':row[11],'status':row[12]}
-					list.append(dict)
-		return render(request,'agency/view_mydetails.html',{'list':list})
-def viewempworker(request):
-		cursor=connection.cursor()
-		sql="select * from tbl_login where user_type='worker' and status='true' "
-		list=[]
-		cursor.execute(sql)
-		result1=cursor.fetchall()
-		for row1 in result1:
-				sql1="select * from tbl_worker where worker_id='%s'"%(row1[3])
-				cursor.execute(sql1)
-				result=cursor.fetchall()
-				for row in result:
-					dict={'worker_id':row[0],'worker_name':row[1],'gender':row[2],'dob':row[3],'aadhar_number':row[4],'regis_date':row[5],'place':row[6],'address':row[7],'languages_known':row[8],'phone':row[9],'mobile':row[10],'email':row[11]}
-					list.append(dict)
-		return render(request,'agency/view_empworker.html',{'list':list})
-def viewnoc1(request):
-		cursor=connection.cursor()
+	"""Agency view: View profile details using ORM for stability"""
+	try:
+		u_id = request.session.get('u_id')
+		if not u_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
+			
+		# Fetch employer details directly using the u_id from session
+		employer = tbl_emp.objects.get(emp_id=u_id)
 		
-		#sql="select * from tbl_login where user_type='worker' and status='true' "
-		sql="select * from tbl_login where user_type='worker' "
-		list=[]
-		cursor.execute(sql)
-		result1=cursor.fetchall()
-		for row1 in result1:
-				#sql1="select * from tbl_worker where worker_id='%s'"%(row1[3])
-				sql1="select * from tbl_worker where worker_id='%s'"%(row1[3])
-				cursor.execute(sql1)
-				result=cursor.fetchall()
-				for row in result:
-					dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'regis_date':row[6],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12],'status':row[14]}
-					list.append(dict)
-		return render(request,'police/view_noc1.html',{'list':list})
+		dict_data = {
+			'emp_id': employer.emp_id,
+			'name': employer.name,
+			'gender': employer.gender,
+			'firm_name': employer.firm_name,
+			'aadhar_no': employer.aadhar_no,
+			'dob': employer.dob,
+			'emp_address': employer.emp_address,
+			'place': employer.place,
+			'phone': employer.phone,
+			'mobile': employer.mobile,
+			'email': employer.email,
+			'password': employer.pswd,
+			'status': employer.status
+		}
+		return render(request, 'agency/view_mydetails.html', {'list': [dict_data]})
+	except tbl_emp.DoesNotExist:
+		html = "<script>alert('Employer record not found');window.location='/login/';</script>"
+		return HttpResponse(html)
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+		return HttpResponse(html)
+def viewempworker(request):
+	"""View all active workers for agency using ORM for stability"""
+	try:
+		# Get active worker IDs from login
+		worker_ids = tbl_login.objects.filter(user_type='worker', status='true').values_list('u_id', flat=True)
+		workers = tbl_worker.objects.filter(worker_id__in=worker_ids).order_by('worker_id')
+		
+		list_data = []
+		for row in workers:
+			dict_data = {
+				'worker_id': row.worker_id,
+				'worker_name': row.worker_name,
+				'gender': row.gender,
+				'dob': row.dob,
+				'aadhar_number': row.aadhar_number,
+				'regis_date': row.regis_date,
+				'place': row.place,
+				'address': row.address,
+				'languages_known': row.languages_known,
+				'phone': row.phone,
+				'mobile': row.mobile,
+				'email': row.email
+			}
+			list_data.append(dict_data)
+		return render(request, 'agency/view_empworker.html', {'list': list_data})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+		return HttpResponse(html)
+def viewnoc1(request):
+	"""View workers for NOC processing using ORM for stability"""
+	try:
+		worker_ids = tbl_login.objects.filter(user_type='worker').values_list('u_id', flat=True)
+		workers = tbl_worker.objects.filter(worker_id__in=worker_ids).order_by('worker_id')
+		
+		list_data = []
+		for worker in workers:
+			dict_data = {
+				'worker_id': worker.worker_id,
+				'image': worker.image,
+				'worker_name': worker.worker_name,
+				'gender': worker.gender,
+				'dob': worker.dob,
+				'aadhar_number': worker.aadhar_number,
+				'regis_date': worker.regis_date,
+				'place': worker.place,
+				'address': worker.address,
+				'languages_known': worker.languages_known,
+				'phone': worker.phone,
+				'mobile': worker.mobile,
+				'email': worker.email,
+				'status': worker.status
+			}
+			list_data.append(dict_data)
+		return render(request, 'police/view_noc1.html', {'list': list_data})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homepolice/';</script>"
+		return HttpResponse(html)
 def viewnoc2(request):
 	"""View detailed NOC for a worker using ORM to avoid index shifts"""
 	try:
@@ -784,59 +1067,105 @@ def viewnoc2(request):
 	except Exception as e:
 		html = f"<script>alert('Error: {str(e)}');window.location='/viewnoc1/';</script>"
 		return HttpResponse(html)
-def view_feedbackworker(request):
-		cursor=connection.cursor()
-		sql="select * from tbl_myworker where status='fixed' and emp_id='%s'"%(request.session['u_id'])
-		list=[]
-		male_count = 0
-		female_count = 0
-		cursor.execute(sql)
-		result1=cursor.fetchall()
-		for row1 in result1:
-				sql1="select * from tbl_worker where worker_id='%s'"%(row1[2])
-				cursor.execute(sql1)
-				result=cursor.fetchall()
-				for row in result:
-					gender = row[3]
-					# Count male and female workers
-					if gender.lower() == 'male':
-						male_count += 1
-					elif gender.lower() == 'female':
-						female_count += 1
-					dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'regis_date':row[6],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12],'status':row[14]}
-					list.append(dict)
-		return render(request,'worker/view_feedbackworker.html',{'list':list, 'male_count': male_count, 'female_count': female_count})
+
 
 def viewvacancy(request):
-		cursor=connection.cursor()
-		list=[]
-		sql="select * from tbl_emp where emp_id='%s'"%(request.session['u_id'])
+	"""View vacancies for the logged-in employer using ORM"""
+	try:
+		# Check session
+		if 'u_id' not in request.session:
+			html = "<script>alert('Please login first');window.location='/login/';</script>"
+			return HttpResponse(html)
 		
-		cursor.execute(sql)
-		result1=cursor.fetchall()
-		for row in result1:
-			sql1="select * from tbl_vacancy where emp_id='%s'"%(row[0])
-			cursor.execute(sql1)
-			result=cursor.fetchall()
-			for row1 in result:
-				dict={'vacancy_id':row1[0],'date':row1[1],'emp_id':row1[2],'vacancy':row1[3],'vacancy_no':row1[4],'description':row1[5],'emp_id':row[0],'name':row[1],'gender':row[2],'firm_name':row[3],'aadhar_no':row[4],'dob':row[5],'emp_address':row[6],'place':row[7],'phone':row[8],'mobile':row[9],'email':row[10],'password':row[11],'status':row[12]}
-				list.append(dict)
-		return render(request,'agency/view_vacancy2.html',{'list':list})
+		emp_id = request.session['u_id']
+		
+		# Get employer details using ORM
+		try:
+			employer = tbl_emp.objects.get(emp_id=emp_id)
+		except tbl_emp.DoesNotExist:
+			return render(request, 'agency/view_vacancy.html', {'list': []})
+		
+		# Get all vacancies for this employer using ORM
+		# Note: emp_id in tbl_vacancy is stored as CharField, so convert to string
+		vacancies = tbl_vacancy.objects.filter(emp_id=str(emp_id))
+		
+		list_data = []
+		for vacancy in vacancies:
+			dict_data = {
+				'vacancy_id': vacancy.vacancy_id,
+				'date': vacancy.date,
+				'emp_id': vacancy.emp_id,
+				'vacancy': vacancy.vacancy,
+				'vacancy_no': vacancy.vacancy_no,
+				'description': vacancy.description,
+				'name': employer.name,
+				'gender': employer.gender,
+				'firm_name': employer.firm_name,
+				'aadhar_no': employer.aadhar_no,
+				'dob': employer.dob,
+				'emp_address': employer.emp_address,
+				'place': employer.place,
+				'phone': employer.phone,
+				'mobile': employer.mobile,
+				'email': employer.email,
+				'status': employer.status
+			}
+			list_data.append(dict_data)
+		
+		return render(request, 'agency/view_vacancy.html', {'list': list_data})
+		
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+		return HttpResponse(html)
+
 def editvacancy1(request):
-		cursor=connection.cursor()
-		list=[]
-		sql="select * from tbl_emp where emp_id='%s'"%(request.session['u_id'])
-		
-		cursor.execute(sql)
-		result1=cursor.fetchall()
-		for row in result1:
-			sql1="select * from tbl_vacancy where emp_id='%s'"%(row[0])
-			cursor.execute(sql1)
-			result=cursor.fetchall()
-			for row1 in result:
-				dict={'vacancy_id':row1[0],'date':row1[1],'emp_id':row1[2],'vacancy':row1[3],'vacancy_no':row1[4],'description':row1[5],'emp_id':row[0],'name':row[1],'gender':row[2],'firm_name':row[3],'aadhar_no':row[4],'dob':row[5],'emp_address':row[6],'place':row[7],'phone':row[8],'mobile':row[9],'email':row[10],'password':row[11],'status':row[12]}
-				list.append(dict)
-		return render(request,'agency/edit_vacancy1.html',{'list':list})
+    """View vacancies for editing - uses ORM for better reliability"""
+    try:
+        # Check if user is logged in
+        if 'u_id' not in request.session:
+            html = "<script>alert('Please login first');window.location='/login/';</script>"
+            return HttpResponse(html)
+        
+        emp_id = request.session['u_id']
+        
+        # Get employer details
+        try:
+            employer = tbl_emp.objects.get(emp_id=emp_id)
+        except tbl_emp.DoesNotExist:
+            return render(request, 'agency/edit_vacancy1.html', {'list': []})
+        
+        # Get all vacancies for this employer
+        vacancies = tbl_vacancy.objects.filter(emp_id=str(emp_id))
+        
+        list_data = []
+        for vacancy in vacancies:
+            dict_data = {
+                'vacancy_id': vacancy.vacancy_id,
+                'date': vacancy.date,
+                'emp_id': vacancy.emp_id,
+                'vacancy': vacancy.vacancy,
+                'vacancy_no': vacancy.vacancy_no,
+                'description': vacancy.description,
+                'name': employer.name,
+                'gender': employer.gender,
+                'firm_name': employer.firm_name,
+                'aadhar_no': employer.aadhar_no,
+                'dob': employer.dob,
+                'emp_address': employer.emp_address,
+                'place': employer.place,
+                'phone': employer.phone,
+                'mobile': employer.mobile,
+                'email': employer.email,
+                'status': employer.status
+            }
+            list_data.append(dict_data)
+        
+        return render(request, 'agency/edit_vacancy1.html', {'list': list_data})
+        
+    except Exception as e:
+        html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+        return HttpResponse(html)
+
 def editvacancy2(request):
 		cursor=connection.cursor()
 		vacancy_id=request.GET['vacancy_id']
@@ -912,63 +1241,54 @@ def viewvacancyhome4(request):
 			html="<script>alert('successfully inserted! ');window.location='/homeworker/';</script>"
 		return HttpResponse(html)
 def viewappliedvacancy(request):
-	"""View applied workers for employer's vacancies"""
+	"""Agency view: View workers who applied to vacancies using ORM"""
 	try:
 		emp_id = request.session.get('u_id')
 		if not emp_id:
-			html = "<script>alert('Please login first');window.location='/login/';</script>"
-			return HttpResponse(html)
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
 		
-		cursor = connection.cursor()
+		# 1. Get all vacancies created by this employer
+		vacancies = tbl_vacancy.objects.filter(emp_id=str(emp_id))
 		list_data = []
 		
-		# Get all vacancies created by this employer
-		sql = "SELECT vacancy_id, date, vacancy, vacancy_no, description, emp_id FROM tbl_vacancy WHERE emp_id='%s'" % (emp_id)
-		cursor.execute(sql)
-		result1 = cursor.fetchall()
-		
-		for row in result1:
-			vacancy_id = row[0]
-			# Get workers who applied to this vacancy (from tbl_workerdetails)
-			# Join with tbl_worker to get worker details and filter by status='Active'
-			sql1 = """
-				SELECT wd.worker_id, wd.vacancy_id, wd.qualification, wd.experience,
-					   w.worker_name, w.gender, w.dob, w.aadhar_number, w.place, w.address, 
-					   w.phone, w.mobile, w.email, w.status
-				FROM tbl_workerdetails wd
-				INNER JOIN tbl_worker w ON wd.worker_id = w.worker_id
-WHERE wd.vacancy_id='%s'
-			""" % (vacancy_id)
-			cursor.execute(sql1)
-			result = cursor.fetchall()
+		for vacancy in vacancies:
+			# 2. Get applications for this specific vacancy
+			# Note: vacancy_id in tbl_workerdetails is CharField
+			applications = tbl_workerdetails.objects.filter(vacancy_id=str(vacancy.vacancy_id))
 			
-			for row1 in result:
-				dict_data = {
-					'date': row[1],
-					'vacancy': row[2],
-					'vacancy_no': row[3],
-					'description': row[4],
-					'worker_id': row1[0],
-					'vacancy_id': row1[1],
-					'qualification': row1[2],
-					'experience': row1[3],
-					'worker_name': row1[4],
-					'gender': row1[5],
-					'dob': row1[6],
-					'aadhar_number': row1[7],
-					'place': row1[8],
-					'address': row1[9],
-					'phone': row1[10],
-					'mobile': row1[11],
-					'email': row1[12],
-					'status': row1[13]
-				}
-				list_data.append(dict_data)
+			for app in applications:
+				try:
+					# 3. Get worker details
+					worker = tbl_worker.objects.get(worker_id=app.worker_id)
+					dict_data = {
+						'date': vacancy.date,
+						'vacancy': vacancy.vacancy,
+						'vacancy_no': vacancy.vacancy_no,
+						'description': vacancy.description,
+						'worker_id': worker.worker_id,
+						'vacancy_id': vacancy.vacancy_id,
+						'qualification': app.qualification,
+						'experience': app.experience,
+						'worker_name': worker.worker_name,
+						'gender': worker.gender,
+						'dob': worker.dob,
+						'aadhar_number': worker.aadhar_number,
+						'place': worker.place,
+						'address': worker.address,
+						'phone': worker.phone,
+						'mobile': worker.mobile,
+						'email': worker.email,
+						'status': worker.status
+					}
+					list_data.append(dict_data)
+				except tbl_worker.DoesNotExist:
+					continue
 		
 		return render(request, 'worker/view_appliedvacancy.html', {'list': list_data})
 	except Exception as e:
 		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
 		return HttpResponse(html)
+
 def index(request):
 	return render(request,'common/index.html')
 def login(request):
@@ -1012,21 +1332,97 @@ def addmyworker(request):
 		else:
 			html="<script>alert('Cannot add as myworker! ');window.location='/homeemp/';</script>"
 		return HttpResponse(html)
-def editfeedbackworker1(request):
-		cursor=connection.cursor()
-		sql="select * from tbl_myworker where status='fixed' and emp_id='%s'"%(request.session['u_id'])
-		list=[]
-		cursor.execute(sql)
-		result1=cursor.fetchall()
-		for row1 in result1:
-				sql1="select * from tbl_worker where worker_id='%s'"%(row1[2])
-				cursor.execute(sql1)
-				result=cursor.fetchall()
-				for row in result:
-					dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'regis_date':row[6],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12]}
-					list.append(dict)
-		return render(request,'worker/editfeedbackworker1.html',{'list':list})
+def view_feedbackworker(request):
+	"""Agency view: View my workers to add feedback using ORM"""
+	try:
+		emp_id = request.session.get('u_id')
+		if not emp_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
+			
+		# Use str(emp_id) because emp_id is CharField in tbl_myworker
+		my_workers = tbl_myworker.objects.filter(emp_id=str(emp_id))
+		list_data = []
+		male_count = 0
+		female_count = 0
 		
+		for my_w in my_workers:
+			try:
+				# Use str(my_w.worker_id) for safety
+				worker = tbl_worker.objects.get(worker_id=str(my_w.worker_id))
+				
+				# Count genders for stats
+				gender = str(worker.gender).lower()
+				if gender == 'male':
+					male_count += 1
+				elif gender == 'female':
+					female_count += 1
+					
+				dict_data = {
+					'worker_id': worker.worker_id,
+					'image': worker.image,
+					'worker_name': worker.worker_name,
+					'gender': worker.gender,
+					'dob': worker.dob,
+					'aadhar_number': worker.aadhar_number,
+					'regis_date': worker.regis_date,
+					'place': worker.place,
+					'address': worker.address,
+					'languages_known': worker.languages_known,
+					'phone': worker.phone,
+					'mobile': worker.mobile,
+					'email': worker.email,
+					'status': worker.status
+				}
+				list_data.append(dict_data)
+			except tbl_worker.DoesNotExist:
+				continue
+				
+		return render(request, 'worker/view_feedbackworker.html', {
+			'list': list_data,
+			'male_count': male_count,
+			'female_count': female_count
+		})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+		return HttpResponse(html)
+		
+def editfeedbackworker1(request):
+	"""Agency view: List workers to edit feedback using ORM"""
+	try:
+		emp_id = request.session.get('u_id')
+		if not emp_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
+			
+		# Filter fixed workers for this employer
+		my_workers = tbl_myworker.objects.filter(status='fixed', emp_id=str(emp_id))
+		list_data = []
+		
+		for my_w in my_workers:
+			try:
+				worker = tbl_worker.objects.get(worker_id=str(my_w.worker_id))
+				dict_data = {
+					'worker_id': worker.worker_id,
+					'image': worker.image,
+					'worker_name': worker.worker_name,
+					'gender': worker.gender,
+					'dob': worker.dob,
+					'aadhar_number': worker.aadhar_number,
+					'regis_date': worker.regis_date,
+					'place': worker.place,
+					'address': worker.address,
+					'languages_known': worker.languages_known,
+					'phone': worker.phone,
+					'mobile': worker.mobile,
+					'email': worker.email
+				}
+				list_data.append(dict_data)
+			except tbl_worker.DoesNotExist:
+				continue
+		
+		return render(request, 'worker/editfeedbackworker1.html', {'list': list_data})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+		return HttpResponse(html)
 		
 def editfeedbackworker2(request):
 		cursor=connection.cursor()
@@ -1073,48 +1469,116 @@ def viewemydetailsworker(request):
 		return render(request,'worker/view_mydetailsworker.html',{'list':list})
 
 def worker_profile(request):
-	"""Display worker profile view - used for cancel button in edit profile"""
-	cursor=connection.cursor()
-	sql="select * from tbl_login where user_type='worker' and u_id='%s'"%(request.session['u_id'])
-	list=[]
-	cursor.execute(sql)
-	result1=cursor.fetchall()
-	for row1 in result1:
-		sql1="select * from tbl_worker where worker_id='%s'"%(row1[3])
-		cursor.execute(sql1)
-		result=cursor.fetchall()
-		for row in result:
-			dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[6],'regis_date':row[7],'place':row[8],'address':row[9],'languages_known':row[10],'phone':row[11],'mobile':row[12],'email':row[13],'status':row[15]}
-			list.append(dict)
-	return render(request,'worker/worker_profile.html',{'worker':list[0] if list else None})
+	"""Display worker profile using ORM for stability"""
+	try:
+		u_id = request.session.get('u_id')
+		if not u_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
+			
+		worker = tbl_worker.objects.get(worker_id=u_id)
+		dict_data = {
+			'worker_id': worker.worker_id,
+			'image': worker.image,
+			'worker_name': worker.worker_name,
+			'gender': worker.gender,
+			'dob': worker.dob,
+			'age': worker.age,
+			'aadhar_number': worker.aadhar_number,
+			'regis_date': worker.regis_date,
+			'place': worker.place,
+			'address': worker.address,
+			'languages_known': worker.languages_known,
+			'phone': worker.phone,
+			'mobile': worker.mobile,
+			'email': worker.email,
+			'status': worker.status
+		}
+		return render(request, 'worker/worker_profile.html', {'worker': dict_data})
+	except tbl_worker.DoesNotExist:
+		html = "<script>alert('Worker profile not found');window.location='/homeworker/';</script>"
+		return HttpResponse(html)
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeworker/';</script>"
+		return HttpResponse(html)
 def viewmyworker(request):
-		cursor=connection.cursor()
-		list=[]
-		sql="select * from tbl_myworker where status='fixed' and emp_id='%s'"%(request.session['u_id'])
+	"""View my workers for the logged-in employer using ORM"""
+	try:
+		# Check session
+		if 'u_id' not in request.session:
+			html = "<script>alert('Please login first');window.location='/login/';</script>"
+			return HttpResponse(html)
 		
-		cursor.execute(sql)
-		result1=cursor.fetchall()
-		for row1 in result1:
-				sql1="select * from tbl_worker where worker_id='%s'"%(row1[2])
-				cursor.execute(sql1)
-				result=cursor.fetchall()
-				for row in result:
-					dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'regis_date':row[6],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12]}
-					list.append(dict)
-		return render(request,'worker/view_myworker.html',{'list':list})
+		emp_id = request.session['u_id']
+		
+		# Get all myworkers for this employer using ORM
+		# Use str(emp_id) because emp_id is CharField in tbl_myworker
+		myworkers = tbl_myworker.objects.filter(status='fixed', emp_id=str(emp_id))
+		
+		list_data = []
+		for myworker in myworkers:
+			try:
+				worker = tbl_worker.objects.get(worker_id=myworker.worker_id)
+				dict_data = {
+					'worker_id': worker.worker_id,
+					'image': worker.image,
+					'worker_name': worker.worker_name,
+					'gender': worker.gender,
+					'dob': worker.dob,
+					'aadhar_number': worker.aadhar_number,
+					'regis_date': worker.regis_date,
+					'place': worker.place,
+					'address': worker.address,
+					'languages_known': worker.languages_known,
+					'phone': worker.phone,
+					'mobile': worker.mobile,
+					'email': worker.email,
+					'status': worker.status
+				}
+				list_data.append(dict_data)
+			except tbl_worker.DoesNotExist:
+				continue
+		
+		return render(request, 'agency/view_myworker.html', {'list': list_data})
+		
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+		return HttpResponse(html)
+
 def viewfeedback(request):
-		cursor=connection.cursor()
-		list=[]
-		sql1="select * from tbl_feedback INNER JOIN tbl_worker on tbl_feedback.worker_id=tbl_worker.worker_id INNER JOIN tbl_emp on tbl_feedback.emp_id=tbl_emp.emp_id where tbl_feedback.emp_id='%s'"%(request.session['u_id'])
-		cursor.execute(sql1)
-		result=cursor.fetchall()
-		#return HttpResponse(result)
-		for row1 in result:
-			dict={'feedback_id':row1[0],'date':row1[1],'emp_id':row1[2],'worker_id':row1[3],'feedback_title':row1[4],'feedback_description':row1[5],'image':row1[7],'worker_name':row1[8],'gender':row1[9],'address':row1[14],'mobile':row1[16],'email':row1[17]}
-			list.append(dict)
-			#return HttpResponse(row1)
-		#return HttpResponse(list)
-		return render(request,'agency/view_feedback.html',{'list':list})
+	"""Agency view: View feedback given by this agency using ORM"""
+	try:
+		emp_id = request.session.get('u_id')
+		if not emp_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
+			
+		feedbacks = tbl_feedback.objects.filter(emp_id=str(emp_id))
+		list_data = []
+		
+		for fb in feedbacks:
+			try:
+				worker = tbl_worker.objects.get(worker_id=fb.worker_id)
+				dict_data = {
+					'feedback_id': fb.feedback_id,
+					'worker_id': fb.worker_id,
+					'emp_id': fb.emp_id,
+					'date': fb.date,
+					'feedback_title': fb.feedback_title, # Corrected field name
+					'feedback_description': fb.feedback_description, # Corrected field name
+					'worker_name': worker.worker_name,
+					'image': worker.image, # Added image
+					'gender': worker.gender, # Added gender
+					'address': worker.address, # Added address
+					'mobile': worker.mobile, # Added mobile
+					'email': worker.email # Added email
+				}
+				list_data.append(dict_data)
+			except tbl_worker.DoesNotExist:
+				continue
+				
+		return render(request, 'agency/view_feedback.html', {'list': list_data})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+		return HttpResponse(html)
 def viewadmin(request):
 		cursor=connection.cursor()
 		sql="select * from tbl_login where user_type='admin' and u_id='%s'"%(request.session['u_id'])
@@ -1172,36 +1636,84 @@ def editadmin3(request):
 		cursor.execute(sql7)
 		html="<script>alert('successfully Editted!');window.location='/homeadmin/';</script>"
 def viewadminworker(request):
-		cursor=connection.cursor()
-		list=[]
-		sql1="select * from tbl_worker "
-		cursor.execute(sql1)
-		result=cursor.fetchall()
-		for row in result:
-			dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'regis_date':row[6],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12],'status':row[14]}
-			list.append(dict)
-		return render(request,'admin/view_adminworker.html',{'list':list})
+	"""Admin view: List all workers using ORM for stability"""
+	try:
+		workers = tbl_worker.objects.all().order_by('worker_id')
+		list_data = []
+		for row in workers:
+			dict_data = {
+				'worker_id': row.worker_id,
+				'image': row.image,
+				'worker_name': row.worker_name,
+				'gender': row.gender,
+				'dob': row.dob,
+				'aadhar_number': row.aadhar_number,
+				'regis_date': row.regis_date,
+				'place': row.place,
+				'address': row.address,
+				'languages_known': row.languages_known,
+				'phone': row.phone,
+				'mobile': row.mobile,
+				'email': row.email,
+				'status': row.status
+			}
+			list_data.append(dict_data)
+		return render(request, 'admin/view_adminworker.html', {'list': list_data})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeadmin/';</script>"
+		return HttpResponse(html)
 def editadminworker(request):
-		cursor=connection.cursor()
-		list=[]
-		sql1="select * from tbl_worker "
-		cursor.execute(sql1)
-		result=cursor.fetchall()
-		for row in result:
-					dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'regis_date':row[6],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12],'status':row[14]}
-					list.append(dict)
-		return render(request,'admin/edit_adminworker.html',{'list':list})
+	"""Admin view: List all workers for editing using ORM"""
+	try:
+		workers = tbl_worker.objects.all().order_by('worker_id')
+		list_data = []
+		for row in workers:
+			dict_data = {
+				'worker_id': row.worker_id,
+				'image': row.image,
+				'worker_name': row.worker_name,
+				'gender': row.gender,
+				'dob': row.dob,
+				'aadhar_number': row.aadhar_number,
+				'regis_date': row.regis_date,
+				'place': row.place,
+				'address': row.address,
+				'languages_known': row.languages_known,
+				'phone': row.phone,
+				'mobile': row.mobile,
+				'email': row.email,
+				'status': row.status
+			}
+			list_data.append(dict_data)
+		return render(request, 'admin/edit_adminworker.html', {'list': list_data})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeadmin/';</script>"
+		return HttpResponse(html)
 def editadminworker2(request):
-		cursor=connection.cursor()
-		worker_id=request.GET['worker_id']
-		sql1="select * from tbl_worker where worker_id='%s'" %(worker_id)
-		cursor.execute(sql1)
-		result=cursor.fetchall()
-		list=[]
-		for row in result:
-			dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'regis_date':row[6],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12],'status':row[14]}
-			list.append(dict)
-		return render(request,'admin/edit_adminworker2.html',{'list':list})
+	"""Admin view: Individual worker details for editing using ORM"""
+	try:
+		worker_id = request.GET.get('worker_id')
+		worker = tbl_worker.objects.get(worker_id=worker_id)
+		dict_data = {
+			'worker_id': worker.worker_id,
+			'image': worker.image,
+			'worker_name': worker.worker_name,
+			'gender': worker.gender,
+			'dob': worker.dob,
+			'aadhar_number': worker.aadhar_number,
+			'regis_date': worker.regis_date,
+			'place': worker.place,
+			'address': worker.address,
+			'languages_known': worker.languages_known,
+			'phone': worker.phone,
+			'mobile': worker.mobile,
+			'email': worker.email,
+			'status': worker.status
+		}
+		return render(request, 'admin/edit_adminworker2.html', {'list': [dict_data]})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/editadminworker/';</script>"
+		return HttpResponse(html)
 def editadminworker3(request):
 		worker_id=request.GET['worker_id']
 		Name=request.GET['name']
@@ -1241,35 +1753,36 @@ def viewempadmin(request):
 
 # Admin Employer Approval Views
 def admin_view_pending_employers(request):
-	"""Admin view: List all pending employer registrations"""
+	"""Admin view: List all pending employer registrations using ORM"""
 	try:
-		cursor = connection.cursor()
-		# Get employers with status='false' (pending) or not yet approved
-		sql = "SELECT * FROM tbl_login WHERE user_type='employer' AND status='false'"
-		cursor.execute(sql)
-		result1 = cursor.fetchall()
-		
+		if 'u_id' not in request.session:
+			return redirect('/login/')
+			
+		# Get pending logins for employers
+		pending_logins = tbl_login.objects.filter(user_type='employer', status='false')
 		list_data = []
-		for row1 in result1:
-			sql1 = "SELECT * FROM tbl_emp WHERE emp_id='%s'" % (row1[3])
-			cursor.execute(sql1)
-			result = cursor.fetchall()
-			for row in result:
+		
+		for login in pending_logins:
+			try:
+				emp = tbl_emp.objects.get(emp_id=str(login.u_id))
 				dict_data = {
-					'emp_id': row[0],
-					'name': row[1],
-					'gender': row[2],
-					'firm_name': row[3],
-					'aadhar_no': row[4],
-					'dob': row[5],
-					'emp_address': row[6],
-					'place': row[7],
-					'phone': row[8],
-					'mobile': row[9],
-					'email': row[10],
-					'status': row[12]
+					'emp_id': emp.emp_id,
+					'name': emp.name,
+					'gender': emp.gender,
+					'firm_name': emp.firm_name,
+					'aadhar_no': emp.aadhar_no,
+					'dob': emp.dob,
+					'emp_address': emp.emp_address,
+					'place': emp.place,
+					'phone': emp.phone,
+					'mobile': emp.mobile,
+					'email': emp.email,
+					'status': 'Pending'
 				}
 				list_data.append(dict_data)
+			except tbl_emp.DoesNotExist:
+				continue
+				
 		return render(request, 'admin/approve_employer.html', {'list': list_data})
 	except Exception as e:
 		html = f"<script>alert('Error: {str(e)}');window.location='/homeadmin/';</script>"
@@ -1277,35 +1790,40 @@ def admin_view_pending_employers(request):
 
 
 def admin_view_all_employers(request):
-	"""Admin view: List all employer/agency details"""
+	"""Admin view: List all employer/agency details using ORM"""
 	try:
-		cursor = connection.cursor()
-		# Get all employers
-		sql = "SELECT * FROM tbl_login WHERE user_type='employer'"
-		cursor.execute(sql)
-		result1 = cursor.fetchall()
-		
+		if 'u_id' not in request.session:
+			return redirect('/login/')
+			
+		# Get all employers from tbl_emp
+		employers = tbl_emp.objects.all().order_by('emp_id')
 		list_data = []
-		for row1 in result1:
-			sql1 = "SELECT * FROM tbl_emp WHERE emp_id='%s'" % (row1[3])
-			cursor.execute(sql1)
-			result = cursor.fetchall()
-			for row in result:
-				dict_data = {
-					'emp_id': row[0],
-					'name': row[1],
-					'gender': row[2],
-					'firm_name': row[3],
-					'aadhar_no': row[4],
-					'dob': row[5],
-					'emp_address': row[6],
-					'place': row[7],
-					'phone': row[8],
-					'mobile': row[9],
-					'email': row[10],
-					'status': row[12]
-				}
-				list_data.append(dict_data)
+		
+		for emp in employers:
+			# Get status from tbl_login
+			# Use filter().first() instead of get() to handle multiple login records
+			login_entry = tbl_login.objects.filter(u_id=str(emp.emp_id)).first()
+			if login_entry:
+				status = 'Active' if login_entry.status == 'true' else 'pending'
+			else:
+				status = 'Unknown'
+				
+			dict_data = {
+				'emp_id': emp.emp_id,
+				'name': emp.name,
+				'gender': emp.gender,
+				'firm_name': emp.firm_name,
+				'aadhar_no': emp.aadhar_no,
+				'dob': emp.dob,
+				'emp_address': emp.emp_address,
+				'place': emp.place,
+				'phone': emp.phone,
+				'mobile': emp.mobile,
+				'email': emp.email,
+				'status': status
+			}
+			list_data.append(dict_data)
+			
 		return render(request, 'admin/view_all_employers.html', {'list': list_data})
 	except Exception as e:
 		html = f"<script>alert('Error: {str(e)}');window.location='/homeadmin/';</script>"
@@ -1431,16 +1949,48 @@ def admin_reject_employer(request):
 	
 
 def viewfeedbackworkerhome(request):
-		cursor=connection.cursor()
-		list=[]
-		sql1="select * from tbl_feedback where worker_id='%s'"%(request.session['u_id'])
-		cursor.execute(sql1)
-		result1=cursor.fetchall()
-		for row1 in result1:
+	"""Worker view: View feedback received from employers using ORM"""
+	try:
+		u_id = request.session.get('u_id')
+		if not u_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
 			
-			dict={'feedback_id':row1[0],'date':row1[1],'emp_id':row1[2],'worker_id':row1[3],'feedback_title':row1[4],'feedback_description':row1[5]}
-			list.append(dict)
-		return render(request,'worker/view_feedbackworkerhome.html',{'list':list})
+		# Get feedback for this worker
+		# Use str(u_id) for CharField column
+		feedbacks = tbl_feedback.objects.filter(worker_id=str(u_id)).order_by('-date')
+		list_data = []
+		
+		for fb in feedbacks:
+			try:
+				# Get employer details
+				employer = tbl_emp.objects.get(emp_id=str(fb.emp_id))
+				dict_data = {
+					'feedback_id': fb.feedback_id,
+					'date': fb.date,
+					'emp_id': fb.emp_id,
+					'emp_name': employer.name,
+					'firm_name': employer.firm_name,
+					'feedback_title': fb.feedback_title,
+					'feedback_description': fb.feedback_description
+				}
+				list_data.append(dict_data)
+			except tbl_emp.DoesNotExist:
+				# If employer doesn't exist, show ID only
+				dict_data = {
+					'feedback_id': fb.feedback_id,
+					'date': fb.date,
+					'emp_id': fb.emp_id,
+					'emp_name': f"Employer #{fb.emp_id}",
+					'firm_name': "N/A",
+					'feedback_title': fb.feedback_title,
+					'feedback_description': fb.feedback_description
+				}
+				list_data.append(dict_data)
+				
+		return render(request, 'worker/view_feedbackworkerhome.html', {'list': list_data})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeworker/';</script>"
+		return HttpResponse(html)
 		
 		
 		'''def viewappliedvacancy(request):
@@ -1478,33 +2028,101 @@ def jobsheddule1(request):
 		return render(request,'worker/jobsheddule.html',{'worker_id':worker_id})
 def jobsheddule2(request):
 		Emp_id=request.session['u_id']
-		Worker_id=request.GET['worker_id']
-		Job_details=request.GET['work'] 
-		Salary=request.GET['salary']
+		Worker_id=request.POST['worker_id']
+		Job_details=request.POST['work'] 
+		Salary=request.POST['salary']
 		
-		Working_houres=request.GET['working_houres']
+		Working_houres=request.POST['working_houres']
 		
 		cursor=connection.cursor()
 		
 		sql4="insert into tbl_workershedule(emp_id,worker_id,job_details,salary,time_from,working_houres)values('%s','%s','%s','%s','%s','%s')"%(Emp_id,Worker_id,Job_details,Salary,now,Working_houres) 
 		cursor.execute(sql4)
+		
+		# Send salary notification email to worker
+		try:
+			# Get worker details from tbl_worker
+			sql_worker = "SELECT worker_name, email FROM tbl_worker WHERE worker_id='%s'" % (Worker_id)
+			cursor.execute(sql_worker)
+			worker_result = cursor.fetchone()
+			
+			if worker_result:
+				worker_name = worker_result[0]
+				worker_email = worker_result[1]
+				
+				# Parse month and year from the date (now is in format YYYY-MM-DD)
+				month_dict = {
+					'01': 'January', '02': 'February', '03': 'March', '04': 'April',
+					'05': 'May', '06': 'June', '07': 'July', '08': 'August',
+					'09': 'September', '10': 'October', '11': 'November', '12': 'December'
+				}
+				month_str = now[5:7]
+				year_str = now[0:4]
+				month_year = f"{month_dict.get(month_str, 'Unknown')} {year_str}"
+				
+				# Send the salary notification email
+				send_salary_notification_email(
+					worker_email=worker_email,
+					worker_name=worker_name,
+					salary_amount=Salary,
+					month_year=month_year
+				)
+				print(f"Salary notification email triggered for worker {worker_name}")
+		except Exception as e:
+			# Log the error but don't interrupt the main flow
+			print(f"Error sending salary notification email: {str(e)}")
+		
 		html="<script>alert('successfully inserted! ');window.location='/homeemp/';</script>"
 		return HttpResponse(html)
 def viewjobshedule(request):
-		cursor=connection.cursor()
-		list=[]
-		sql="select * from tbl_myworker where status='fixed' and emp_id='%s'"%(request.session['u_id'])
+	"""Agency view: View job schedules for assigned workers using ORM"""
+	try:
+		emp_id = request.session.get('u_id')
+		if not emp_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
+			
+		# 1. Get my workers first to filter schedules
+		# Use str(emp_id) for CharField column
+		my_worker_ids = list(tbl_myworker.objects.filter(emp_id=str(emp_id)).values_list('worker_id', flat=True))
 		
-		cursor.execute(sql)
-		result1=cursor.fetchall()
-		for row1 in result1:
-				sql1="select * from tbl_worker where worker_id='%s'"%(row1[2])
-				cursor.execute(sql1)
-				result=cursor.fetchall()
-				for row in result:
-					dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12],'status':row[14]}
-					list.append(dict)
-		return render(request,'worker/viewjobshedule.html',{'list':list})
+		# 2. Get schedules for these workers
+		# Convert string IDs back to integers as tbl_workershedule uses IntegerField for worker_id
+		worker_ids_int = [int(wid) for wid in my_worker_ids if str(wid).isdigit()]
+		schedules = tbl_workershedule.objects.filter(worker_id__in=worker_ids_int).order_by('-shedule_id')
+		list_data = []
+		
+		for shed in schedules:
+			try:
+				worker = tbl_worker.objects.get(worker_id=shed.worker_id)
+				dict_data = {
+					'shedule_id': shed.shedule_id,
+					'worker_id': shed.worker_id,
+					'job_details': shed.job_details, # Corrected field name
+					'salary': shed.salary,
+					'time_from': shed.time_from,
+					'working_houres': shed.working_houres,
+					'worker_name': worker.worker_name,
+					'image': worker.image,
+					'gender': worker.gender,
+					'dob': worker.dob,
+					'aadhar_number': worker.aadhar_number,
+					'regis_date': worker.regis_date,
+					'place': worker.place,
+					'address': worker.address,
+					'languages_known': worker.languages_known,
+					'phone': worker.phone,
+					'mobile': worker.mobile,
+					'email': worker.email
+				}
+				list_data.append(dict_data)
+			except tbl_worker.DoesNotExist:
+				continue
+				
+		return render(request, 'worker/viewjobshedule.html', {'list': list_data})
+
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+		return HttpResponse(html)
 def viewjobshedule2(request):
 		cursor=connection.cursor()
 		worker_id=request.GET['worker_id']
@@ -1582,19 +2200,32 @@ def changepaswd1 (request):
 		html="<script>alert('Cannot be changed! ');window.location='/login/';</script>"
 	return HttpResponse(html)
 def viewadminpolice(request):
-		cursor=connection.cursor()
-		sql="select * from tbl_login where user_type='police'"
-		list=[]
-		cursor.execute(sql)
-		result1=cursor.fetchall()
-		for row1 in result1:
-				sql1="select * from tbl_policestation where station_id='%s'"%(row1[3])
-				cursor.execute(sql1)
-				result=cursor.fetchall()
-				for row in result:
-					dict={'station_id':row[0],'branch':row[1],'address':row[2],'phone':row[3],'mobile':row[4],'email':row[5],'district':row[6],'city':row[7],'state':row[8],'password':row[9]}
-					list.append(dict)
-		return render(request,'admin/viewadminpolice.html',{'list':list})
+	"""Admin view: List all registered police units using ORM"""
+	try:
+		if 'u_id' not in request.session:
+			return redirect('/login/')
+			
+		stations = tbl_policestation.objects.all().order_by('branch')
+		list_data = []
+		
+		for ps in stations:
+			dict_data = {
+				'station_id': ps.station_id,
+				'branch': ps.branch,
+				'address': ps.address,
+				'phone': ps.phone,
+				'mobile': ps.mobile,
+				'email': ps.email,
+				'district': ps.district,
+				'city': ps.city,
+				'state': ps.state
+			}
+			list_data.append(dict_data)
+			
+		return render(request, 'admin/viewadminpolice.html', {'list': list_data})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeadmin/';</script>"
+		return HttpResponse(html)
 def viewpolice(request):
 	"""View all police stations - fetches all police station records"""
 	cursor=connection.cursor()
@@ -1855,21 +2486,60 @@ def addcomplaint(request):
 		html = f"<script>alert('Error: {str(e)}');window.location='/homeworker/';</script>"
 		return HttpResponse(html)
 def complaint2(request):
-		#now=datetime.datetime.today()
-		Worker_id=request.session['u_id']
-		Noc_id=request.GET['noc_id']
+	"""Worker: Submit a complaint linked to a NOC using ORM"""
+	try:
+		u_id = request.session.get('u_id')
+		if not u_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
+			
+		noc_id = request.GET.get('noc_id', '').strip()
+		complaint_text = request.GET.get('complaint', '').strip()
 		
-		Complaint=request.GET['complaint'] 
+		if not noc_id or not complaint_text:
+			return HttpResponse("<script>alert('Complaint text and NOC ID are required');history.back();</script>")
 		
-		cursor=connection.cursor()
+		# Verify the NOC belongs to this worker before allowing complaint
+		try:
+			noc = tbl_noc.objects.get(noc_id=noc_id, worker_id=str(u_id))
+		except tbl_noc.DoesNotExist:
+			return HttpResponse("<script>alert('Invalid NOC reference. This NOC does not belong to you.');window.location='/addcomplaint/';</script>")
 		
-		sql4="insert into tbl_noccomplaint(worker_id,noc_id,complaint,complaint_date)values('%s','%s','%s','%s')"%(Worker_id,Noc_id,Complaint,now) 
-		cursor.execute(sql4)
-		html="<script>alert('successfully inserted! ');window.location='/homeworker/';</script>"
+		# Use ORM to create complaint safely
+		from Track.models import tbl_noccomplaint
+		tbl_noccomplaint.objects.create(
+			worker_id=str(u_id),
+			noc_id=str(noc_id),
+			complaint=complaint_text[:500],  # Enforce max length
+			complaint_date=now
+		)
+		
+		html = "<script>alert('Complaint submitted successfully! The police authority has been notified.');window.location='/homeworker/';</script>"
 		return HttpResponse(html)
+	except Exception as e:
+		html = f"<script>alert('Error submitting complaint: {str(e)}');window.location='/addcomplaint/';</script>"
+		return HttpResponse(html)
+
 def addcomplaint3(request):
-		Noc_id=request.GET['noc_id']
-		return render(request,'police/complaint.html',{'noc_id':Noc_id})
+	"""Worker: Open complaint writing form for a specific NOC"""
+	try:
+		u_id = request.session.get('u_id')
+		if not u_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
+			
+		noc_id = request.GET.get('noc_id', '')
+		if not noc_id:
+			return HttpResponse("<script>alert('NOC ID missing');window.location='/addcomplaint/';</script>")
+		
+		# Verify the NOC belongs to this worker
+		try:
+			noc = tbl_noc.objects.get(noc_id=noc_id, worker_id=str(u_id))
+		except tbl_noc.DoesNotExist:
+			return HttpResponse("<script>alert('Invalid NOC ID or you do not have access to this NOC.');window.location='/addcomplaint/';</script>")
+		
+		return render(request, 'police/complaint.html', {'noc_id': noc_id})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/addcomplaint/';</script>"
+		return HttpResponse(html)
 '''def viewcomplaints(request):
 		cursor=connection.cursor()
 		sql="select * from tbl_login where user_type='worker' and status='true' "
@@ -1994,19 +2664,35 @@ def editnoc4(request):
 		html = f"<script>alert('Error: {str(e)}');window.location='/homepolice/';</script>"
 		return HttpResponse(html)
 def viewpoliceworker(request):
-	cursor=connection.cursor()
-	list=[]
-	sql="select * from tbl_login where user_type='worker'"
-	cursor.execute(sql)
-	result1=cursor.fetchall()
-	for row1 in result1:
-		sql6="select * from tbl_worker where worker_id='%s'"%(row1[3])
-		cursor.execute(sql6)
-		result=cursor.fetchall()
-		for row in result:
-			dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'regis_date':row[6],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12],'status':row[14]}
-			list.append(dict)
-	return render(request,'police/view_police_worker.html',{'list':list})
+	"""Police view: List all workers using ORM for stability"""
+	try:
+		# Get all worker IDs from login table
+		worker_ids = tbl_login.objects.filter(user_type='worker').values_list('u_id', flat=True)
+		workers = tbl_worker.objects.filter(worker_id__in=worker_ids).order_by('worker_id')
+		
+		list_data = []
+		for worker in workers:
+			dict_data = {
+				'worker_id': worker.worker_id,
+				'image': worker.image,
+				'worker_name': worker.worker_name,
+				'gender': worker.gender,
+				'dob': worker.dob,
+				'aadhar_number': worker.aadhar_number,
+				'regis_date': worker.regis_date,
+				'place': worker.place,
+				'address': worker.address,
+				'languages_known': worker.languages_known,
+				'phone': worker.phone,
+				'mobile': worker.mobile,
+				'email': worker.email,
+				'status': worker.status
+			}
+			list_data.append(dict_data)
+		return render(request, 'police/view_police_worker.html', {'list': list_data})
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homepolice/';</script>"
+		return HttpResponse(html)
 def viewfeedbackworker1(request):
 		cursor=connection.cursor()
 		sql="select * from tbl_login where user_type='employer' and status='true'"
@@ -2169,16 +2855,40 @@ def idcard(request):
 			list.append(emp)
 		return render(request,'common/idcard2.html',{'worker':worker,'noc':noc,'list':list})
 def searchvaccancy(request):
-	search=request.GET.get('search1')
-	cursor = connection.cursor()
-	e="select * from tbl_vacancy "
-	cursor.execute(e)
-	result = cursor.fetchall()
-	list = []
-	for row in result:
-		w = {'vacancy_id': row[0], 'date': row[1], 'emp_id': row[2], 'vacancy': row[3], 'vacancy_no': row[4] ,'description': row[5], 'status': row[4]}
-		list.append(w)
-	return render(request,'common/view_users.html', {'list': list})
+	"""Search vacancies with proper template and ORM"""
+	try:
+		# Check session
+		if 'u_id' not in request.session:
+			html = "<script>alert('Please login first');window.location='/login/';</script>"
+			return HttpResponse(html)
+		
+		search = request.GET.get('search1', '')
+		
+		# Use ORM to get all vacancies
+		if search:
+			vacancies = tbl_vacancy.objects.filter(vacancy__icontains=search)
+		else:
+			vacancies = tbl_vacancy.objects.all()
+		
+		list_data = []
+		for vacancy in vacancies:
+			dict_data = {
+				'vacancy_id': vacancy.vacancy_id,
+				'date': vacancy.date,
+				'emp_id': vacancy.emp_id,
+				'vacancy': vacancy.vacancy,
+				'vacancy_no': vacancy.vacancy_no,
+				'description': vacancy.description,
+				'place': vacancy.place
+			}
+			list_data.append(dict_data)
+		
+		return render(request, 'agency/searchvaccancy.html', {'list': list_data})
+		
+	except Exception as e:
+		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+		return HttpResponse(html)
+
 def view1(request):
 	search=request.GET.get('search1')
 	cursor = connection.cursor()
@@ -2191,16 +2901,36 @@ def view1(request):
 		list.append(w)
 	return render(request,'common/table123.html', {'list': list})
 def view2(request):
-	search=request.GET.get('search1')
-	cursor = connection.cursor()
-	e="select * from tbl_worker where  worker_name  LIKE '%s%%'" % (search)
-	cursor.execute(e)
-	result = cursor.fetchall()
-	list = []
-	for row in result:
-		w = {'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'regis_date':row[6],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12],'status':row[14]}
-		list.append(w)
-	return render(request,'common/table1234.html', {'list': list})
+	"""Search workers using ORM for reliable filtering and indexing"""
+	try:
+		search = request.GET.get('search1', '')
+		if search:
+			workers = tbl_worker.objects.filter(worker_name__icontains=search).order_by('worker_id')
+		else:
+			workers = tbl_worker.objects.all().order_by('worker_id')
+			
+		list_data = []
+		for row in workers:
+			dict_data = {
+				'worker_id': row.worker_id,
+				'image': row.image,
+				'worker_name': row.worker_name,
+				'gender': row.gender,
+				'dob': row.dob,
+				'aadhar_number': row.aadhar_number,
+				'regis_date': row.regis_date,
+				'place': row.place,
+				'address': row.address,
+				'languages_known': row.languages_known,
+				'phone': row.phone,
+				'mobile': row.mobile,
+				'email': row.email,
+				'status': row.status
+			}
+			list_data.append(dict_data)
+		return render(request, 'common/table1234.html', {'list': list_data})
+	except Exception as e:
+		return HttpResponse(f"Search error: {str(e)}")
 def changepassword (request):
 	cursor=connection.cursor()
 	username=request.GET['user']
@@ -2249,21 +2979,3 @@ def vacancy_search(request):
 		w = {'vacancy_id': row[0], 'date': row[1], 'emp_id': row[2], 'vacancy': row[3], 'vacancy_no': row[4] ,'description': row[5], 'status': row[4]}
 		list.append(w)
 	return render(request,'worker/vacancy_search.html', {'list': list})
-
-		
-	
-	
-		
-	
-
-		
-		
-	
-
-
-
-
-
-
-
-

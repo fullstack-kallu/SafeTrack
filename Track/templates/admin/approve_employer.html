@@ -1,69 +1,164 @@
 {% extends "admin/admin_base.html" %}
 {% load static %}
 
-{% block page_title %}Employer Approvals{% endblock %}
+{% block page_title %}Vetting Hub & Approvals{% endblock %}
+
+{% block extra_css %}
+<style>
+    .vetting-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .vetting-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02);
+        border: 1px solid #f1f5f9;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .vetting-card:hover {
+        transform: translateX(10px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        border-color: var(--warning);
+    }
+
+    .vetting-icon {
+        width: 80px;
+        height: 80px;
+        background: #fffbeb;
+        color: #f59e0b;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        flex-shrink: 0;
+    }
+
+    .vetting-info {
+        flex: 1;
+    }
+
+    .vetting-info h5 {
+        margin: 0 0 5px 0;
+        font-weight: 800;
+        color: var(--text-main);
+    }
+
+    .vetting-meta {
+        display: flex;
+        gap: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        font-weight: 600;
+    }
+
+    .vetting-meta span i {
+        margin-right: 5px;
+        color: var(--primary);
+    }
+
+    .action-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .review-btn {
+        background: var(--dark-bg);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .review-btn:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .pending-pulse {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #f59e0b;
+        animation: pulse-warn 2s infinite;
+    }
+
+    @keyframes pulse-warn {
+        0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+        }
+
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+        }
+
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+        }
+    }
+</style>
+{% endblock %}
 
 {% block main_content %}
-<div class="animate-fade-up">
-    <div class="admin-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <div>
-                <h4 style="margin: 0; font-weight: 800;"><i class="fa-solid fa-building-user"
-                        style="margin-right: 10px;"></i> Employer Approval Requests</h4>
-                <p style="font-size: 13px; color: #64748B; margin: 5px 0 0 0;">Review and approve employer registration requests.</p>
+<div class="animate__animated animate__fadeIn">
+    <div class="mb-5">
+        <h4 class="fw-800 m-0">Verification Queue</h4>
+        <p class="text-muted small">You have {{ list|length }} pending agency credential verifications.</p>
+    </div>
+
+    <div class="vetting-container">
+        {% for i in list %}
+        <div class="vetting-card">
+            <div class="vetting-icon">
+                <i class="fas fa-file-shield"></i>
+            </div>
+            <div class="vetting-info">
+                <h5>{{ i.firm_name }}</h5>
+                <div class="vetting-meta">
+                    <span><i class="fas fa-user"></i> {{ i.name }}</span>
+                    <span><i class="fas fa-map-marker-alt"></i> {{ i.place }}</span>
+                    <span><i class="fas fa-clock"></i> Applied on {{ i.dob|default:"N/A" }}</span>
+                </div>
+            </div>
+            <div class="action-group">
+                <div class="d-flex align-items-center gap-2 text-warning fw-800 small me-3">
+                    <div class="pending-pulse"></div>
+                    PENDING REVIEW
+                </div>
+                <a href="/admin_view_employer_detail?emp_id={{ i.emp_id }}" class="review-btn">
+                    <i class="fas fa-search-plus"></i> BEGIN AUDIT
+                </a>
             </div>
         </div>
-
-        {% if list %}
-        <div class="data-table-container">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>Company/Firm Name</th>
-                        <th>Owner Name</th>
-                        <th>Aadhar Number</th>
-                        <th>Mobile</th>
-                        <th>Place</th>
-                        <th>Status</th>
-                        <th style="text-align: center;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for i in list %}
-                    <tr>
-                        <td>
-                            <div style="font-weight: 800; color: var(--admin-navy);">{{i.firm_name}}</div>
-                        </td>
-                        <td>{{i.name}}</td>
-                        <td style="font-family: monospace; font-weight: 700;">{{i.aadhar_no}}</td>
-                        <td>{{i.mobile}}</td>
-                        <td>{{i.place}}</td>
-                        <td>
-                            {% if i.status == 'Pending' %}
-                            <span style="background: #FEF3C7; color: #D97706; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">PENDING</span>
-                            {% elif i.status == 'Active' %}
-                            <span style="background: #DCFCE7; color: #10B981; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">APPROVED</span>
-                            {% else %}
-                            <span style="background: #FEE2E2; color: #EF4444; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">{{i.status|upper}}</span>
-                            {% endif %}
-                        </td>
-                        <td style="text-align: center;">
-                            <a href="/admin_view_employer_detail?emp_id={{i.emp_id}}" class="btn-admin btn-primary" style="padding: 6px 15px; font-size: 11px;">
-                                <i class="fa-solid fa-eye"></i> REVIEW
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        {% empty %}
+        <div class="text-center py-5">
+            <div class="glass-card p-5">
+                <i class="fas fa-clipboard-check fa-4x mb-3 text-success"></i>
+                <h3 class="fw-800 text-dark">Vetting Queue Empty</h3>
+                <p class="text-muted">All agency applications have been processed. Great job!</p>
+                <a href="/homeadmin/" class="btn btn-primary rounded-4 px-4 fw-700 mt-3">Return to Dashboard</a>
+            </div>
         </div>
-        {% else %}
-        <div style="text-align: center; padding: 50px; color: #64748B;">
-            <i class="fa-solid fa-check-circle" style="font-size: 48px; color: #10B981; margin-bottom: 20px;"></i>
-            <h4 style="margin: 0; font-weight: 800;">No Pending Requests</h4>
-            <p style="margin: 10px 0 0 0;">There are no employer approval requests at this time.</p>
-        </div>
-        {% endif %}
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

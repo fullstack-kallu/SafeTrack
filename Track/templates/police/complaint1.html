@@ -1,0 +1,185 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}File a Complaint - SafeTrack{% endblock %}
+
+{% block extra_head %}
+<style>
+    .complaint-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .page-hero {
+        background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+        padding: 2.5rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-hero::after {
+        content: '\f0e7';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        position: absolute;
+        right: -20px;
+        bottom: -20px;
+        font-size: 10rem;
+        opacity: 0.06;
+    }
+
+    .noc-selection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .noc-card {
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .noc-card:hover {
+        border-color: #ef4444;
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(239, 68, 68, 0.15);
+    }
+
+    .noc-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 5px;
+        height: 100%;
+        background: linear-gradient(to bottom, #ef4444, #b91c1c);
+        border-radius: 20px 0 0 20px;
+    }
+
+    .noc-icon {
+        width: 55px;
+        height: 55px;
+        background: rgba(239, 68, 68, 0.1);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ef4444;
+        font-size: 1.5rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .noc-card h5 {
+        margin: 0 0 0.5rem;
+        color: var(--text-main);
+        font-weight: 700;
+    }
+
+    .noc-meta {
+        display: flex;
+        gap: 1.5rem;
+        margin: 1rem 0 1.5rem;
+    }
+
+    .meta-tag {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--glass-border);
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .select-noc-btn {
+        width: 100%;
+        padding: 0.9rem;
+        background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+        transition: all 0.25s;
+    }
+
+    .select-noc-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="complaint-container">
+    <div class="page-hero">
+        <h2 class="mb-1"><i class="fas fa-shield-exclamation me-2"></i> File a Formal Complaint</h2>
+        <p class="mb-0 opacity-75">Select the NOC record for which you wish to raise a complaint to the police station.
+        </p>
+    </div>
+
+    <div class="mb-4">
+        <h5 class="text-white fw-700">Your NOC Records — Choose One to File Complaint</h5>
+        <p class="text-muted small">Each NOC is linked to a registered police station. Complaints are logged and tracked
+            by the respective authority.</p>
+    </div>
+
+    <div class="noc-selection-grid">
+        {% for i in list %}
+        <div class="noc-card">
+            <div class="noc-icon">
+                <i class="fas fa-file-shield"></i>
+            </div>
+            <h5>NOC Reference #{{ i.noc_id }}</h5>
+            <p class="text-muted small">Station Node ID: {{ i.station_id }}</p>
+
+            <div class="noc-meta">
+                <span class="meta-tag">
+                    <i class="fas fa-calendar-alt"></i> {{ i.date }}
+                </span>
+                <span class="meta-tag">
+                    <i class="fas fa-tag"></i> {{ i.crime }}
+                </span>
+            </div>
+
+            <p style="font-size:0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1.5rem;">
+                {{ i.crime_details|truncatechars:80 }}
+            </p>
+
+            <a href="/addcomplaint3/?noc_id={{ i.noc_id }}" class="select-noc-btn">
+                <i class="fas fa-file-pen"></i> File Complaint for this NOC
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="glass-card text-center p-5">
+                <i class="fas fa-folder-open fa-3x mb-3 text-muted"></i>
+                <h4 class="text-muted">No NOC records found</h4>
+                <p class="text-muted">You must have at least one NOC from a police station before you can file a
+                    complaint.</p>
+                <a href="/homeworker/" class="btn-modern mt-3">Return to Home</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

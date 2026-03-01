@@ -14,22 +14,68 @@
     <link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
     <link rel="stylesheet" href="{% static 'files/css/modern_ui.css' %}">
-    
+
     <!-- Global Font Scaling -->
     <link rel="stylesheet" href="{% static 'files/css/global_fonts.css' %}">
 
     {% block extra_css %}{% endblock %}
 
-<style>
-        /* Increased sidebar font sizes */
+    <style>
+        /* ===== GLOBAL FONT & BODY ===== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 16px;
+        }
+
+        /* Sidebar font sizes - 16px */
         .nav-link {
-            font-size: 1.85rem !important;
+            font-size: 16px !important;
         }
+
         .submenu-link {
-            font-size: 1.85rem !important;
+            font-size: 16px !important;
         }
+
         .sidebar-logo {
-            font-size: 2rem !important;
+            font-size: 16px !important;
+        }
+
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                padding: 1rem !important;
+            }
+
+            .mobile-toggle {
+                display: flex !important;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 0.75rem !important;
+            }
+
+            h1,
+            h2,
+            h3 {
+                font-size: 1.2rem !important;
+            }
         }
 
         .page-header-accent {

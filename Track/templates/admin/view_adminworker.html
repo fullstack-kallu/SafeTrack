@@ -1,92 +1,304 @@
 {% extends "admin/admin_base.html" %}
 {% load static %}
 
-{% block page_title %}Personnel Registry Intelligence{% endblock %}
+{% block page_title %}Worker Records{% endblock %}
+
+{% block extra_css %}
+<style>
+
+/* ===== BASE FONT SIZE ===== */
+.data-card,
+.search-box {
+    font-size: 16px;
+}
+
+/* ===== SEARCH SECTION ===== */
+.search-box {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.search-box h3 {
+    font-weight: 800;
+    margin: 0;
+}
+
+.search-box p {
+    font-size: 14px;
+    color: #64748b;
+    margin: 5px 0 0;
+}
+
+.search-input {
+    position: relative;
+    min-width: 280px;
+    flex: 1;
+}
+
+.search-input input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border-radius: 12px;
+    border: 2px solid #eef2f6;
+    font-size: 15px;
+}
+
+.search-input input:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.search-input i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+/* ===== CARD ===== */
+.data-card {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+}
+
+/* ===== TABLE ===== */
+.modern-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.modern-table th {
+    background: #f8fafc;
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.modern-table td {
+    padding: 18px 16px;
+    font-size: 15px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.modern-table tr:hover {
+    background: #f9fafb;
+}
+
+/* ===== PROFILE ===== */
+.profile-box {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.profile-img {
+    width: 55px;
+    height: 55px;
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+.profile-name {
+    font-weight: 700;
+}
+
+.profile-id {
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* ===== STATUS ===== */
+.status {
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.active {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.pending {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.rejected {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* ===== ACTION ===== */
+.action-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #eef2f6;
+    text-decoration: none;
+    color: #64748b;
+}
+
+.action-btn:hover {
+    background: #2563eb;
+    color: white;
+}
+
+/* ===== MOBILE CARD VIEW ===== */
+@media (max-width: 768px) {
+
+    .modern-table thead {
+        display: none;
+    }
+
+    .modern-table,
+    .modern-table tbody,
+    .modern-table tr,
+    .modern-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .modern-table tr {
+        background: white;
+        margin-bottom: 15px;
+        padding: 15px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .modern-table td {
+        border: none;
+        padding: 10px 0;
+    }
+
+    .modern-table td::before {
+        content: attr(data-label);
+        display: block;
+        font-weight: 700;
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+
+}
+
+</style>
+{% endblock %}
 
 {% block main_content %}
-<div class="animate-fade-up">
-    <div class="admin-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <div>
-                <h4 style="margin: 0; font-weight: 800;"><i class="fa-solid fa-users-viewfinder"
-                        style="margin-right: 10px;"></i> Master Worker Database</h4>
-                <p style="font-size: 13px; color: #64748B; margin: 5px 0 0 0;">Unified monitoring repository for all
-                    registered migrant professionals.</p>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="workerSearch" placeholder="Scan Aadhar or Name..."
-                    style="padding: 10px 15px; border-radius: 10px; border: 1px solid #E2E8F0; font-size: 13px; outline: none; width: 250px;">
-                <button class="btn-admin btn-primary"><i class="fa-solid fa-magnifying-glass"></i> SCAN</button>
-            </div>
-        </div>
 
-        <div class="data-table-container">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th>Subject Profile</th>
-                        <th>Biometric Identifier</th>
-                        <th>Designation Details</th>
-                        <th>Communication Channel</th>
-                        <th style="text-align: center;">Registry Status</th>
-                    </tr>
-                </thead>
-                <tbody id="workerTableBody">
-                    {% for i in list %}
-                    <tr>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <img src="/media/{{i.image}}"
-                                    style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 2px solid #E2E8F0;">
-                                <div>
-                                    <div style="font-weight: 800; color: var(--admin-navy);">{{i.worker_name}}</div>
-                                    <div style="font-size: 11px; opacity: 0.6;">{{i.gender|capfirst}} • {{i.dob}}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <div style="font-family: monospace; font-weight: 700; letter-spacing: 1px;">
-                                {{i.aadhar_number}}</div>
-                            <div style="font-size: 11px; opacity: 0.6;">Reg: {{i.regis_date}}</div>
-                        </td>
-                        <td>
-                            <div style="font-size: 14px;">{{i.place}}</div>
-                            <div style="font-size: 11px; opacity: 0.6;">Addr: {{i.address|truncatechars:20}}</div>
-                        </td>
-                        <td>
-                            <div style="font-weight: 700;">{{i.mobile}}</div>
-                            <div style="font-size: 11px; opacity: 0.6;">{{i.email}}</div>
-                        </td>
-                        <td style="text-align: center;">
-                            {% if i.status == 'approved' %}
-                            <span
-                                style="background: #DCFCE7; color: #10B981; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">ACTIVE</span>
-                            {% elif i.status == 'pending' %}
-                            <span
-                                style="background: #FEF3C7; color: #D97706; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">PENDING</span>
-                            {% else %}
-                            <span
-                                style="background: #FEE2E2; color: #EF4444; padding: 4px 12px; border-radius: 50px; font-size: 11px; font-weight: 800;">REJECTED</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<div class="search-box">
+    <div>
+        <h3>Worker List</h3>
+        <p>View and manage all registered workers.</p>
+    </div>
+
+    <div class="search-input">
+        <i class="fas fa-search"></i>
+        <input type="text" id="workerSearch" placeholder="Search worker...">
     </div>
 </div>
 
+<div class="data-card">
+    <div class="table-responsive">
+        <table class="modern-table">
+            <thead>
+                <tr>
+                    <th>Worker</th>
+                    <th>Aadhar</th>
+                    <th>Location</th>
+                    <th>Contact</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="workerTableBody">
+                {% for i in list %}
+                <tr>
+                    <td data-label="Worker">
+                        <div class="profile-box">
+                            <img src="/media/{{i.image}}" class="profile-img">
+                            <div>
+                                <div class="profile-name">{{i.worker_name}}</div>
+                                <div class="profile-id">ID: {{i.worker_id}}</div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td data-label="Aadhar">{{i.aadhar_number}}</td>
+
+                    <td data-label="Location">
+                        {{i.place}} <br>
+                        <small>{{i.address|truncatechars:20}}</small>
+                    </td>
+
+                    <td data-label="Contact">
+                        {{i.mobile}} <br>
+                        <small>{{i.email}}</small>
+                    </td>
+
+                    <td data-label="Status">
+                        {% if i.status == 'approved' or i.status == 'Active' %}
+                            <span class="status active">Active</span>
+                        {% elif i.status == 'pending' %}
+                            <span class="status pending">Pending</span>
+                        {% else %}
+                            <span class="status rejected">Rejected</span>
+                        {% endif %}
+                    </td>
+
+                    <td data-label="Action">
+                        <a href="/editadminworker/" class="action-btn">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="text-align:center;padding:40px;color:#64748b;">
+                        No workers found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
 {% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $("#workerSearch").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#workerTableBody tr").filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
+$(document).ready(function () {
+    $("#workerSearch").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#workerTableBody tr").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
     });
+});
 </script>
-{% endblock %}
 {% endblock %}

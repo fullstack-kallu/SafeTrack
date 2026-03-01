@@ -137,3 +137,17 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',  
 )
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'mca.projectwork2026@gmail.com'
+EMAIL_HOST_PASSWORD = 'fazz myuw thzk uasj'  # Uncomment and set your app password
+DEFAULT_FROM_EMAIL = 'mca.projectwork2026@gmail.com'
+
+# Session expiration settings
+SESSION_COOKIE_AGE = 1800  # 30 minutes
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+

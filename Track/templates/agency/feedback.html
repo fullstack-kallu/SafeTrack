@@ -1,39 +1,120 @@
 {% extends 'agency/agency_base.html' %}
 {% load static %}
 
-{% block title %}Add Feedback{% endblock %}
+{% block title %}Add Feedback | SafeTrack{% endblock %}
+
+{% block extra_head %}
+<style>
+	.feedback-form-container {
+		max-width: 800px;
+		margin: 0 auto;
+	}
+
+	.form-header {
+		background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+		padding: 2.5rem;
+		border-radius: 20px;
+		margin-bottom: 2rem;
+		color: white;
+		box-shadow: 0 10px 25px rgba(245, 158, 11, 0.2);
+	}
+
+	.feedback-card {
+		background: white;
+		padding: 3rem;
+		border-radius: 24px;
+		box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+		border: 1px solid #f1f5f9;
+	}
+
+	.form-label {
+		font-weight: 700;
+		color: #1f2937;
+		margin-bottom: 0.75rem;
+		display: block;
+		font-size: 0.95rem;
+	}
+
+	.form-control {
+		border: 2px solid #e2e8f0 !important;
+		border-radius: 12px !important;
+		padding: 1rem !important;
+		transition: all 0.3s ease !important;
+		font-size: 1rem !important;
+	}
+
+	.form-control:focus {
+		border-color: #f59e0b !important;
+		box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.1) !important;
+		background: #fffcf0 !important;
+	}
+
+	.btn-submit {
+		background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+		color: white;
+		border: none;
+		border-radius: 12px;
+		padding: 1rem 2.5rem;
+		font-weight: 700;
+		letter-spacing: 0.5px;
+		transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+
+	.btn-submit:hover {
+		transform: translateY(-3px);
+		box-shadow: 0 10px 25px rgba(217, 119, 6, 0.3);
+		color: white;
+	}
+
+	.worker-id-badge {
+		background: #fef3c7;
+		color: #92400e;
+		padding: 4px 12px;
+		border-radius: 8px;
+		font-size: 0.85rem;
+		font-weight: 600;
+		margin-bottom: 2rem;
+		display: inline-block;
+	}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="page-header-accent" style="border-left-color: #fbbf24;">
-	<h2 class="h4 font-weight-bold">Submit Worker Feedback</h2>
-	<p class="text-muted small">Provide feedback on worker performance and conduct.</p>
-</div>
+<div class="feedback-form-container">
+	<div class="form-header">
+		<h2 class="mb-2"><i class="fas fa-comment-medical me-2"></i> Submit Feedback</h2>
+		<p class="mb-0 opacity-75">Your honest review helps in maintaining service quality.</p>
+	</div>
 
-<div class="row justify-content-center">
-	<div class="col-lg-6">
-		<div class="glass-card">
-			<form action="/feedbackinsert/" method="get">
-				<input type="hidden" name="worker_id" value="{{ worker_id }}" required>
-
-				<div class="form-group mb-3">
-					<label class="font-weight-600 mb-2">Feedback Title</label>
-					<input type="text" name="title" class="form-control" placeholder="e.g. Excellent Performance"
-						required>
-				</div>
-
-				<div class="form-group mb-3">
-					<label class="font-weight-600 mb-2">Description</label>
-					<textarea name="description" id="description" class="form-control" rows="5"
-						placeholder="Provide detailed feedback about the worker's performance..." required></textarea>
-				</div>
-
-				<div class="text-right mt-4">
-					<button type="submit" class="btn-modern px-4 py-2">
-						<i class="fas fa-paper-plane mr-2"></i> POST FEEDBACK
-					</button>
-				</div>
-			</form>
+	<div class="feedback-card">
+		<div class="worker-id-badge">
+			<i class="fas fa-id-badge me-1"></i> TARGET WORKER ID: {{ worker_id }}
 		</div>
+
+		<form action="/feedbackinsert/" method="get">
+			<input type="hidden" name="worker_id" value="{{ worker_id }}">
+
+			<div class="mb-4">
+				<label class="form-label">Review Headline</label>
+				<input type="text" name="title" class="form-control"
+					placeholder="e.g., Excellent Work Ethic / Highly Recommended" required>
+			</div>
+
+			<div class="mb-4">
+				<label class="form-label">Detailed Experience</label>
+				<textarea name="description" class="form-control" rows="6"
+					placeholder="Describe the worker's performance, punctuality, and conduct..." required></textarea>
+			</div>
+
+			<div class="d-flex justify-content-between align-items-center mt-5">
+				<a href="/view_feedbackworker/" class="text-muted text-decoration-none">
+					<i class="fas fa-arrow-left me-1"></i> Back to Workers
+				</a>
+				<button type="submit" class="btn-submit">
+					<i class="fas fa-paper-plane me-2"></i> SUBMIT REVIEW
+				</button>
+			</div>
+		</form>
 	</div>
 </div>
 {% endblock %}

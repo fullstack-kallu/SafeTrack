@@ -1,40 +1,70 @@
+{% extends "agency/agency_base.html" %}
+{% load static %}
 
-<html lang="en">
-  <head>
-    <title>view_feedback</title>
-    
-  </head>
-  <body>
-    
-    
-<center>
-        <form action="" method="get" > 
-   
-              
-     <table class="gridtable" border="2"  align="center">
-<tr>
-<th>Date</th><th>Feedbck title</th><th>Feedbck Description</th>
-{% for i in list %}
+{% block title %}View My Feedback{% endblock %}
 
-<tr><td>{{i.date}}</td>
-<td>{{i.feedback_title}}</td>
-<td>{{i.feedback_description}}</td></tr>
+{% block extra_css %}
+<style>
+  .feedback-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
 
+  .fb-card {
+    background: var(--card-bg, white);
+    border: 1px solid var(--glass-border, #eef2f6);
+    border-radius: 18px;
+    padding: 1.5rem;
+    border-left: 5px solid #6366f1;
+    transition: all 0.3s;
+  }
 
+  .fb-card:hover {
+    transform: translateX(6px);
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
+  }
 
-{% endfor %}
-</table>
-<BR><BR>
+  .fb-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text-main, #1e293b);
+    margin-bottom: 0.4rem;
+  }
 
-</form>
+  .fb-desc {
+    color: var(--text-muted, #64748b);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
 
-</head>
+  .fb-date {
+    font-size: 0.75rem;
+    color: var(--text-muted, #94a3b8);
+    margin-top: 0.8rem;
+    font-weight: 600;
+  }
+</style>
+{% endblock %}
 
+{% block content %}
+<div class="page-header-accent animate-page">
+  <h2 class="h4 font-weight-bold mb-1"><i class="fas fa-star me-2"></i> Feedback You've Given</h2>
+  <p class="text-muted small mb-0">All worker feedback submitted by your agency.</p>
+</div>
 
-         
-                   
-
-
-    
-  </body>
-</html>
+<div class="feedback-list">
+  {% for i in list %}
+  <div class="fb-card">
+    <div class="fb-title">{{ i.feedback_title }}</div>
+    <div class="fb-desc">{{ i.feedback_description }}</div>
+    <div class="fb-date"><i class="fas fa-calendar-alt me-1"></i> {{ i.date }}</div>
+  </div>
+  {% empty %}
+  <div class="text-center py-5">
+    <i class="fas fa-comment-slash fa-3x mb-3 text-muted"></i>
+    <h4 class="text-muted">No feedback submitted yet.</h4>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

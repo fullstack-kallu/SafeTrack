@@ -1,38 +1,151 @@
-
 <html lang="en">
-  <head>
-    <title>view_vacancy</title>
-    
-  </head>
-  <body>
-    
-    
-<center>
-       
-   
-              
-     <table class="gridtable" border="2"  align="center">
-<tr>
-<th>Qualification</th><th>Experience</th>
-{% for i in list %}
-<tr><td>{{i.qualification}}</td>
-<td>{{i.experience}}</td>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Vacancy</title>
 
-<td><a href="/viewworker?worker_id={{i.worker_id}}">VIEW DETAILS</td>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #eef2f7, #e4e9f2);
+        }
 
-{% endfor %}
-</table>
-<BR><BR>
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 50px auto;
+        }
 
+        .page-title {
+            text-align: center;
+            font-size: 18px; /* Reduced font size */
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
 
+        /* Table Card */
+        .table-card {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #3498db;
+            color: #fff;
+        }
+
+        th {
+            padding: 10px;
+            font-size: 13px; /* Reduced font */
+            text-align: left;
+        }
+
+        td {
+            padding: 10px;
+            font-size: 13px; /* Reduced font */
+            border-bottom: 1px solid #eee;
+            color: #555;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Button */
+        .view-btn {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 12px;
+            transition: 0.3s ease;
+        }
+
+        .view-btn:hover {
+            background: #218838;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            thead {
+                display: none;
+            }
+
+            tr {
+                margin-bottom: 15px;
+                background: #fff;
+                padding: 10px;
+                border-radius: 8px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            }
+
+            td {
+                border: none;
+                padding: 6px 0;
+                font-size: 12px;
+            }
+
+            td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                display: block;
+                color: #333;
+                font-size: 12px;
+            }
+        }
+
+    </style>
 </head>
 
+<body>
 
-         
-                   
+<div class="container">
 
+    <div class="page-title">Available Workers</div>
 
-    
-  </body>
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Qualification</th>
+                    <th>Experience</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in list %}
+                <tr>
+                    <td data-label="Qualification">{{ i.qualification }}</td>
+                    <td data-label="Experience">{{ i.experience }}</td>
+                    <td data-label="Action">
+                        <a href="/viewworker?worker_id={{ i.worker_id }}" class="view-btn">
+                            VIEW DETAILS
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
 </html>

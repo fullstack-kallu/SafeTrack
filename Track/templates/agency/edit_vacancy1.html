@@ -24,13 +24,13 @@
             <tbody>
                 {% for i in list %}
                 <tr>
-                    <td>{{ i.date }}</td>
-                    <td class="font-weight-bold">{{ i.vacancy }}</td>
-                    <td><span class="badge badge-pill badge-primary">{{ i.vacancy_no }}</span></td>
-                    <td style="max-width: 300px;">
+                    <td style="font-size: 12px;">{{ i.date }}</td>
+                    <td class="font-weight-bold" style="font-size: 12px;">{{ i.vacancy }}</td>
+                    <td style="font-size: 12px;"><span class="badge badge-pill badge-primary">{{ i.vacancy_no }}</span></td>
+                    <td style="max-width: 300px; font-size: 12px;">
                         <div class="text-truncate" title="{{ i.description }}">{{ i.description }}</div>
                     </td>
-                    <td>
+                    <td style="font-size: 12px;">
                         <a href="/editvacancy2?vacancy_id={{ i.vacancy_id }}" class="btn-modern btn-sm">
                             <i class="fas fa-edit mr-1"></i> EDIT
                         </a>

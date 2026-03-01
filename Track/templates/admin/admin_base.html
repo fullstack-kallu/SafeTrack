@@ -4,100 +4,432 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>SafeMigrate | Admin Control Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SafeTrack | Admin Command Center{% endblock %}</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    <!-- Global Styles & Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'files/css/admin_styles.css' %}">
-    
-    <!-- Global Font Scaling -->
-    <link rel="stylesheet" href="{% static 'files/css/global_fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
 
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #64748b;
+            --dark-bg: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-bg: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #f8fafc;
+            color: var(--text-main);
+            margin: 0;
+            overflow-x: hidden;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar Styles --- */
+        .sidebar {
+            width: 280px;
+            background: var(--sidebar-bg);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-brand {
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0.7));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-brand i {
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            -webkit-background-clip: padding-box;
+            background-clip: padding-box;
+            -webkit-text-fill-color: white;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 1rem;
+            list-style: none;
+            margin: 0;
+        }
+
+        .nav-header {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.4);
+            margin: 1.5rem 0 0.5rem 1rem;
+            font-weight: 700;
+        }
+
+        .nav-item {
+            margin-bottom: 4px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
+            color: white;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .nav-link i {
+            width: 20px;
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .submenu {
+            margin-left: 2.5rem;
+            padding: 0.5rem 0;
+            list-style: none;
+            display: none;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.has-submenu.open .submenu {
+            display: block;
+        }
+
+        .submenu-link {
+            display: block;
+            padding: 8px 1rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .submenu-link:hover {
+            color: white;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--danger);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* --- Main Content Styles --- */
+        .main-wrapper {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2.5rem;
+            transition: all 0.3s;
+        }
+
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-title-area h6 {
+            margin: 0;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+
+        .page-title-area h2 {
+            margin: 0;
+            font-weight: 800;
+            font-size: 1.75rem;
+            color: var(--text-main);
+        }
+
+        .user-profile {
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f1f5f9;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        /* --- Utility Classes --- */
+        .glass-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.05);
+        }
+
+        .badge-modern {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        .badge-success {
+            background: #ecfdf5;
+            color: #10b981;
+        }
+
+        .badge-danger {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        .badge-warning {
+            background: #fffbeb;
+            color: #f59e0b;
+        }
+
+        /* --- Responsive Styles --- */
+        .mobile-header {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--dark-bg);
+            color: white;
+            padding: 1rem;
+            z-index: 1100;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+                padding: 1.5rem;
+                margin-top: 60px;
+            }
+
+            .mobile-header {
+                display: flex;
+            }
+        }
+    </style>
     {% block extra_css %}{% endblock %}
 </head>
 
 <body>
-
-    <!-- SIDEBAR -->
-    <div class="admin-sidebar">
-        <div class="sidebar-header">
-            <div class="logo-icon">
-                <i class="fa-solid fa-shield-halved fa-lg"></i>
-            </div>
-            <h3>Safe Migrate</h3>
-        </div>
-
-        <ul class="sidebar-menu">
-            <li class="{% if request.path == '/homeadmin/' %}active{% endif %}">
-                <a href="/homeadmin/"><i class="fa-solid fa-gauge-high"></i> <span>Dashboard</span></a>
-            </li>
-
-            <li
-                class="{% if '/viewadminworker/' in request.path or '/registration/' in request.path or '/editadminworker/' in request.path %}active{% endif %}">
-                <a href="#"><i class="fa-solid fa-users"></i> <span>Worker Management</span></a>
-                <ul class="submenu-admin">
-                    <li><a href="/registration/"><i class="fa-solid fa-plus"></i> Add Worker</a></li>
-                    <li><a href="/viewadminworker/"><i class="fa-solid fa-list"></i> View Database</a></li>
-                    <li><a href="/editadminworker/"><i class="fa-solid fa-user-pen"></i> Edit Records</a></li>
-                </ul>
-            </li>
-
-            <li
-                class="{% if '/viewempadmin/' in request.path or '/viewemprequest/' in request.path or '/admin_view_pending_employers/' in request.path or '/admin_view_all_employers/' in request.path %}active{% endif %}">
-                <a href="#"><i class="fa-solid fa-building-user"></i> <span>Agency Hub</span></a>
-                <ul class="submenu-admin">
-                    
-                    <li><a href="/admin_view_all_employers/"><i class="fa-solid fa-list"></i> View Agencies</a></li>
-                   
-                    <li><a href="/admin_view_pending_employers/"><i class="fa-solid fa-user-check"></i> Agency Approvals</a></li>
-                </ul>
-            </li>
-
-            <li class="{% if '/viewadminpolice/' in request.path %}active{% endif %}">
-                <a href="/viewadminpolice/"><i class="fa-solid fa-building-shield"></i> <span>Police Units</span></a>
-            </li>
-
-            <li class="{% if '/worker_salary/' in request.path %}active{% endif %}">
-                <a href="/worker_salary/"><i class="fa-solid fa-file-invoice-dollar"></i> <span>Revenue &
-                        Salary</span></a>
-            </li>
-
-        </ul>
-
-        <div class="sidebar-footer">
-            <a href="/home/"
-                style="color: rgba(255,255,255,0.6); text-decoration: none; font-size: 18px; display: flex; align-items: center; gap: 10px;"
-                <i class="fa-solid fa-right-from-bracket"></i> <span>Secure Logout</span>
-            </a>
-        </div>
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <div style="font-weight: 800; font-size: 1.2rem;">SafeTrack Admin</div>
+        <button onclick="toggleSidebar()" style="background:none; border:none; color:white; font-size:1.5rem;">
+            <i class="fas fa-bars"></i>
+        </button>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <main class="admin-main">
-        <div class="admin-header">
-            <div>
-                <p
-                    style="font-size: 12px; font-weight: 700; color: var(--admin-accent); margin: 0; text-transform: uppercase; letter-spacing: 1px;">
-                    Admin Terminal</p>
-                <h1>{% block page_title %}Dashboard Overview{% endblock %}</h1>
-            </div>
-            <div style="display: flex; gap: 15px;">
-                <div
-                    style="background: white; padding: 10px 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 10px;">
-                    <div style="width: 8px; height: 8px; background: #10B981; border-radius: 50%;"></div>
-                    <span style="font-size: 13px; font-weight: 700;">System Online</span>
-                </div>
-            </div>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <i class="fas fa-shield-alt"></i>
+            <span>SafeTrack</span>
         </div>
 
+        <nav class="nav-menu">
+            <div class="nav-header">Main Dashboard</div>
+            <li class="nav-item">
+                <a href="/homeadmin/" class="nav-link {% if request.path == '/homeadmin/' %}active{% endif %}">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Overview</span>
+                </a>
+            </li>
+
+            <div class="nav-header">Workforce</div>
+            <li class="nav-item has-submenu" id="workerMenu">
+                <a href="javascript:void(0)" class="nav-link" onclick="toggleSub(this)">
+                    <i class="fas fa-user-hard-hat"></i>
+                    <span>Worker Hub</span>
+                    <i class="fas fa-chevron-down ms-auto" style="font-size: 0.7rem;"></i>
+                </a>
+                <ul class="submenu">
+                    <li><a href="/registration/" class="submenu-link">Register New</a></li>
+                    <li><a href="/viewadminworker/" class="submenu-link">Worker Database</a></li>
+                    <li><a href="/editadminworker/" class="submenu-link">Manage Records</a></li>
+                </ul>
+            </li>
+
+            <div class="nav-header">Agencies & Partners</div>
+            <li class="nav-item has-submenu" id="agencyMenu">
+                <a href="javascript:void(0)" class="nav-link" onclick="toggleSub(this)">
+                    <i class="fas fa-building"></i>
+                    <span>Agencies</span>
+                    <i class="fas fa-chevron-down ms-auto" style="font-size: 0.7rem;"></i>
+                </a>
+                <ul class="submenu">
+                    <li><a href="/admin_view_all_employers/" class="submenu-link">All Agencies</a></li>
+                    <li><a href="/admin_view_pending_employers/" class="submenu-link">Pending Approvals</a></li>
+                </ul>
+            </li>
+
+            <div class="nav-header">Enforcement</div>
+            <li class="nav-item">
+                <a href="/viewadminpolice/"
+                    class="nav-link {% if '/viewadminpolice/' in request.path %}active{% endif %}">
+                    <i class="fas fa-police-box"></i>
+                    <span>Police Stations</span>
+                </a>
+            </li>
+
+            <div class="nav-header">Financials</div>
+            <li class="nav-item">
+                <a href="/worker_salary/" class="nav-link {% if '/worker_salary/' in request.path %}active{% endif %}">
+                    <i class="fas fa-wallet"></i>
+                    <span>Employee Payroll</span>
+                </a>
+            </li>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/home/" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Secure Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <header class="top-navbar">
+            <div class="page-title-area">
+                <h6>Central Command</h6>
+                <h2>{% block page_title %}Dashboard{% endblock %}</h2>
+            </div>
+            <div class="user-profile">
+                <span style="font-size: 0.85rem; font-weight: 600;">System Administrator</span>
+                <div class="avatar">AD</div>
+            </div>
+        </header>
+
         {% block main_content %}{% endblock %}
-    </main>
+    </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Scripts -->
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function toggleSub(el) {
+            el.parentElement.classList.toggle('open');
+            const icon = el.querySelector('.fa-chevron-down');
+            if (icon) {
+                icon.style.transform = el.parentElement.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+                icon.style.transition = 'transform 0.3s';
+            }
+        }
+
+        // Auto-open parent menus based on current path
+        window.onload = function () {
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.submenu-link').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.closest('.has-submenu').classList.add('open');
+                    link.style.color = 'white';
+                    link.style.fontWeight = '700';
+                }
+            });
+        };
+    </script>
     {% block extra_js %}{% endblock %}
-
 </body>
 
 </html>

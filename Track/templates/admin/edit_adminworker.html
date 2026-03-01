@@ -1,72 +1,257 @@
 {% extends "admin/admin_base.html" %}
 {% load static %}
 
-{% block page_title %}Subject Profile Modification Center{% endblock %}
+{% block page_title %}Edit Worker Profile{% endblock %}
+
+{% block extra_css %}
+<style>
+
+/* ===== BASE ===== */
+.edit-wrapper{
+    font-size:16px;
+}
+
+/* ===== HEADER ===== */
+.edit-header{
+    background:white;
+    padding:25px;
+    border-radius:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.05);
+    margin-bottom:25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.edit-header h3{
+    margin:0;
+    font-weight:800;
+}
+
+.edit-header p{
+    margin:5px 0 0;
+    font-size:14px;
+    color:#64748b;
+}
+
+/* ===== SEARCH ===== */
+.search-box{
+    position:relative;
+    min-width:250px;
+}
+
+.search-box input{
+    padding:10px 15px 10px 35px;
+    border-radius:10px;
+    border:2px solid #e2e8f0;
+    font-size:14px;
+    width:100%;
+}
+
+.search-box input:focus{
+    border-color:#2563eb;
+    outline:none;
+    box-shadow:0 0 0 3px rgba(37,99,235,0.1);
+}
+
+.search-box i{
+    position:absolute;
+    left:10px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#94a3b8;
+}
+
+/* ===== CARD ===== */
+.table-card{
+    background:white;
+    padding:20px;
+    border-radius:20px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.05);
+}
+
+/* ===== TABLE ===== */
+.modern-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.modern-table th{
+    background:#f8fafc;
+    padding:16px;
+    font-size:13px;
+    text-transform:uppercase;
+    font-weight:800;
+    color:#64748b;
+}
+
+.modern-table td{
+    padding:18px 15px;
+    font-size:15px;
+    border-bottom:1px solid #f1f5f9;
+}
+
+.modern-table tr:hover{
+    background:#f9fafb;
+}
+
+/* ===== PROFILE ===== */
+.profile-box{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.profile-img{
+    width:45px;
+    height:45px;
+    border-radius:12px;
+    object-fit:cover;
+}
+
+.profile-name{
+    font-weight:700;
+}
+
+/* ===== BUTTON ===== */
+.edit-btn{
+    padding:8px 18px;
+    background:#2563eb;
+    color:white;
+    border-radius:8px;
+    font-size:14px;
+    text-decoration:none;
+    font-weight:700;
+}
+
+.edit-btn:hover{
+    background:#1d4ed8;
+}
+
+/* ===== MOBILE CARD ===== */
+@media(max-width:768px){
+
+    .modern-table thead{
+        display:none;
+    }
+
+    .modern-table,
+    .modern-table tbody,
+    .modern-table tr,
+    .modern-table td{
+        display:block;
+        width:100%;
+    }
+
+    .modern-table tr{
+        background:white;
+        margin-bottom:15px;
+        padding:15px;
+        border-radius:15px;
+        box-shadow:0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .modern-table td{
+        border:none;
+        padding:8px 0;
+    }
+
+    .modern-table td::before{
+        content:attr(data-label);
+        display:block;
+        font-size:12px;
+        font-weight:700;
+        color:#64748b;
+        margin-bottom:3px;
+        text-transform:uppercase;
+    }
+
+}
+
+</style>
+{% endblock %}
 
 {% block main_content %}
-<div class="animate-fade-up">
-    <div class="admin-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <div>
-                <h4 style="margin: 0; font-weight: 800;"><i class="fa-solid fa-user-pen"
-                        style="margin-right: 10px;"></i> Intelligence Amendment Queue</h4>
-                <p style="font-size: 13px; color: #64748B; margin: 5px 0 0 0;">Select a subject profile to initiate
-                    supervised data modification.</p>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="editSearch" placeholder="Quick find by name..."
-                    style="padding: 10px 20px; border-radius: 12px; border: 1px solid #E2E8F0; outline: none; font-size: 13px;">
-            </div>
+
+<div class="edit-wrapper">
+
+    <!-- Header -->
+    <div class="edit-header">
+        <div>
+            <h3><i class="fa-solid fa-user-pen"></i> Edit Worker</h3>
+            <p>Select a worker to update their details.</p>
         </div>
 
-        <div class="data-table-container">
-            <table class="admin-table">
+        <div class="search-box">
+            <i class="fa fa-search"></i>
+            <input type="text" id="editSearch" placeholder="Search worker...">
+        </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="table-card">
+        <div class="table-responsive">
+            <table class="modern-table">
                 <thead>
                     <tr>
-                        <th>Subject</th>
-                        <th>Biometric Code (Aadhar)</th>
-                        <th>Operational Area</th>
-                        <th>Signal Status</th>
-                        <th style="text-align: center;">Authorized Action</th>
+                        <th>Worker</th>
+                        <th>Aadhar</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
+
                 <tbody id="editBody">
                     {% for i in list %}
                     <tr>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <img src="/media/{{i.image}}"
-                                    style="width: 40px; height: 40px; border-radius: 10px; object-fit: cover;">
-                                <div style="font-weight: 800; color: var(--admin-navy);">{{i.worker_name}}</div>
+                        <td data-label="Worker">
+                            <div class="profile-box">
+                                <img src="/media/{{i.image}}" class="profile-img">
+                                <div class="profile-name">{{i.worker_name}}</div>
                             </div>
                         </td>
-                        <td style="font-family: monospace; font-weight: 700;">{{i.aadhar_number}}</td>
-                        <td>{{i.place}}</td>
-                        <td>{{i.status|upper}}</td>
-                        <td style="text-align: center;">
-                            <a href="/editadminworker2?worker_id={{i.worker_id}}" class="btn-admin btn-primary"
-                                style="padding: 8px 18px; font-size: 12px;">
-                                <i class="fa-solid fa-wrench"></i> CONFIGURE
+
+                        <td data-label="Aadhar">{{i.aadhar_number}}</td>
+
+                        <td data-label="Location">{{i.place}}</td>
+
+                        <td data-label="Status">{{i.status|upper}}</td>
+
+                        <td data-label="Action">
+                            <a href="/editadminworker2?worker_id={{i.worker_id}}" class="edit-btn">
+                                Edit
                             </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align:center;padding:30px;color:#64748b;">
+                            No workers available.
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
+
             </table>
         </div>
     </div>
+
 </div>
+
+{% endblock %}
 
 {% block extra_js %}
 <script>
-    $(document).ready(function () {
-        $("#editSearch").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#editBody tr").filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
+$(document).ready(function () {
+    $("#editSearch").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#editBody tr").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
     });
+});
 </script>
-{% endblock %}
 {% endblock %}

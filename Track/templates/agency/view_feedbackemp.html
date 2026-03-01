@@ -1,45 +1,110 @@
+{% extends "agency/agency_base.html" %}
+{% load static %}
 
-<html lang="en">
-  <head>
-    <title>view_emp</title>
-    
-  </head>
-  <body>
-    
-    
-<center>
-        <form action="/update_employer/" method="get" > 
-   
-              
-     <table class="gridtable" border="2"  align="center">
-<tr>
-<th>Name</th><th>Gender</th><th>Firm Name</th><th>Aadhar Number</th><th>DOB</th><th>Address</th><th>Place</th><th>Phone</th><th>Mobile</th><th>Email</th>
-{% for i in list %}
-<tr><td>{{i.name}}</td>
-<td>{{i.gender}}</td>
-<td>{{i.firm_name}}</td>
-<td>{{i.aadhar_no}}</td>
-<td>{{i.dob}}</td>
-<td>{{i.emp_address}}</td>
-<td>{{i.place}}</td>
-<td>{{i.phone}}</td>
-<td>{{i.mobile}}</td>
-<td>{{i.email}}</td>
+{% block title %}Add Worker Feedback{% endblock %}
 
-<td><a href="/addfeedbackworker?emp_id={{i.emp_id}}">Add feedback</a></td>
-{% endfor %}
-</table>
-<BR><BR>
+{% block extra_css %}
+<style>
+  .emp-select-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
 
-</form>
+  .emp-card {
+    background: var(--card-bg, white);
+    border: 1px solid var(--glass-border, #eef2f6);
+    border-radius: 20px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
 
-</head>
+  .emp-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    border-color: #6366f1;
+  }
 
+  .emp-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
 
-         
-                   
+  .emp-name {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--text-main, #1e293b);
+  }
 
+  .emp-firm {
+    font-size: 0.8rem;
+    color: var(--text-muted, #64748b);
+    margin-bottom: 1rem;
+  }
 
-    
-  </body>
-</html>
+  .emp-meta {
+    font-size: 0.82rem;
+    color: var(--text-muted, #64748b);
+    margin-bottom: 0.3rem;
+  }
+
+  .fb-btn {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    margin-top: 1.2rem;
+    transition: all 0.25s;
+    font-size: 0.9rem;
+  }
+
+  .fb-btn:hover {
+    color: white;
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header-accent animate-page">
+  <h2 class="h4 font-weight-bold mb-1"><i class="fas fa-comment-dots me-2"></i> Add Feedback</h2>
+  <p class="text-muted small mb-0">Select a worker to submit your performance feedback.</p>
+</div>
+
+<div class="emp-select-grid">
+  {% for i in list %}
+  <div class="emp-card">
+    <div class="emp-avatar">{{ i.name|first|upper }}</div>
+    <div class="emp-name">{{ i.name }}</div>
+    <div class="emp-firm">{{ i.firm_name }}</div>
+    <div class="emp-meta"><i class="fas fa-phone me-1"></i> {{ i.mobile }}</div>
+    <div class="emp-meta"><i class="fas fa-envelope me-1"></i> {{ i.email }}</div>
+    <a href="/addfeedbackworker?emp_id={{ i.emp_id }}" class="fb-btn">
+      <i class="fas fa-pen me-2"></i> Add Feedback
+    </a>
+  </div>
+  {% empty %}
+  <div class="text-center py-5">
+    <i class="fas fa-users-slash fa-3x mb-3 text-muted"></i>
+    <h4 class="text-muted">No workers found to add feedback.</h4>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

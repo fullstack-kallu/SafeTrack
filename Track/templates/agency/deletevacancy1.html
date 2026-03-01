@@ -4,49 +4,160 @@
 {% block title %}Delete Vacancy{% endblock %}
 
 {% block content %}
-<div class="page-header-accent" style="border-left-color: #dc3545;">
-    <h2 class="h4 font-weight-bold">Delete Vacancies</h2>
-    <p class="text-muted small">Select a vacancy to permanently remove it from the listings.</p>
+
+<style>
+
+.vacancy-container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 40px auto;
+}
+
+.vacancy-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.vacancy-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #dc3545;
+}
+
+.vacancy-header p {
+    font-size: 14px;
+    color: #6c757d;
+}
+
+/* Card Design */
+.vacancy-card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+/* Vertical Table */
+.vacancy-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.vacancy-table th {
+    width: 180px;
+    text-align: left;
+    padding: 12px;
+    background: #f8f9fa;
+    font-size: 14px;
+    font-weight: 600;
+    color: #34495e;
+}
+
+.vacancy-table td {
+    padding: 12px;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #555;
+}
+
+.vacancy-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Delete Button */
+.delete-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #dc3545;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: 0.3s ease;
+}
+
+.delete-btn:hover {
+    background: #b02a37;
+}
+
+/* Empty State */
+.empty-box {
+    text-align: center;
+    padding: 50px 0;
+    color: #6c757d;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+
+    .vacancy-card {
+        padding: 18px;
+    }
+
+    .vacancy-table th {
+        width: 130px;
+        font-size: 13px;
+    }
+
+    .vacancy-table td {
+        font-size: 13px;
+    }
+
+    .vacancy-header h2 {
+        font-size: 18px;
+    }
+}
+
+</style>
+
+<div class="vacancy-container">
+
+    <div class="vacancy-header">
+        <h2>Delete Vacancies</h2>
+        <p>Select a vacancy to permanently remove it from the listings</p>
+    </div>
+
+    {% for i in list %}
+    <div class="vacancy-card">
+
+        <table class="vacancy-table">
+            <tr>
+                <th>Date Posted</th>
+                <td>{{ i.date }}</td>
+            </tr>
+            <tr>
+                <th>Vacancy Title</th>
+                <td><strong>{{ i.vacancy }}</strong></td>
+            </tr>
+            <tr>
+                <th>Number of Positions</th>
+                <td>{{ i.vacancy_no }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ i.description }}</td>
+            </tr>
+            <tr>
+                <th>Action</th>
+                <td>
+                    <a href="/deletevacancy2?vacancy_id={{ i.vacancy_id }}"
+                       class="delete-btn">
+                       <i class="fas fa-trash-alt"></i> Delete Vacancy
+                    </a>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    {% empty %}
+    <div class="vacancy-card empty-box">
+        <i class="fas fa-check-circle fa-3x text-success"></i>
+        <p>No active vacancies to delete.</p>
+    </div>
+    {% endfor %}
+
 </div>
 
-<div class="glass-card">
-    <div class="table-responsive">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Date Posted</th>
-                    <th>Vacancy Title</th>
-                    <th>Positions</th>
-                    <th>Description</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in list %}
-                <tr>
-                    <td>{{ i.date }}</td>
-                    <td class="font-weight-bold">{{ i.vacancy }}</td>
-                    <td>{{ i.vacancy_no }}</td>
-                    <td style="max-width: 300px;">
-                        <div class="text-truncate" title="{{ i.description }}">{{ i.description }}</div>
-                    </td>
-                    <td>
-                        <a href="/deletevacancy2?vacancy_id={{ i.vacancy_id }}" class="btn-modern btn-sm"
-                            style="background-color: #dc3545;">
-                            <i class="fas fa-trash-alt mr-1"></i> DELETE
-                        </a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="5" class="text-center py-5 text-muted">
-                        <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
-                        <p>No active vacancies to delete.</p>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
 {% endblock %}

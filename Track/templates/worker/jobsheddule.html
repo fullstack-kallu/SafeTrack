@@ -1,160 +1,146 @@
 {% extends 'agency/agency_base.html' %}
 {% load static %}
-    <title>SafeTrack.com - Add Attendance</title>
+
+{% block title %}SafeTrack - Add Attendance{% endblock %}
+
 {% block extra_css %}
-    <style type="text/css">
-        /* Base page styling */
-        body {
-            background-color: #f4f7f6 !important;
-            font-family: 'Open Sans', sans-serif;
-            min-height: 100vh;
-        }
+<style>
+    body {
+        background: linear-gradient(135deg, #eef2f7, #e4e9f2);
+        font-family: 'Open Sans', sans-serif;
+        min-height: 100vh;
+    }
 
-        /* Area to hold and center the form content */
-        .content-area {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; /* Align to the top of the viewport after header */
-            padding: 40px 10px;
-        }
+    /* Center Content */
+    .content-area {
+        display: flex;
+        justify-content: center;
+        padding: 60px 15px;
+    }
 
-        /* Form Card Styling */
+    /* Card */
+    .form-card {
+        width: 100%;
+        max-width: 500px;
+        background: #ffffff;
+        padding: 35px;
+        border-radius: 14px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        border-top: 5px solid #007bff;
+    }
+
+    /* Title */
+    .form-title {
+        text-align: center;
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: #2c3e50;
+    }
+
+    /* Form Group */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #34495e;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #dcdde1;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: 0.3s ease;
+        background: #f8f9fa;
+    }
+
+    .form-group input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+        background: #ffffff;
+        outline: none;
+    }
+
+    /* Button */
+    .submit-button {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #28a745, #20c997);
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #fff;
+        cursor: pointer;
+        transition: 0.3s ease;
+        margin-top: 10px;
+    }
+
+    .submit-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+    }
+
+    /* Responsive */
+    @media (max-width: 576px) {
         .form-card {
-            background-color: white; /* Clean white card */
-            border-radius: 10px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 450px; /* Constrain width for better reading */
-            padding: 30px;
-            border-top: 5px solid #007bff; /* Accent color */
+            padding: 25px;
         }
 
-        /* Form Title */
         .form-title {
-            color: #343a40;
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 25px;
-            text-align: center;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
+            font-size: 18px;
         }
+    }
+</style>
+{% endblock %}
 
-        /* Form Table Layout (for structure within the card) */
-        .form-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 15px; /* Spacing between rows */
-        }
+{% block content %}
 
-        /* Input Labels */
-        .form-table td:first-child {
-            color: #555;
-            font-weight: 600;
-            width: 40%;
-            padding-right: 15px;
-            vertical-align: middle;
-        }
+<div class="content-area">
+    <div class="form-card">
 
-        /* Input Fields */
-        .form-table input[type="text"] {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            font-size: 14px;
-            color: #333;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            background-color: #f8f9fa;
-        }
+        <div class="form-title">
+            Add Worker Schedule & Attendance 📝
+        </div>
 
-        .form-table input[type="text"]:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-            background-color: white;
-            outline: none;
-        }
+        <form action="/jobsheddule2/" method="post">
+            {% csrf_token %}
 
-        /* Submit Button */
-        .submit-button {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: #28a745; /* Green for success/action */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.2s;
-        }
+            <!-- Hidden Worker ID -->
+            <input type="hidden" name="worker_id" value="{{ worker_id }}">
 
-        .submit-button:hover {
-            background-color: #1e7e34;
-        }
-        
-        /* Hiding worker_id field but keeping its value */
-        .hidden-input {
-            opacity: 0;
-            height: 0;
-            width: 0;
-            margin: 0;
-            padding: 0;
-            border: none;
-            position: absolute; /* Ensures it doesn't take up space */
-        }
-    </style>
-    {% endblock %}
-</head>
+            <div class="form-group">
+                <label>Work Description</label>
+                <input type="text" name="work" required 
+                       placeholder="e.g., Daily Cleaning, Maintenance">
+            </div>
 
-<body>
-    {% block content %}
-    
-    
-                <div class="content-area">
-                    <div class="form-card">
-                        <form action="/jobsheddule2/" method="get" > 
-                            <div class="form-title">
-                                Add Worker Schedule & Attendance 📝
-                            </div>
-                            
-                            <input type="text" name="worker_id" value="{{worker_id}}" class="hidden-input" readonly>
-                            
-                            <table class="form-table">
-                                <tbody>
-                                    <tr>
-                                        <td>Work Description</td>
-                                        <td>
-                                            <input type="text" name="work" required placeholder="e.g., Daily Cleaning, Maintenance">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Salary / Pay Rate</td>
-                                        <td>
-                                            <input type="text" name="salary" required placeholder="e.g., $15/hr or $120/day">
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Time Schedule (Hours)</td>
-                                        <td>
-                                            <input type="text" name="working_houres" required placeholder="e.g., 9:00 AM - 5:00 PM (8 hrs)">
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="2" style="padding-top: 20px;">
-                                            <input type="submit" name="submit" value="ADD SCHEDULE" class="submit-button">
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </form>
-                    </div>
-                </div>
-                
-            </div> </div> </div> </body>
-            {% endblock %}
-</html>
+            <div class="form-group">
+                <label>Salary / Pay Rate</label>
+                <input type="text" name="salary" required 
+                       placeholder="e.g., ₹800/day or ₹150/hr">
+            </div>
+
+            <div class="form-group">
+                <label>Time Schedule (Hours)</label>
+                <input type="text" name="working_houres" required 
+                       placeholder="e.g., 9:00 AM - 5:00 PM">
+            </div>
+
+            <button type="submit" class="submit-button">
+                ADD SCHEDULE
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -19,6 +19,7 @@
         width: 100%;
         max-width: 550px;
         transition: 0.3s ease;
+        color: #000;
     }
 
     .form-card:hover {
@@ -31,7 +32,7 @@
         font-size: 1.8rem;
         font-weight: 700;
         margin-bottom: 2rem;
-        color: #2c3e50;
+        color: #000;
     }
 
     .form-group {
@@ -42,7 +43,7 @@
         font-weight: 600;
         display: block;
         margin-bottom: 6px;
-        color: #555;
+        color: #000;
     }
 
     .form-control {
@@ -52,6 +53,12 @@
         border-radius: 8px;
         font-size: 14px;
         transition: 0.3s;
+        color: #000; /* Input text black */
+    }
+
+    .form-control::placeholder {
+        color: #000;
+        opacity: 0.6;
     }
 
     .form-control:focus {
@@ -63,11 +70,17 @@
     textarea.form-control {
         min-height: 100px;
         resize: vertical;
+        color: #000 !important; /* Qualification text black */
+    }
+
+    textarea.form-control::placeholder {
+        color: #000 !important; /* Qualification placeholder black */
+        opacity: 0.6;
     }
 
     .note-text {
         font-size: 12px;
-        color: #888;
+        color: #000;
         margin-top: 4px;
     }
 

@@ -1,0 +1,191 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}Write Complaint - SafeTrack{% endblock %}
+
+{% block extra_head %}
+<style>
+    .complaint-form-wrapper {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .complaint-header {
+        background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+        padding: 2.5rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .complaint-header::after {
+        content: '"';
+        position: absolute;
+        right: 20px;
+        bottom: -20px;
+        font-size: 12rem;
+        opacity: 0.05;
+        font-family: serif;
+    }
+
+    .noc-ref-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.15);
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .form-card {
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 2.5rem;
+    }
+
+    .form-group-modern {
+        margin-bottom: 1.8rem;
+    }
+
+    .form-label-modern {
+        display: block;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--text-main);
+        margin-bottom: 0.8rem;
+    }
+
+    .form-label-modern span {
+        color: #ef4444;
+    }
+
+    .form-input-modern {
+        width: 100%;
+        padding: 1rem 1.2rem;
+        background: rgba(255, 255, 255, 0.04) !important;
+        border: 2px solid var(--glass-border) !important;
+        border-radius: 12px !important;
+        color: var(--text-main) !important;
+        font-size: 1rem !important;
+        transition: border-color 0.3s !important;
+        resize: vertical;
+    }
+
+    .form-input-modern:focus {
+        border-color: #ef4444 !important;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+    }
+
+    .char-counter {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-align: right;
+        margin-top: 5px;
+    }
+
+    .warning-note {
+        background: rgba(239, 68, 68, 0.05);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 12px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 1.1rem;
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        color: white;
+        border: none;
+        border-radius: 14px;
+        font-size: 1rem;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(185, 28, 28, 0.35);
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-top: 1.5rem;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: var(--text-main);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="complaint-form-wrapper">
+    <div class="complaint-header">
+        <div class="noc-ref-badge">
+            <i class="fas fa-hashtag"></i> NOC Reference: {{ noc_id }}
+        </div>
+        <h2 class="mb-2"><i class="fas fa-pen-to-square me-2"></i> Write Your Complaint</h2>
+        <p class="mb-0 opacity-75">Your complaint will be forwarded to the registered police authority linked to NOC #{{
+            noc_id }}.</p>
+    </div>
+
+    <div class="form-card">
+        <div class="warning-note">
+            <i class="fas fa-triangle-exclamation me-2" style="color: #f59e0b;"></i>
+            <strong>Important:</strong> Filing a false complaint is a punishable offence. Ensure all details are
+            accurate and truthful before submitting.
+        </div>
+
+        <form action="/complaint2/" method="get">
+            <input type="hidden" name="noc_id" value="{{ noc_id }}">
+
+            <div class="form-group-modern">
+                <label class="form-label-modern">
+                    Your Complaint <span>*</span>
+                </label>
+                <textarea name="complaint" class="form-input-modern" rows="8" id="complaintText"
+                    placeholder="Describe your complaint clearly... Include details of the incident, dates, persons involved, and any supporting information."
+                    maxlength="500" required oninput="updateCount(this)"></textarea>
+                <div class="char-counter"><span id="charCount">0</span> / 500 characters</div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i> SUBMIT COMPLAINT TO POLICE
+            </button>
+        </form>
+
+        <a href="/addcomplaint/" class="back-link">
+            <i class="fas fa-arrow-left"></i> Choose a different NOC
+        </a>
+    </div>
+</div>
+
+<script>
+    function updateCount(el) {
+        document.getElementById('charCount').textContent = el.value.length;
+    }
+</script>
+{% endblock %}

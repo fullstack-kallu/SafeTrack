@@ -1,139 +1,135 @@
-<html lang="en">
-  <head>
-    <title>Worker Schedule Date Range</title>
-    {% include "police/policeheder.html" %}
-    
-    <style>
-        /* General body styling */
-        body {
-            background-color: #f0f0f0; 
-            font-family: 'Open Sans', Arial, sans-serif;
-            padding-top: 100px; /* Space below the fixed header */
-        }
+{% extends 'police/policeheder.html' %}
+{% load static %}
 
-        /* Container for the form (The Card) */
-        .form-card {
-            background-color: rgba(63, 81, 181, 0.9); /* Deep Blue/Indigo with opacity */
-            width: 90%; 
-            max-width: 400px; /* Constrain width for a compact form */
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            color: white;
-            margin: 50px auto;
-        }
+{% block title %}View Worker Schedules{% endblock %}
 
-        /* Title Styling */
-        .form-title {
-            font-size: 1.6em; 
-            font-weight: 700;
-            color: #ff9800; /* Orange highlight */
-            text-align: center;
-            padding-bottom: 20px;
-            margin-bottom: 15px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-            text-transform: uppercase;
-        }
+{% block extra_css %}
+<style>
 
-        /* Table/Form Layout Styling */
-        .schedule-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 15px; /* Add vertical spacing between rows */
-        }
+.page-wrapper{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:80vh;
+}
 
-        .schedule-table td {
-            padding: 0;
-            vertical-align: middle;
-            font-size: 1.0em;
-        }
+/* Card */
+.schedule-card{
+    background:linear-gradient(135deg,#4F46E5,#4338CA);
+    padding:40px;
+    border-radius:20px;
+    width:100%;
+    max-width:450px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.15);
+    color:#fff;
+}
 
-        /* Input Styling */
-        .schedule-table input[type="Date"] {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #ffffff;
-            color: #333;
-            box-sizing: border-box;
-            font-size: 1.0em;
-            transition: border 0.3s;
-        }
+/* Title */
+.schedule-title{
+    font-size:22px;
+    font-weight:700;
+    text-align:center;
+    margin-bottom:30px;
+    color:#FF9800;
+    letter-spacing:1px;
+}
 
-        /* Input Focus Effect */
-        .schedule-table input[type="Date"]:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px #ff9800; /* Orange glow on focus */
-        }
+.schedule-title i{
+    margin-right:8px;
+}
 
-        /* Submit Button Styling */
-        .submit-btn {
-            background-color: #ff9800; /* Orange color for the action */
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 1.1em;
-            text-transform: uppercase;
-            transition: background-color 0.3s, transform 0.2s;
-            margin-top: 20px;
-            width: 100%; /* Make button full width */
-        }
-        
-        .submit-btn:hover {
-            background-color: #fb8c00;
-            transform: translateY(-1px);
-        }
+/* Form group */
+.form-group{
+    margin-bottom:20px;
+}
 
-    </style>
-  </head>
-  <body>
-<center>
-    <div class="form-card">
-        <div class="form-title">
-            <i class="fa fa-calendar"></i> View Worker Schedules
+.form-group label{
+    font-size:14px;
+    font-weight:600;
+    display:block;
+    margin-bottom:6px;
+}
+
+.form-group input{
+    width:100%;
+    padding:10px 12px;
+    border:none;
+    border-radius:8px;
+    font-size:14px;
+}
+
+/* Focus effect */
+.form-group input:focus{
+    outline:none;
+    box-shadow:0 0 0 3px rgba(255,152,0,0.5);
+}
+
+/* Button */
+.submit-btn{
+    width:100%;
+    padding:12px;
+    background:#FF9800;
+    border:none;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:700;
+    color:#fff;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.submit-btn:hover{
+    background:#FB8C00;
+    transform:translateY(-2px);
+}
+
+/* Responsive */
+@media(max-width:768px){
+    .schedule-card{
+        padding:25px;
+    }
+
+    .schedule-title{
+        font-size:18px;
+    }
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="main-content">
+    <div class="page-wrapper">
+
+        <div class="schedule-card">
+
+            <div class="schedule-title">
+                <i class="fa-solid fa-calendar-days"></i>
+                VIEW WORKER SCHEDULES
+            </div>
+
+            <form action="/workersheddule2/" method="get">
+
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" name="start" required>
+                </div>
+
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" name="end" required>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    TAKE INFORMATIONS
+                </button>
+
+            </form>
+
         </div>
-        <form action="/workersheddule2/" method="get" > 
-              
-            <table class="schedule-table" align="center">
-                <tr>
-                    <td>Start Date</td>
-                    <td><input type="Date" name="start" required></td>
-                </tr>
-                <tr>
-                    <td>End Date</td>
-                    <td><input type="Date" name="end" required></td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="center">
-                        <input type="submit" class="submit-btn" name="submit" value="Take Informations">
-                    </td>
-                </tr>
-            </table>
-        </form>
+
     </div>
-</center>
+</div>
 
-<table id="table_id" align="center" style="background-color:white;color:#000000; margin-top: 20px;">
-</table>
-
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script>
-    // Note: The original JavaScript functions (searchOpen, searchResult) are not directly 
-    // relevant to this date range form submission, as the form uses action="/workersheddule2/" 
-    // and method="get" to submit the dates directly. I've left the unused script block here 
-    // for reference, but it should be noted that the form relies on the standard submit action.
-
- function searchOpen() {
-    // This function is for a different element/process and is not used by the date form above.
-}
-
-function searchResult(data) {
-    // This function is for jQuery UI autocomplete and is not used here.
-}
-  </script> 
-  </body>
-</html>
+{% endblock %}

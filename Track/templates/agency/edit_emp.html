@@ -1,302 +1,190 @@
+{% extends 'agency/agency_base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en-US">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-    <title>SafeTrack.com - Edit Details</title>
+{% block title %}Update Employer Details{% endblock %}
 
+{% block content %}
+<div class="page-header-accent" style="border-left-color: #0d6efd;">
+    <h2 class="h4 font-weight-bold">Update My Employer Details</h2>
+    <p class="text-muted small">Edit your profile information and click update to save changes.</p>
+</div>
 
-    <link href="{% static 'http://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,800' %}" rel='stylesheet' type='text/css'>
-    <link href="{% static 'http://fonts.googleapis.com/css?family=Audiowide' %}" rel='stylesheet' type='text/css'>
-
-    <link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
-    <link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
-    <link rel="stylesheet" href="{% static 'files/css/simple-line-icons.css' %}">
-    <link rel="stylesheet" href="{% static 'files/css/font-awesome.min.css' %}">
-    <link rel="stylesheet" href="{% static 'files/css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'files/rs-plugin/css/settings.css' %}">
-
-    <style type="text/css">
-        body {
-            background-color: #f0f0f0; 
-            font-family: 'Open Sans', Arial, sans-serif;
-            padding-top: 80px; 
-        }
-
-        /* --- Form Card Styling --- */
-        .form-card {
-            width: 90%;
-            max-width: 600px; /* Constrain width for better readability */
-            margin: 40px auto; 
-            padding: 30px;
-            background-color: #ffffff; 
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
-            border-radius: 10px;
-        }
-
-        .form-title {
-            font-size: 2.2em; 
-            font-weight: 700;
-            color: #007bff; /* Primary Blue */
-            margin-bottom: 25px;
-            text-align: center;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 15px;
-        }
-
-        /* Input and Textarea Styling */
-        .form-card input[type="text"], 
-        .form-card input[type="date"],
-        .form-card textarea {
-            width: 100%;
-            padding: 10px 15px;
-            margin-bottom: 15px;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            box-sizing: border-box; /* Include padding/border in element's total width/height */
-            font-size: 1em;
-            color: #495057;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .form-card input:focus, .form-card textarea:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-            outline: none;
-        }
-
-        .form-card textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        
-        /* Form Layout using Grid for labels/inputs */
-        .form-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .form-label {
-            flex: 0 0 35%; /* Label width */
-            padding-right: 15px;
-            text-align: right;
-            font-weight: 600;
-            color: #343a40;
-        }
-        
-        .form-input {
-            flex: 1; /* Input takes up remaining space */
-        }
-
-        /* Gender Radio Buttons */
-        .gender-group {
-            text-align: left;
-        }
-        .gender-group label {
-            margin-right: 20px;
-            font-weight: normal;
-            color: #495057;
-            cursor: pointer;
-        }
-        
-        /* Submit Button Styling */
-        .submit-button {
-            width: 100%;
-            padding: 12px;
-            background-color: #28a745; /* Green for Update/Success */
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1.1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 20px;
-        }
-
-        .submit-button:hover {
-            background-color: #218838;
-        }
-        
-        /* Hidden input visual fix */
-        input[type="hidden"] {
-            display: none;
-        }
-        
-        /* Small screen adjustments */
-        @media (max-width: 576px) {
-            .form-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .form-label {
-                text-align: left;
-                padding-right: 0;
-                margin-bottom: 5px;
-            }
-        }
-
-    </style>
-</head>
-<body>
-
-    
-    <div class="sidebar-menu-container" id="sidebar-menu-container">
-
-        <div class="sidebar-menu-push">
-
-            <div class="sidebar-menu-overlay"></div>
-
-            <div class="sidebar-menu-inner">
-
-                <header class="site-header">
-                    <div id="main-header" class="main-header header-sticky">
-                        <div class="inner-header clearfix">
-                            <div class="logo">
-                                <a href="">SafeTrack.com</a>
-                            </div>
-                            <div class="header-right-toggle pull-right hidden-md hidden-lg">
-                                <a href="{% static 'javascript:void(0)' %}" class="side-menu-button"><i class="fa fa-bars"></i></a>
-                            </div>
-                            <nav class="main-navigation pull-right hidden-xs hidden-sm">
-                                <ul>
-                                    <li><a href="/homeemp/">Home</a></li>
-                                    <li><a href="/viewmyworker/" >My Worker</a></li>
-                                    <li><a href="#" class="has-submenu">Vacancy</a>
-                                        <ul class="sub-menu">
-                                            <li><a href="/addvacancy/">Post vacancy</a></li>
-                                            <li><a href="/viewvacancy/">View vacancy</a></li>
-                                            <li><a href="/editvacancy1/">Edit vacancy</a></li>
-                                            <li><a href="/deletevacancy1/">Delete vacancy</a></li>
-                                            <li><a href="/viewappliedvacancy/">Applied vacancy</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#" class="has-submenu">Feedback</a>
-                                        <ul class="sub-menu">
-                                            <li><a href="/view_feedbackworker/">Add Feedback</a></li>
-                                            <li><a href="/viewfeedback/">View Feedback</a></li>
-                                            <li><a href="/editfeedbackworker1/">Edit Feedback</a></li>
-                                            <li><a href="/deletefeedback1/">Delete Feedback</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#" class="has-submenu">My Details</a>
-                                        <ul class="sub-menu">
-                                        <li><a href="/viewemydetails/">View details</a></li>
-                                            <li><a href="/vieweditemp/">Update details </a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#" class="has-submenu">Sheddules</a>
-                                        <ul class="sub-menu">
-                                        <li><a href="/viewmyworker_jobsheddule/">Add sheddules</a></li>
-                                            <li><a href="/viewjobshedule/">View sheddules </a></li>
-                                            <li><a href="/deletejobshedule1/">Delete sheddules </a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="/home/">Logout</a></li>
-                                </ul>
-                            </nav>
+<div class="glass-card">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            {% for i in list %}
+            <form action="/update_employer/" method="get" class="modern-form">
+                <input type="hidden" name="empid" value="{{ i.emp_id }}" />
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" id="name" name="name" value="{{ i.name }}" pattern="[a-zA-Z\s]+" required class="form-control">
                         </div>
                     </div>
-                </header> 
-                <br><br><br><br><br><br><br>
-
-                <center>
-                    <div class="form-card">
-                        <div class="form-title"><i class="fa fa-refresh"></i> Update My Employer Details</div>
-                        
-                        {% for i in list %}
-                        <form action="/update_employer/" method="get" > 
-                            
-                            <input type="hidden" name="empid" value="{{i.emp_id}}" />
-                            
-                            <div class="form-row">
-                                <label class="form-label" for="name">Name</label>
-                                <div class="form-input">
-                                    <input type="text" id="name" name="name" value="{{i.name}}" pattern="[a-zA-Z\s]+" required>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Gender</label>
+                            <div class="gender-options">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Gender" id="genderMale" value="male" {% if i.gender == 'male' %}checked{% endif %}>
+                                    <label class="form-check-label" for="genderMale">Male</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="Gender" id="genderFemale" value="female" {% if i.gender == 'female' %}checked{% endif %}>
+                                    <label class="form-check-label" for="genderFemale">Female</label>
                                 </div>
                             </div>
-
-                            <div class="form-row">
-                                <label class="form-label">Gender</label>
-                                <div class="form-input gender-group">
-                                    <label>
-                                        <input type="radio" name="Gender" value="male" {% if i.gender == 'male' %}checked{% endif %}> Male
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="Gender" value="female" {% if i.gender == 'female' %}checked{% endif %}> Female
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <label class="form-label" for="firm_name">Office Name</label>
-                                <div class="form-input">
-                                    <input type="text" id="firm_name" name="Firm_name" value="{{i.firm_name}}" pattern="[a-zA-Z0-9\s]+" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <label class="form-label" for="aadhar_number">Aadhar Number</label>
-                                <div class="form-input">
-                                    <input type="text" id="aadhar_number" name="Aadhar_number" value="{{i.aadhar_no}}" pattern="[0-9]{12}" title="Aadhar number must be 12 digits" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <label class="form-label" for="dob">DOB</label>
-                                <div class="form-input">
-                                    <input type="date" id="dob" value="{{i.dob}}" name="DOB" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <label class="form-label" for="address">Address</label>
-                                <div class="form-input">
-                                    <textarea id="address" name="Emp_address" required>{{i.emp_address}}</textarea>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <label class="form-label" for="place">Place</label>
-                                <div class="form-input">
-                                    <input type="text" id="place" name="Place" value="{{i.place}}" pattern="[a-zA-Z\s]+" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <label class="form-label" for="phone">Phone</label>
-                                <div class="form-input">
-                                    <input type="text" id="phone" name="Phone" value="{{i.phone}}" pattern="[0-9]{7,15}" title="Enter a valid phone number" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <label class="form-label" for="mobile">Mobile</label>
-                                <div class="form-input">
-                                    <input type="text" id="mobile" name="Mobile" value="{{i.mobile}}" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <label class="form-label" for="email">Email ID</label>
-                                <div class="form-input">
-                                    <input type="text" id="email" name="Email_id" value="{{i.email}}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Enter a valid email address" required>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="submit-button"><i class="fa fa-check-circle"></i> Update Details</BUTTON>
-                        </form>
-                        {% endfor %}
+                        </div>
                     </div>
-                </center>
                 </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="firm_name" class="form-label">Office Name</label>
+                            <input type="text" id="firm_name" name="Firm_name" value="{{ i.firm_name }}" pattern="[a-zA-Z0-9\s]+" required class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="aadhar_number" class="form-label">Aadhar Number</label>
+                            <input type="text" id="aadhar_number" name="Aadhar_number" value="{{ i.aadhar_no }}" pattern="[0-9]{12}" title="Aadhar number must be 12 digits" required class="form-control">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="dob" class="form-label">Date of Birth</label>
+                            <input type="date" id="dob" value="{{ i.dob }}" name="DOB" required class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="place" class="form-label">Place</label>
+                            <input type="text" id="place" name="Place" value="{{ i.place }}" pattern="[a-zA-Z\s]+" required class="form-control">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="text" id="phone" name="Phone" value="{{ i.phone }}" pattern="[0-9]{7,15}" title="Enter a valid phone number" required class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="mobile" class="form-label">Mobile</label>
+                            <input type="text" id="mobile" name="Mobile" value="{{ i.mobile }}" pattern="[0-9]{10}" title="Mobile number must be 10 digits" required class="form-control">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email ID</label>
+                            <input type="email" id="email" name="Email_id" value="{{ i.email }}" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Enter a valid email address" required class="form-control">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea id="address" name="Emp_address" rows="3" required class="form-control">{{ i.emp_address }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions text-center">
+                    <button type="submit" class="btn-modern btn-lg">
+                        <i class="fas fa-check-circle me-2"></i> Update Details
+                    </button>
+                </div>
+            </form>
+            {% endfor %}
         </div>
     </div>
-    
-<script src="{% static 'files/js/jquery.js' %}"></script>
-<script src="{% static 'files/js/bootstrap.min.js' %}"></script>
-</body>
-</html>
+</div>
+
+<style>
+    .modern-form .form-group {
+        margin-bottom: 0;
+    }
+    
+    .modern-form .form-label {
+        display: block;
+        font-weight: 600;
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .modern-form .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: #fff;
+    }
+    
+    .modern-form .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        outline: none;
+    }
+    
+    .modern-form .gender-options {
+        display: flex;
+        gap: 1.5rem;
+        padding-top: 0.5rem;
+    }
+    
+    .modern-form .form-check-input {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-right: 0.5rem;
+        cursor: pointer;
+    }
+    
+    .modern-form .form-check-label {
+        cursor: pointer;
+        font-size: 0.95rem;
+    }
+    
+    .modern-form .form-actions {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border-color);
+    }
+    
+    .modern-form .btn-lg {
+        padding: 0.875rem 2.5rem;
+        font-size: 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .modern-form .row {
+            margin-bottom: 0 !important;
+        }
+        
+        .modern-form .col-md-6 {
+            margin-bottom: 1.5rem;
+        }
+        
+        .modern-form .gender-options {
+            flex-direction: row;
+            gap: 1rem;
+        }
+    }
+</style>
+{% endblock %}

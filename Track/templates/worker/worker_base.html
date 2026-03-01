@@ -14,21 +14,73 @@
     <link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
     <link rel="stylesheet" href="{% static 'files/css/modern_ui.css' %}">
-    
-   <!-- 🔥 THIS IS IMPORTANT -->
+
+    <!-- 🔥 THIS IS IMPORTANT -->
     {% block extra_css %}{% endblock %}
-<style>
+    <style>
+        /* ===== GLOBAL FONT & BODY ===== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 16px;
+        }
+
         /* Sidebar font sizes - 16px */
         .nav-link {
             font-size: 16px !important;
         }
+
         .submenu-link {
             font-size: 16px !important;
         }
+
         .sidebar-logo {
             font-size: 16px !important;
         }
-        
+
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0 !important;
+                padding: 1rem !important;
+            }
+
+            .mobile-toggle {
+                display: flex !important;
+            }
+
+            .sidebar-overlay.show {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 0.75rem !important;
+            }
+
+            h1,
+            h2,
+            h3 {
+                font-size: 1.2rem !important;
+            }
+        }
+
+
         .page-header-accent {
             border-left: 4px solid var(--secondary-color);
             padding-left: 1rem;
