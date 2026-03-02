@@ -484,6 +484,44 @@ body::before {
         padding: 1rem;
     }
 }
+/* ===== FORCE BLACK FORM TEXT ===== */
+
+.form-label,
+.section-title,
+.section-subtitle {
+    color: #000000 !important;
+}
+
+/* Input & Select text */
+.form-control,
+.form-select,
+.form-control:focus,
+.form-select:focus {
+    color: #000000 !important;
+}
+
+/* Placeholder */
+.form-control::placeholder {
+    color: #555555 !important;
+    opacity: 1;
+}
+
+/* Dropdown options */
+.form-select option {
+    color: #000000;
+}
+
+/* Upload section text */
+.image-upload-area h5,
+.image-upload-area p {
+    color: #000000 !important;
+}
+
+/* Header text fix */
+.page-header h2,
+.page-header p {
+    color: #000000 !important;
+}
 </style>
 {% endblock %}
 
@@ -670,14 +708,14 @@ body::before {
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label required">State</label>
-                            <input type="text" class="form-control" name="state" value="{{ worker.state }}" required>
+                            <label class="form-label">State</label>
+                            <input type="text" class="form-control" name="state" value="{{ worker.state }}">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label class="form-label required">PIN Code</label>
-                            <input type="text" class="form-control" name="pincode" value="{{ worker.pincode }}" pattern="[0-9]{6}" maxlength="6" required>
+                            <label class="form-label">PIN Code</label>
+                            <input type="text" class="form-control" name="pincode" value="{{ worker.pincode }}" pattern="[0-9]{6}" maxlength="6">
                         </div>
                     </div>
                 </div>

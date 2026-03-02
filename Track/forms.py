@@ -83,6 +83,10 @@ class EmpForm(forms.ModelForm):
 
 class WorkerForm(forms.ModelForm):
     paswd = forms.CharField(widget=forms.PasswordInput)
+    image = forms.ImageField(
+        required=False,
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'accept': 'image/*'})
+    )
 
     class Meta:
         model = tbl_worker
@@ -107,7 +111,6 @@ class WorkerForm(forms.ModelForm):
             'mobile': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'paswd': forms.PasswordInput(attrs={'class': 'form-control'}),
-            'image': forms.TextInput(attrs={'class': 'form-control'})  # 🔥 FIXED
         }
 
 
@@ -270,3 +273,4 @@ class InsuranceForm(forms.ModelForm):
 # ==================== BACKWARD COMPATIBILITY ALIASES ====================
 # Maintain compatibility with existing code
 workerform = WorkerForm
+

@@ -1,164 +1,200 @@
 {% extends "admin/admin_base.html" %}
 {% load static %}
 
-{% block page_title %}Vetting Hub & Approvals{% endblock %}
+{% block page_title %}Agency Verification{% endblock %}
 
 {% block extra_css %}
 <style>
-    .vetting-container {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
+
+body{
+    font-family:'Segoe UI', sans-serif;
+    background:#f5f7fa;
+}
+
+/* ===== HEADER ===== */
+.page-header{
+    margin-bottom:35px;
+}
+
+.page-header h4{
+    font-size:26px;
+    font-weight:700;
+    color:#1e293b;
+    margin-bottom:6px;
+}
+
+.page-header p{
+    font-size:14px;
+    color:#64748b;
+}
+
+/* ===== CARD CONTAINER ===== */
+.vetting-container{
+    display:grid;
+    gap:20px;
+}
+
+/* ===== CARD ===== */
+.vetting-card{
+    background:#ffffff;
+    border-radius:18px;
+    padding:24px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.05);
+    display:flex;
+    align-items:center;
+    gap:25px;
+    transition:0.3s ease;
+    border:1px solid #e5e7eb;
+}
+
+.vetting-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 15px 30px rgba(0,0,0,0.08);
+}
+
+/* ===== ICON ===== */
+.vetting-icon{
+    width:70px;
+    height:70px;
+    background:#fff7ed;
+    color:#f97316;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.8rem;
+}
+
+/* ===== INFO ===== */
+.vetting-info{
+    flex:1;
+}
+
+.vetting-info h5{
+    font-size:18px;
+    font-weight:700;
+    color:#1e293b;
+    margin-bottom:8px;
+}
+
+.vetting-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    font-size:13px;
+    color:#6b7280;
+}
+
+.vetting-meta i{
+    margin-right:5px;
+    color:#3b82f6;
+}
+
+/* ===== STATUS ===== */
+.status-label{
+    background:#fef3c7;
+    color:#d97706;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+}
+
+/* ===== BUTTON ===== */
+.review-btn{
+    padding:10px 20px;
+    background:#3b82f6;
+    color:white;
+    border-radius:10px;
+    font-size:13px;
+    font-weight:600;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.review-btn:hover{
+    background:#2563eb;
+    color:white;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-card{
+    background:white;
+    padding:50px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+.empty-card h3{
+    font-size:20px;
+    margin-bottom:10px;
+    color:#1e293b;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+
+    .vetting-card{
+        flex-direction:column;
+        align-items:flex-start;
     }
 
-    .vetting-card {
-        background: white;
-        border-radius: 20px;
-        padding: 1.5rem;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02);
-        border: 1px solid #f1f5f9;
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        transition: all 0.3s ease;
+    .review-btn{
+        width:100%;
+        text-align:center;
+        margin-top:10px;
     }
 
-    .vetting-card:hover {
-        transform: translateX(10px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
-        border-color: var(--warning);
-    }
+}
 
-    .vetting-icon {
-        width: 80px;
-        height: 80px;
-        background: #fffbeb;
-        color: #f59e0b;
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        flex-shrink: 0;
-    }
-
-    .vetting-info {
-        flex: 1;
-    }
-
-    .vetting-info h5 {
-        margin: 0 0 5px 0;
-        font-weight: 800;
-        color: var(--text-main);
-    }
-
-    .vetting-meta {
-        display: flex;
-        gap: 1.5rem;
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        font-weight: 600;
-    }
-
-    .vetting-meta span i {
-        margin-right: 5px;
-        color: var(--primary);
-    }
-
-    .action-group {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .review-btn {
-        background: var(--dark-bg);
-        color: white;
-        padding: 10px 24px;
-        border-radius: 12px;
-        text-decoration: none;
-        font-weight: 700;
-        font-size: 0.85rem;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .review-btn:hover {
-        background: var(--primary);
-        color: white;
-        transform: translateY(-2px);
-    }
-
-    .pending-pulse {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: #f59e0b;
-        animation: pulse-warn 2s infinite;
-    }
-
-    @keyframes pulse-warn {
-        0% {
-            transform: scale(0.95);
-            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
-        }
-
-        70% {
-            transform: scale(1);
-            box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
-        }
-
-        100% {
-            transform: scale(0.95);
-            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
-        }
-    }
 </style>
 {% endblock %}
 
 {% block main_content %}
 <div class="animate__animated animate__fadeIn">
-    <div class="mb-5">
-        <h4 class="fw-800 m-0">Verification Queue</h4>
-        <p class="text-muted small">You have {{ list|length }} pending agency credential verifications.</p>
+
+    <div class="page-header">
+        <h4>Agency Verification</h4>
+        <p>You have {{ list|length }} agencies waiting for approval.</p>
     </div>
 
     <div class="vetting-container">
         {% for i in list %}
         <div class="vetting-card">
+
             <div class="vetting-icon">
-                <i class="fas fa-file-shield"></i>
+                <i class="fas fa-file-alt"></i>
             </div>
+
             <div class="vetting-info">
                 <h5>{{ i.firm_name }}</h5>
                 <div class="vetting-meta">
                     <span><i class="fas fa-user"></i> {{ i.name }}</span>
                     <span><i class="fas fa-map-marker-alt"></i> {{ i.place }}</span>
-                    <span><i class="fas fa-clock"></i> Applied on {{ i.dob|default:"N/A" }}</span>
+                    <span><i class="fas fa-calendar"></i> Applied on {{ i.dob|default:"N/A" }}</span>
                 </div>
             </div>
-            <div class="action-group">
-                <div class="d-flex align-items-center gap-2 text-warning fw-800 small me-3">
-                    <div class="pending-pulse"></div>
-                    PENDING REVIEW
-                </div>
+
+            <div class="d-flex align-items-center gap-3">
+                <span class="status-label">Pending</span>
                 <a href="/admin_view_employer_detail?emp_id={{ i.emp_id }}" class="review-btn">
-                    <i class="fas fa-search-plus"></i> BEGIN AUDIT
+                    Review
                 </a>
             </div>
+
         </div>
         {% empty %}
-        <div class="text-center py-5">
-            <div class="glass-card p-5">
-                <i class="fas fa-clipboard-check fa-4x mb-3 text-success"></i>
-                <h3 class="fw-800 text-dark">Vetting Queue Empty</h3>
-                <p class="text-muted">All agency applications have been processed. Great job!</p>
-                <a href="/homeadmin/" class="btn btn-primary rounded-4 px-4 fw-700 mt-3">Return to Dashboard</a>
-            </div>
+        <div class="empty-card">
+            <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
+            <h3>No pending agencies</h3>
+            <p class="text-muted">All agencies have been reviewed.</p>
+            <a href="/homeadmin/" class="review-btn mt-3">
+                Go to Dashboard
+            </a>
         </div>
         {% endfor %}
     </div>
+
 </div>
 {% endblock %}

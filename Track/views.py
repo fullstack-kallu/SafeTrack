@@ -16,7 +16,7 @@ from django.db.models import Q
 from Track.models import (
     tbl_worker, tbl_login, tbl_admin, tbl_emp, 
     tbl_policestation, tbl_vacancy, tbl_myworker, tbl_noc,
-    tbl_workerdetails, tbl_feedback, tbl_workershedule
+    tbl_workerdetails, tbl_feedback, tbl_workershedule, tbl_noccomplaint
 )
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
@@ -25,6 +25,7 @@ from django.conf import settings
 from datetime import date
 from django.db import IntegrityError
 import datetime
+import os
 now=str(date.today())
 
 
@@ -198,7 +199,10 @@ def homepolice(request):
 def homeadmin(request):
 	"""Admin view: Dashboard with analytics using ORM"""
 	try:
-		if 'u_id' not in request.session:
+		# Keep this page accessible for legacy admin flows that may not set u_id,
+		# but still block clearly non-admin logged-in users.
+		session_user_type = request.session.get('user_type')
+		if session_user_type and session_user_type != 'admin':
 			return redirect('/login/')
 			
 		worker_count = tbl_worker.objects.count()
@@ -1454,19 +1458,37 @@ def editfeedbackworker3(request):
 		html="<script>alert('successfully Editted!');window.location='/homeemp/';</script>"
 		return HttpResponse(html)
 def viewemydetailsworker(request):
-		cursor=connection.cursor()
-		sql="select * from tbl_login where user_type='worker' and u_id='%s'"%(request.session['u_id'])
-		list=[]
-		cursor.execute(sql)
-		result1=cursor.fetchall()
-		for row1 in result1:
-				sql1="select * from tbl_worker where worker_id='%s'"%(row1[3])
-				cursor.execute(sql1)
-				result=cursor.fetchall()
-				for row in result:
-					dict={'worker_id':row[0],'image':row[1],'worker_name':row[2],'gender':row[3],'dob':row[4],'aadhar_number':row[5],'regis_date':row[6],'place':row[7],'address':row[8],'languages_known':row[9],'phone':row[10],'mobile':row[11],'email':row[12]}
-					list.append(dict)
-		return render(request,'worker/view_mydetailsworker.html',{'list':list})
+	"""Worker self-profile edit view"""
+	try:
+		u_id = request.session.get('u_id')
+		if not u_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
+
+		worker = tbl_worker.objects.get(worker_id=u_id)
+
+		if request.method == 'POST':
+			worker.worker_name = request.POST.get('worker_name', worker.worker_name).strip()
+			worker.gender = request.POST.get('gender', worker.gender).strip()
+			worker.dob = request.POST.get('dob', worker.dob).strip()
+			worker.aadhar_number = request.POST.get('aadhar_number', worker.aadhar_number).strip()
+			worker.languages_known = request.POST.get('languages_known', worker.languages_known).strip()
+			worker.email = request.POST.get('email', worker.email).strip()
+			worker.mobile = request.POST.get('mobile', worker.mobile).strip()
+			worker.phone = request.POST.get('phone', worker.phone).strip()
+			worker.address = request.POST.get('address', worker.address).strip()
+			worker.place = request.POST.get('place', worker.place).strip()
+
+			if request.FILES.get('image'):
+				worker.image = request.FILES['image']
+
+			worker.save()
+			return HttpResponse("<script>alert('Profile updated successfully');window.location='/worker_profile/';</script>")
+
+		return render(request, 'worker/view_mydetailsworker.html', {'worker': worker})
+	except tbl_worker.DoesNotExist:
+		return HttpResponse("<script>alert('Worker profile not found');window.location='/homeworker/';</script>")
+	except Exception as e:
+		return HttpResponse(f"<script>alert('Error: {str(e)}');window.location='/worker_profile/';</script>")
 
 def worker_profile(request):
 	"""Display worker profile using ORM for stability"""
@@ -1641,9 +1663,28 @@ def viewadminworker(request):
 		workers = tbl_worker.objects.all().order_by('worker_id')
 		list_data = []
 		for row in workers:
+			image_url = ''
+			if row.image:
+				try:
+					image_url = row.image.url
+				except Exception:
+					raw_name = str(row.image).replace('\\', '/').strip()
+					if raw_name:
+						if raw_name.startswith('media/'):
+							raw_name = raw_name[len('media/'):]
+						candidate_names = [raw_name]
+						base_name = os.path.basename(raw_name)
+						if base_name:
+							candidate_names.extend([f"workers/{base_name}", f"pictures/{base_name}"])
+						for name in candidate_names:
+							full_path = os.path.join(settings.MEDIA_ROOT, name)
+							if os.path.exists(full_path):
+								image_url = f"{settings.MEDIA_URL}{name}".replace('\\', '/')
+								break
 			dict_data = {
 				'worker_id': row.worker_id,
 				'image': row.image,
+				'image_url': image_url,
 				'worker_name': row.worker_name,
 				'gender': row.gender,
 				'dob': row.dob,
@@ -1755,7 +1796,10 @@ def viewempadmin(request):
 def admin_view_pending_employers(request):
 	"""Admin view: List all pending employer registrations using ORM"""
 	try:
-		if 'u_id' not in request.session:
+		# Keep this page accessible for legacy admin flows that may not set u_id,
+		# but still block clearly non-admin logged-in users.
+		session_user_type = request.session.get('user_type')
+		if session_user_type and session_user_type != 'admin':
 			return redirect('/login/')
 			
 		# Get pending logins for employers
@@ -1792,7 +1836,10 @@ def admin_view_pending_employers(request):
 def admin_view_all_employers(request):
 	"""Admin view: List all employer/agency details using ORM"""
 	try:
-		if 'u_id' not in request.session:
+		# Keep this page accessible for legacy admin flows that may not set u_id,
+		# but still block clearly non-admin logged-in users.
+		session_user_type = request.session.get('user_type')
+		if session_user_type and session_user_type != 'admin':
 			return redirect('/login/')
 			
 		# Get all employers from tbl_emp
@@ -2202,7 +2249,10 @@ def changepaswd1 (request):
 def viewadminpolice(request):
 	"""Admin view: List all registered police units using ORM"""
 	try:
-		if 'u_id' not in request.session:
+		# Keep this page accessible for legacy admin flows that may not set u_id,
+		# but still block clearly non-admin logged-in users.
+		session_user_type = request.session.get('user_type')
+		if session_user_type and session_user_type != 'admin':
 			return redirect('/login/')
 			
 		stations = tbl_policestation.objects.all().order_by('branch')

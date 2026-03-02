@@ -5,122 +5,176 @@
 
 {% block extra_head %}
 <style>
-    /* Printing Layout Styles */
-    .id-card-container {
-        display: flex;
-        justify-content: center;
-        padding: 2rem 0;
+
+/* ===== Page Background ===== */
+body{
+    background: linear-gradient(135deg,#0f172a,#1e293b);
+}
+
+/* ===== Container ===== */
+.id-card-container{
+    display:flex;
+    justify-content:center;
+    padding:3rem 0;
+}
+
+/* ===== Card ===== */
+#DivIdToPrint{
+    width:380px;
+    border-radius:30px;
+    overflow:hidden;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    box-shadow:0 30px 60px rgba(0,0,0,0.4);
+    position:relative;
+    font-family:'Segoe UI',sans-serif;
+    transition:0.4s ease;
+}
+
+#DivIdToPrint:hover{
+    transform: translateY(-8px);
+    box-shadow:0 40px 70px rgba(0,0,0,0.5);
+}
+
+/* ===== Header ===== */
+.card-banner{
+    background: linear-gradient(135deg,#064e3b,#10b981);
+    padding:2rem 1rem 4rem;
+    text-align:center;
+    color:white;
+    position:relative;
+}
+
+.card-banner h2{
+    font-size:18px;
+    font-weight:700;
+    letter-spacing:1px;
+    margin:0;
+}
+
+.card-banner .small{
+    opacity:0.9;
+}
+
+/* ===== Profile Image ===== */
+
+.worker-profile-wrapper{
+    display:flex;
+    justify-content:center;
+    position:relative;
+    margin-top:-65px;
+}
+
+.worker-profile-img{
+    width:140px;
+    height:140px;
+    border-radius:50%;
+    object-fit:cover;
+    border:6px solid white;
+    box-shadow:0 15px 35px rgba(0,0,0,0.25);
+    background:white;
+}
+/* ===== Body ===== */
+.card-body{
+    padding:2rem;
+    color:#1f2937;
+}
+
+/* Worker Name */
+.worker-name{
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:1px;
+    text-align:center;
+}
+
+/* Verified Badge */
+.worker-badge{
+    display:inline-block;
+    background:#10b981;
+    color:white;
+    padding:6px 18px;
+    border-radius:50px;
+    font-size:13px;
+    margin-top:8px;
+    font-weight:600;
+    box-shadow:0 5px 15px rgba(16,185,129,0.4);
+}
+
+/* ===== Info List ===== */
+.worker-info-list{
+    list-style:none;
+    padding:0;
+    margin-top:25px;
+}
+
+.worker-info-item{
+    display:flex;
+    justify-content:space-between;
+    padding:10px 0;
+    border-bottom:1px solid #e5e7eb;
+    font-size:15px;
+}
+
+.worker-info-item:last-child{
+    border-bottom:none;
+}
+
+.info-label{
+    font-weight:600;
+    color:#6b7280;
+}
+
+.info-value{
+    font-weight:700;
+    color:#111827;
+}
+
+/* ===== Footer ===== */
+.card-footer{
+    background:#f3f4f6;
+    padding:1rem;
+    text-align:center;
+    font-size:13px;
+    color:#6b7280;
+    border-top:1px solid #e5e7eb;
+}
+
+/* ===== Print ===== */
+@media print{
+
+    body{
+        background:white !important;
     }
 
-    #DivIdToPrint {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        width: 400px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        position: relative;
+    .sidebar,
+    .page-header-accent,
+    .no-print,
+    .main-content header{
+        display:none !important;
     }
 
-    .card-banner {
-        background: var(--secondary-color);
-        padding: 1.5rem;
-        text-align: center;
-        color: rgb(17, 10, 216);
+    #DivIdToPrint{
+        box-shadow:none !important;
+        border:1px solid #ccc !important;
+        width:100% !important;
+        max-width:380px;
     }
+}
 
-    .card-banner h2 {
-        font-family: 'Audiowide', cursive;
-        font-size: 1.2rem;
-        margin: 0;
-        letter-spacing: 2px;
-    }
-
-    .card-body {
-        padding: 2rem;
-        color: #1f2937;
-    }
-
-    .worker-profile-img {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid white;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        display: block;
-        margin: -60px auto 1.5rem;
-        background: white;
-    }
-
-    .worker-info-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .worker-info-item {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.75rem 0;
-        border-bottom: 1px dashed #e5e7eb;
-        font-size: 16px;
-    }
-
-    .worker-info-item:last-child {
-        border-bottom: none;
-    }
-
-    .info-label {
-        font-weight: 600;
-        color: #6b7280;
-    }
-
-    .info-value {
-        font-weight: 700;
-        color: #111827;
-    }
-
-    .card-footer {
-        background: #f3f4f6;
-        padding: 1rem;
-        text-align: center;
-        font-size: 0.75rem;
-        color: #9ca3af;
-    }
-
-    @media print {
-
-        .sidebar,
-        .page-header-accent,
-        .no-print,
-        .main-content header {
-            display: none !important;
-        }
-
-        .main-content {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        #DivIdToPrint {
-            box-shadow: none !important;
-            border: 1px solid #ccc !important;
-            width: 100% !important;
-            max-width: 400px;
-        }
-    }
 </style>
 {% endblock %}
 
 {% block content %}
+
 <div class="page-header-accent">
-    <h2 class="h4 font-weight-bold">Digital Identity Card</h2>
-    <p class="text-muted small">Your official verified worker ID for security access.</p>
+    <h2 class="h4 font-weight-bold text-white">Digital Identity Card</h2>
+    <p class="text-light small">Your official verified worker ID for security access.</p>
 </div>
 
-<div class="id-card-container animate-page">
+<div class="id-card-container">
     <div id="DivIdToPrint">
+
         <div class="card-banner">
             <h2>COPTRACK OFFICIAL</h2>
             <div class="small">Security Verified Professional</div>
@@ -128,14 +182,20 @@
 
         <div class="card-body">
             {% for i in worker %}
-            <img src="/media/{{i.image}}" class="worker-profile-img" alt="{{i.worker_name}}">
+<img src="/media/{{i.image}}" class="worker-profile-img" alt="{{i.worker_name}}">
 
-            <div class="text-center mb-4">
-                <h3 class="h4 font-weight-bold mb-0">{{ i.worker_name }}</h3>
-                <div class="badge badge-pill badge-success">ST-VERIFIED-{{ i.aadhar_number|slice:":4" }}</div>
+            <div class="worker-name">{{ i.worker_name|upper }}</div>
+            <div class="text-center">
+                <span class="worker-badge">
+                    ST-VERIFIED-{{ i.aadhar_number|slice:":4" }}
+                </span>
             </div>
 
             <ul class="worker-info-list">
+                <li class="worker-info-item">
+                    <span class="info-label">Worker ID</span>
+                    <span class="info-value">{{ i.worker_id }}</span>
+                </li>
                 <li class="worker-info-item">
                     <span class="info-label">Aadhaar No</span>
                     <span class="info-value">{{ i.aadhar_number }}</span>
@@ -149,7 +209,7 @@
                     <span class="info-value">{{ i.place }}</span>
                 </li>
                 <li class="worker-info-item">
-                    <span class="info-label">Contact</span>
+                    <span class="info-label">Mobile</span>
                     <span class="info-value">{{ i.mobile }}</span>
                 </li>
                 <li class="worker-info-item">
@@ -157,18 +217,22 @@
                     <span class="info-value">{{ i.languages_known }}</span>
                 </li>
             </ul>
+
             {% endfor %}
         </div>
 
         <div class="card-footer">
-            <i class="fas fa-shield-alt mr-1"></i> Valid only with active NOC certificate.
+            <i class="fas fa-shield-alt mr-1"></i>
+            Valid only with active NOC certificate.
         </div>
+
     </div>
 </div>
 
 <div class="text-center mt-4 no-print">
-    <button type="button" class="btn-modern btn-lg px-5" onclick="window.print();">
+    <button type="button" class="btn btn-success px-5 py-2" onclick="window.print();">
         <i class="fas fa-print mr-2"></i> Print Official ID Card
     </button>
 </div>
+
 {% endblock %}

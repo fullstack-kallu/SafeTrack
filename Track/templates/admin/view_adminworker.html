@@ -6,24 +6,27 @@
 {% block extra_css %}
 <style>
 
-/* ===== BASE FONT SIZE ===== */
-.data-card,
-.search-box {
-    font-size: 16px;
+/* ===== BACKGROUND ===== */
+body {
+    background: url("https://images.unsplash.com/photo-1508780709619-79562169bc64") center/cover no-repeat fixed;
 }
 
 /* ===== SEARCH SECTION ===== */
 .search-box {
-    background: white;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
     padding: 2rem;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
     margin-bottom: 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 20px;
+    color: white;
 }
 
 .search-box h3 {
@@ -33,7 +36,7 @@
 
 .search-box p {
     font-size: 14px;
-    color: #64748b;
+    color: #e2e8f0;
     margin: 5px 0 0;
 }
 
@@ -47,14 +50,15 @@
     width: 100%;
     padding: 12px 15px 12px 40px;
     border-radius: 12px;
-    border: 2px solid #eef2f6;
+    border: none;
     font-size: 15px;
+    background: rgba(255,255,255,0.95);
+    color: #000;
 }
 
 .search-input input:focus {
-    border-color: #2563eb;
     outline: none;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 4px rgba(59,130,246,0.4);
 }
 
 .search-input i {
@@ -62,15 +66,19 @@
     left: 12px;
     top: 50%;
     transform: translateY(-50%);
-    color: #94a3b8;
+    color: #64748b;
 }
 
 /* ===== CARD ===== */
 .data-card {
-    background: white;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: 20px;
     padding: 1.5rem;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    color: white;
 }
 
 /* ===== TABLE ===== */
@@ -80,22 +88,27 @@
 }
 
 .modern-table th {
-    background: #f8fafc;
+    background: rgba(255,255,255,0.1);
     padding: 16px;
     font-size: 13px;
     font-weight: 800;
     text-transform: uppercase;
-    color: #64748b;
+    color: #e2e8f0;
 }
 
 .modern-table td {
     padding: 18px 16px;
     font-size: 15px;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.modern-table tr {
+    transition: 0.3s ease;
 }
 
 .modern-table tr:hover {
-    background: #f9fafb;
+    background: rgba(255,255,255,0.1);
+    transform: scale(1.01);
 }
 
 /* ===== PROFILE ===== */
@@ -110,6 +123,16 @@
     height: 55px;
     border-radius: 15px;
     object-fit: cover;
+    border: 2px solid rgba(255,255,255,0.4);
+}
+
+.profile-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.18);
+    color: #e2e8f0;
+    font-size: 20px;
 }
 
 .profile-name {
@@ -118,7 +141,7 @@
 
 .profile-id {
     font-size: 13px;
-    color: #64748b;
+    color: #cbd5e1;
 }
 
 /* ===== STATUS ===== */
@@ -130,18 +153,18 @@
 }
 
 .active {
-    background: #dcfce7;
-    color: #16a34a;
+    background: #22c55e;
+    color: white;
 }
 
 .pending {
-    background: #fef3c7;
-    color: #d97706;
+    background: #f59e0b;
+    color: white;
 }
 
 .rejected {
-    background: #fee2e2;
-    color: #dc2626;
+    background: #ef4444;
+    color: white;
 }
 
 /* ===== ACTION ===== */
@@ -152,56 +175,102 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #eef2f6;
+    border: 1px solid rgba(255,255,255,0.4);
     text-decoration: none;
-    color: #64748b;
+    color: white;
+    transition: 0.3s;
 }
 
 .action-btn:hover {
-    background: #2563eb;
-    color: white;
+    background: #3b82f6;
+    transform: scale(1.1);
 }
 
-/* ===== MOBILE CARD VIEW ===== */
+/* ===== PREMIUM MOBILE CARD VIEW ===== */
 @media (max-width: 768px) {
 
     .modern-table thead {
         display: none;
     }
 
+    .modern-table {
+        border: none;
+    }
+
     .modern-table,
-    .modern-table tbody,
-    .modern-table tr,
-    .modern-table td {
+    .modern-table tbody {
         display: block;
         width: 100%;
     }
 
     .modern-table tr {
-        background: white;
-        margin-bottom: 15px;
-        padding: 15px;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        display: block;
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(15px);
+        border-radius: 18px;
+        padding: 18px;
+        margin-bottom: 18px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        transition: 0.3s ease;
+    }
+
+    .modern-table tr:hover {
+        transform: translateY(-3px);
+        background: rgba(255,255,255,0.25);
     }
 
     .modern-table td {
+        display: block;
         border: none;
-        padding: 10px 0;
+        padding: 8px 0;
+        font-size: 14px;
     }
 
     .modern-table td::before {
         content: attr(data-label);
         display: block;
         font-weight: 700;
-        font-size: 12px;
-        color: #64748b;
+        font-size: 11px;
+        color: #cbd5e1;
         margin-bottom: 4px;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Profile Section Top Styling */
+    .profile-box {
+        margin-bottom: 10px;
+    }
+
+    .profile-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+    }
+
+    .profile-name {
+        font-size: 16px;
+    }
+
+    .profile-id {
+        font-size: 12px;
+    }
+
+    /* Status badge spacing */
+    .status {
+        display: inline-block;
+        margin-top: 6px;
+    }
+
+    /* Action button styling */
+    .action-btn {
+        margin-top: 8px;
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
     }
 
 }
-
 </style>
 {% endblock %}
 
@@ -238,7 +307,17 @@
                 <tr>
                     <td data-label="Worker">
                         <div class="profile-box">
-                            <img src="/media/{{i.image}}" class="profile-img">
+                            {% if i.image_url %}
+                                <img src="{{ i.image_url }}" class="profile-img" alt="{{ i.worker_name }}"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="profile-img profile-placeholder" style="display:none;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            {% else %}
+                                <div class="profile-img profile-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            {% endif %}
                             <div>
                                 <div class="profile-name">{{i.worker_name}}</div>
                                 <div class="profile-id">ID: {{i.worker_id}}</div>
@@ -276,7 +355,7 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" style="text-align:center;padding:40px;color:#64748b;">
+                    <td colspan="6" style="text-align:center;padding:40px;color:#e2e8f0;">
                         No workers found.
                     </td>
                 </tr>
