@@ -58,6 +58,12 @@
                                 </a>
                             </td>
                         </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" style="text-align:center; padding: 24px; color:#64748B; font-weight:600;">
+                                No worker details available for NOC monitoring.
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>

@@ -156,6 +156,26 @@
         box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
     }
 
+    /* Error styling */
+    .input-reg.error {
+        border-color: #e53e3e;
+    }
+
+    .input-reg.error:focus {
+        box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+    }
+
+    .error-message {
+        color: #e53e3e;
+        font-size: 12px;
+        margin-top: 4px;
+        display: none;
+    }
+
+    .error-message.visible {
+        display: block;
+    }
+
     /* Gender */
     .gender-group {
         display: flex;
@@ -315,7 +335,7 @@
             </div>
         </div>
 
-        <form action="/regempinsert/" method="get" id="regForm">
+        <form action="/regempinsert/" method="POST" id="regForm">
             {% csrf_token %}
             <div class="steps-box">
                 <!-- STEP 1: PERSONAL -->
@@ -327,30 +347,32 @@
                         <div class="form-group-full">
                             <div class="form-group-reg">
                                 <label>Full Name</label>
-                                <input type="text" name="Emp_name" class="input-reg" placeholder="Enter your full name" required>
+                                <input type="text" name="Emp_name" class="input-reg" id="Emp_name" placeholder="Enter your full name" value="{{ form_data.Emp_name|default:'' }}" required>
+                                <div class="error-message" id="error_Emp_name">{% if errors.name %}{{ errors.name }}{% endif %}</div>
                             </div>
                         </div>
                         <div class="form-group-reg">
                             <label>Gender</label>
                             <div class="gender-group">
                                 <label class="gender-btn">
-                                    <input type="radio" name="Gender" value="male" checked>
+                                    <input type="radio" name="Gender" value="male" {% if form_data.Gender == 'male' or not form_data.Gender %}checked{% endif %}>
                                     <div class="gender-box">Male</div>
                                 </label>
                                 <label class="gender-btn">
-                                    <input type="radio" name="Gender" value="female">
+                                    <input type="radio" name="Gender" value="female" {% if form_data.Gender == 'female' %}checked{% endif %}>
                                     <div class="gender-box">Female</div>
                                 </label>
                             </div>
                         </div>
                         <div class="form-group-reg">
                             <label>Date of Birth</label>
-                            <input type="date" name="DOB" class="input-reg" required>
+                            <input type="date" name="DOB" class="input-reg" id="DOB" value="{{ form_data.DOB|default:'' }}" required>
                         </div>
                         <div class="form-group-full">
                             <div class="form-group-reg">
                                 <label>Aadhar Number (12-digit)</label>
-                                <input type="text" name="Aadhar_number" class="input-reg" pattern="[0-9]{12}" maxlength="12" placeholder="12-digit aadhar" required>
+                                <input type="text" name="Aadhar_number" class="input-reg" id="Aadhar_number" pattern="[0-9]{12}" maxlength="12" placeholder="12-digit aadhar" value="{{ form_data.Aadhar_number|default:'' }}" required>
+                                <div class="error-message" id="error_Aadhar_number">{% if errors.aadhar %}{{ errors.aadhar }}{% endif %}</div>
                             </div>
                         </div>
                     </div>
@@ -365,19 +387,19 @@
                         <div class="form-group-full">
                             <div class="form-group-reg">
                                 <label>Firm / Office Name</label>
-                                <input type="text" name="Firm_name" class="input-reg" placeholder="Company name" required>
+                                <input type="text" name="Firm_name" class="input-reg" id="Firm_name" placeholder="Company name" value="{{ form_data.Firm_name|default:'' }}" required>
                             </div>
                         </div>
                         <div class="form-group-full">
                             <div class="form-group-reg">
                                 <label>Office Address</label>
-                                <textarea name="Emp_address" class="input-reg" rows="2" placeholder="Full address" required></textarea>
+                                <textarea name="Emp_address" class="input-reg" id="Emp_address" rows="2" placeholder="Full address" required>{{ form_data.Emp_address|default:'' }}</textarea>
                             </div>
                         </div>
                         <div class="form-group-full">
                             <div class="form-group-reg">
                                 <label>City</label>
-                                <input type="text" name="Place" class="input-reg" placeholder="City name" required>
+                                <input type="text" name="Place" class="input-reg" id="Place" placeholder="City name" value="{{ form_data.Place|default:'' }}" required>
                             </div>
                         </div>
                     </div>
@@ -392,31 +414,35 @@
                         <div class="form-group-reg">
                             <div class="form-group-reg">
                                 <label>Phone (Landline)</label>
-                                <input type="text" name="Phone" class="input-reg" placeholder="Optional">
+                                <input type="text" name="Phone" class="input-reg" id="Phone" placeholder="Optional" value="{{ form_data.Phone|default:'' }}">
                             </div>
                         </div>
                         <div class="form-group-reg">
                             <div class="form-group-reg">
                                 <label>Mobile Number</label>
-                                <input type="text" name="Mobile" class="input-reg" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile" required>
+                                <input type="text" name="Mobile" class="input-reg" id="Mobile" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile" value="{{ form_data.Mobile|default:'' }}" required>
+                                <div class="error-message" id="error_Mobile">{% if errors.mobile %}{{ errors.mobile }}{% endif %}</div>
                             </div>
                         </div>
                         <div class="form-group-full">
                             <div class="form-group-reg">
                                 <label>Email Address</label>
-                                <input type="email" name="Email_id" class="input-reg" placeholder="your@email.com" required>
+                                <input type="email" name="Email_id" class="input-reg" id="Email_id" placeholder="your@email.com" value="{{ form_data.Email_id|default:'' }}" required>
+                                <div class="error-message" id="error_Email_id">{% if errors.email %}{{ errors.email }}{% endif %}</div>
                             </div>
                         </div>
                         <div class="form-group-reg">
                             <div class="form-group-reg">
                                 <label>Password</label>
                                 <input type="password" name="Password" id="mainPass" class="input-reg" required>
+                                <div class="error-message" id="error_Password">{% if errors.password %}{{ errors.password }}{% endif %}</div>
                             </div>
                         </div>
                         <div class="form-group-reg">
                             <div class="form-group-reg">
                                 <label>Confirm Password</label>
                                 <input type="password" name="re_Password" id="verifyPass" class="input-reg" required>
+                                <div class="error-message" id="error_re_Password">{% if errors.re_password %}{{ errors.re_password }}{% endif %}</div>
                             </div>
                         </div>
                     </div>
@@ -461,6 +487,50 @@ $(document).ready(function () {
     let currentStep = 1;
     const totalSteps = 3;
 
+    function goToStep(stepNumber) {
+        $('.form-step').removeClass('active');
+        currentStep = stepNumber;
+        $('#step' + currentStep).addClass('active');
+        $('#prevBtn').toggle(currentStep > 1);
+        $('#nextBtn').text(currentStep === totalSteps ? 'SUBMIT REGISTRATION' : 'NEXT STEP');
+        updateProgress();
+    }
+
+    // Show inline errors from server-side validation
+    {% if errors %}
+    (function() {
+        {% if errors.name %}
+        $('#Emp_name').addClass('error');
+        $('#error_Emp_name').text('{{ errors.name|escapejs }}').addClass('visible');
+        {% endif %}
+        
+        {% if errors.email %}
+        $('#Email_id').addClass('error');
+        $('#error_Email_id').text('{{ errors.email|escapejs }}').addClass('visible');
+        {% endif %}
+        
+        {% if errors.mobile %}
+        $('#Mobile').addClass('error');
+        $('#error_Mobile').text('{{ errors.mobile|escapejs }}').addClass('visible');
+        {% endif %}
+        
+        {% if errors.aadhar %}
+        $('#Aadhar_number').addClass('error');
+        $('#error_Aadhar_number').text('{{ errors.aadhar|escapejs }}').addClass('visible');
+        {% endif %}
+        
+        {% if errors.password %}
+        $('#mainPass').addClass('error');
+        $('#error_Password').text('{{ errors.password|escapejs }}').addClass('visible');
+        {% endif %}
+        
+        {% if errors.re_password %}
+        $('#verifyPass').addClass('error');
+        $('#error_re_Password').text('{{ errors.re_password|escapejs }}').addClass('visible');
+        {% endif %}
+    })();
+    {% endif %}
+
     function updateProgress() {
         $('.step-circle').removeClass('active completed');
         for (let i = 1; i <= totalSteps; i++) {
@@ -474,6 +544,21 @@ $(document).ready(function () {
             }
         }
     }
+
+    {% if errors %}
+    if ({% if errors.email or errors.mobile or errors.password or errors.re_password %}true{% else %}false{% endif %}) {
+        goToStep(3);
+    } else if ({% if errors.name or errors.aadhar %}true{% else %}false{% endif %}) {
+        goToStep(1);
+    }
+    {% endif %}
+
+    // Clear error styling on input
+    $('.input-reg').on('input', function() {
+        $(this).removeClass('error');
+        const errorId = '#error_' + $(this).attr('id');
+        $(errorId).removeClass('visible');
+    });
 
     $('#nextBtn').click(function () {
         const currentFormStep = $('#step' + currentStep);
@@ -504,7 +589,9 @@ $(document).ready(function () {
             const p1 = $('#mainPass').val();
             const p2 = $('#verifyPass').val();
             if (p1 !== p2) {
-                alert("Passwords do not match!");
+                // Show inline error for password mismatch
+                $('#verifyPass').addClass('error');
+                $('#error_re_Password').text('Passwords do not match').addClass('visible');
                 return;
             }
             $('#regForm').submit();

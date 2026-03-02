@@ -82,6 +82,21 @@
         min-height: 80px;
     }
 
+    .input-police.error {
+        border-color: #e53e3e;
+    }
+
+    .error-message {
+        color: #e53e3e;
+        font-size: 12px;
+        margin-top: 4px;
+        display: none;
+    }
+
+    .error-message.visible {
+        display: block;
+    }
+
     .btn-police-submit {
         background: #e63946;
         color: white;
@@ -139,54 +154,63 @@
         <div class="police-form-card">
             <h2><i class="fas fa-building-shield"></i> Command Center Registration</h2>
 
-            <form action="/regpoliceinsert/" method="get">
+            <form action="/regpoliceinsert/" method="get" id="policeRegForm">
                 {% csrf_token %}
 
                 <div class="form-grid-police">
                     <div class="form-group-police full-width">
                         <label>Station Branch / Unit Name</label>
-                        <input type="text" name="branch" class="input-police" placeholder="e.g., Central Division Station" required>
+                        <input type="text" name="branch" class="input-police {% if errors.branch %}error{% endif %}" id="branch" placeholder="e.g., Central Division Station" value="{{ form_data.branch|default:'' }}" required>
+                        <div class="error-message {% if errors.branch %}visible{% endif %}" id="error_branch">{% if errors.branch %}{{ errors.branch }}{% endif %}</div>
                     </div>
 
                     <div class="form-group-police full-width">
                         <label>Operational Jurisdiction Address</label>
-                        <textarea name="address" class="input-police" placeholder="Enter full station address" required></textarea>
+                        <textarea name="address" class="input-police {% if errors.address %}error{% endif %}" id="address" placeholder="Enter full station address" required>{{ form_data.address|default:'' }}</textarea>
+                        <div class="error-message {% if errors.address %}visible{% endif %}" id="error_address">{% if errors.address %}{{ errors.address }}{% endif %}</div>
                     </div>
 
                     <div class="form-group-police">
                         <label>Landline Phone</label>
-                        <input type="text" name="Phone" class="input-police" placeholder="Optional">
+                        <input type="text" name="Phone" class="input-police" placeholder="Optional" value="{{ form_data.Phone|default:'' }}">
                     </div>
                     <div class="form-group-police">
                         <label>Emergency Mobile</label>
-                        <input type="text" name="Mobile" class="input-police" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit number" required>
+                        <input type="text" name="Mobile" class="input-police {% if errors.mobile %}error{% endif %}" id="Mobile" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit number" value="{{ form_data.Mobile|default:'' }}" required>
+                        <div class="error-message {% if errors.mobile %}visible{% endif %}" id="error_Mobile">{% if errors.mobile %}{{ errors.mobile }}{% endif %}</div>
                     </div>
 
                     <div class="form-group-police full-width">
                         <label>Official Email</label>
-                        <input type="email" name="Email_id" class="input-police" placeholder="station@gov.in" required>
+                        <input type="email" name="Email_id" class="input-police {% if errors.email %}error{% endif %}" id="Email_id" placeholder="station@gov.in" value="{{ form_data.Email_id|default:'' }}" required>
+                        <div class="error-message {% if errors.email %}visible{% endif %}" id="error_Email_id">{% if errors.email %}{{ errors.email }}{% endif %}</div>
                     </div>
 
                     <div class="form-group-police">
                         <label>City</label>
-                        <input type="text" name="city" class="input-police" placeholder="Enter City" required>
+                        <input type="text" name="city" class="input-police {% if errors.city %}error{% endif %}" id="city" placeholder="Enter City" value="{{ form_data.city|default:'' }}" required>
+                        <div class="error-message {% if errors.city %}visible{% endif %}" id="error_city">{% if errors.city %}{{ errors.city }}{% endif %}</div>
                     </div>
                     <div class="form-group-police">
                         <label>District</label>
-                        <input type="text" name="district" class="input-police" placeholder="Enter District" required>
+                        <input type="text" name="district" class="input-police {% if errors.district %}error{% endif %}" id="district" placeholder="Enter District" value="{{ form_data.district|default:'' }}" required>
+                        <div class="error-message {% if errors.district %}visible{% endif %}" id="error_district">{% if errors.district %}{{ errors.district }}{% endif %}</div>
                     </div>
                     <div class="form-group-police full-width">
                         <label>State</label>
-                        <input type="text" name="state" class="input-police" placeholder="Enter State" required>
+                        <input type="text" name="state" class="input-police {% if errors.state %}error{% endif %}" id="state" placeholder="Enter State" value="{{ form_data.state|default:'' }}" required>
+                        <div class="error-message {% if errors.state %}visible{% endif %}" id="error_state">{% if errors.state %}{{ errors.state }}{% endif %}</div>
                     </div>
 
                     <div class="form-group-police">
                         <label>Password</label>
-                        <input type="password" name="Password" class="input-police" required>
+                        <input type="password" name="Password" id="Password" class="input-police {% if errors.password %}error{% endif %}" required>
+                        <div class="error-message {% if errors.password %}visible{% endif %}" id="error_Password">{% if errors.password %}{{ errors.password }}{% endif %}</div>
                     </div>
                     <div class="form-group-police">
                         <label>Confirm Password</label>
-                        <input type="password" name="re_Password" class="input-police" required>
+                        <input type="password" name="re_Password" id="re_Password" class="input-police {% if errors.re_password %}error{% endif %}" required>
+                        <div class="error-message {% if errors.re_password %}visible{% endif %}" id="error_re_Password">{% if errors.re_password %}{{ errors.re_password }}{% endif %}</div>
                     </div>
 
                     <div class="form-group-police full-width">
@@ -202,15 +226,25 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function () {
+    $('#policeRegForm .input-police').on('input', function () {
+        $(this).removeClass('error');
+        const id = $(this).attr('id');
+        if (id) {
+            $('#error_' + id).removeClass('visible');
+        }
+    });
+
     // Password confirmation validation
     $('input[name="re_Password"]').on('input', function () {
-        var password = $('input[name="Password"]').val();
+        var password = $('#Password').val();
         var confirmPassword = $(this).val();
 
         if (password !== confirmPassword) {
-            $(this).css('border-color', '#e74c3c');
+            $(this).addClass('error');
+            $('#error_re_Password').text('Passwords do not match').addClass('visible');
         } else {
-            $(this).css('border-color', '#2ecc71');
+            $(this).removeClass('error');
+            $('#error_re_Password').removeClass('visible');
         }
     });
 });

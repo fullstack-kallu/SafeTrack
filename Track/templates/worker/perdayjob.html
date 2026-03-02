@@ -1,0 +1,50 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}Job Schedule{% endblock %}
+
+{% block content %}
+<div class="page-header-accent">
+    <h2 class="h4 font-weight-bold">Assigned Job Schedule</h2>
+    <p class="text-muted small">View all work schedules assigned by your agency.</p>
+</div>
+
+<div class="glass-card">
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Schedule ID</th>
+                    <th>Job Details</th>
+                    <th>Date</th>
+                    <th>Hours</th>
+                    <th>Salary</th>
+                    <th>Attendance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in list %}
+                <tr>
+                    <td class="font-weight-bold text-primary">#{{ i.shedule_id }}</td>
+                    <td>
+                        <div class="font-weight-bold">{{ i.job_details }}</div>
+                        <div class="text-muted small">Agency ID: {{ i.emp_id }}</div>
+                    </td>
+                    <td>{{ i.time_from }}</td>
+                    <td>{{ i.working_houres }} Hours</td>
+                    <td><span class="text-success font-weight-bold">Rs {{ i.salary }}</span></td>
+                    <td><span class="badge badge-pill badge-primary">{{ i.attendance|default:"Pending" }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="fas fa-calendar-day fa-3x mb-3"></i>
+                        <p>No schedules assigned yet.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

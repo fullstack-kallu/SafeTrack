@@ -1,27 +1,209 @@
-
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>view_vacancy</title>
-    
-  </head>
-  <body>
-    
-    
-<center>
-        <form action="" method="get" > 
-   
-              
-     <table class="gridtable" border="2"  align="center">
-<tr>
-<th>Date</th><th>Vacancy</th><th>Number of vacancy</th><th>About job</th><th>Qualification</th><th>Experience</th>
-{% for i in list %}
-<tr><td>{{i.date}}</td>
-<td>{{i.vacancy}}</td>
-<td>{{i.vacancy_no}}</td>
+<head>
+    <meta charset="UTF-8">
+    <title>View Vacancies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<td>{{i.vacancy_no}}</td>
-<td>{{i.description}}</td>
-<td>{{i.qualification}}</td>
-<td>{{i.experience}}</td>
+<style>
 
-<td><a href="/insertworkerdetails?worker_id={{i.worker_id}}">VIEW DETAILS</td>
+/* ===== Page Styling ===== */
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7fc;
+    margin: 0;
+    padding: 30px;
+}
+
+/* ===== Page Header ===== */
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.page-header h2 {
+    font-weight: 700;
+    color: #0d6efd;
+}
+
+.page-header p {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* ===== Modern Table ===== */
+.table-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+}
+
+.data-table thead th {
+    background: linear-gradient(135deg,#0d6efd,#4dabf7);
+    color: #ffffff;
+    padding: 14px;
+    font-size: 13px;
+    text-transform: uppercase;
+    border: none;
+}
+
+.data-table thead th:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.data-table thead th:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.data-table tbody tr {
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+.data-table tbody tr:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+}
+
+.data-table tbody td {
+    padding: 14px;
+    font-size: 13px;
+    border: none;
+}
+
+.data-table tbody td:first-child {
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+}
+
+.data-table tbody td:last-child {
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* ===== Button ===== */
+.btn-view {
+    background: linear-gradient(135deg,#28a745,#43d17d);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.btn-view:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(40,167,69,0.4);
+}
+
+/* ===== Mobile Responsive ===== */
+@media (max-width: 768px) {
+
+    body {
+        padding: 15px;
+    }
+
+    .data-table thead {
+        display: none;
+    }
+
+    .data-table,
+    .data-table tbody,
+    .data-table tr,
+    .data-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .data-table tr {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 14px;
+    }
+
+    .data-table td {
+        padding: 8px 0;
+    }
+
+    .data-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        display: block;
+        font-size: 12px;
+        margin-bottom: 4px;
+        color: #6c757d;
+        text-transform: uppercase;
+    }
+
+    .btn-view {
+        display: block;
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div class="page-header">
+    <h2>Available Vacancies</h2>
+    <p>Browse job details and view worker information.</p>
+</div>
+
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Vacancy</th>
+                <th>No. of Positions</th>
+                <th>About Job</th>
+                <th>Qualification</th>
+                <th>Experience</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for i in list %}
+            <tr>
+                <td data-label="Date">{{ i.date }}</td>
+                <td data-label="Vacancy">{{ i.vacancy }}</td>
+                <td data-label="Positions">{{ i.vacancy_no }}</td>
+                <td data-label="About Job">{{ i.description }}</td>
+                <td data-label="Qualification">{{ i.qualification }}</td>
+                <td data-label="Experience">{{ i.experience }}</td>
+                <td data-label="Action">
+                    <a href="/insertworkerdetails?worker_id={{ i.worker_id }}" class="btn-view">
+                        VIEW DETAILS
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align:center; padding:40px; color:#6c757d;">
+                    No vacancies available.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

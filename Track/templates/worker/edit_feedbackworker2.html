@@ -1,155 +1,136 @@
-<!DOCTYPE html>
-<!--[if IE 9]>
-<html class="ie ie9" lang="en-US">
-<![endif]-->
-<html lang="en-US">
-{% load  static %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+{% extends 'agency/agency_base.html' %}
+{% load static %}
 
-	<title>SafeTrack.com</title>
+{% block title %}Edit Feedback{% endblock %}
 
+{% block extra_css %}
+<style>
 
-	<link href="{% static 'http://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,800' %}" rel='stylesheet' type='text/css'>
-	<link href="{% static 'http://fonts.googleapis.com/css?family=Audiowide' %}" rel='stylesheet' type='text/css'>
+/* ===== Form Card ===== */
+.feedback-card {
+    max-width: 550px;
+    margin: 30px auto;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
 
-	<link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
-	<link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
-	<link rel="stylesheet" href="{% static 'files/css/simple-line-icons.css' %}">
-	<link rel="stylesheet" href="{% static 'files/css/font-awesome.min.css' %}">
-	<link rel="stylesheet" href="{% static 'files/css/style.css' %}">
-	<link rel="stylesheet" href="{% static 'files/rs-plugin/css/settings.css' %}">
+/* ===== Title ===== */
+.feedback-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #0d6efd;
+    border-left: 5px solid #0d6efd;
+    padding-left: 12px;
+}
 
-	<!--[if lt IE 9]>
-	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-	<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-	<![endif]-->
+/* ===== Form Group ===== */
+.form-group-modern {
+    margin-bottom: 20px;
+}
 
-</head>
-<body>
+.form-group-modern label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+    display: block;
+}
 
-	
-	<div class="sidebar-menu-container" id="sidebar-menu-container">
+.input-modern,
+.textarea-modern {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    font-size: 14px;
+    transition: 0.3s;
+}
 
-		<div class="sidebar-menu-push">
+.input-modern:focus,
+.textarea-modern:focus {
+    border-color: #0d6efd;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(13,110,253,0.15);
+}
 
-			<div class="sidebar-menu-overlay"></div>
+.textarea-modern {
+    min-height: 120px;
+    resize: vertical;
+}
 
-			<div class="sidebar-menu-inner">
+/* ===== Button ===== */
+.btn-edit {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg,#0d6efd,#4dabf7);
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
 
-				<header class="site-header">
-					<div id="main-header" class="main-header header-sticky">
-						<div class="inner-header clearfix">
-							<div class="logo">
-								<a href="">SafeTrack.com</a>
-							</div>
-							<div class="header-right-toggle pull-right hidden-md hidden-lg">
-								<a href="{% static 'javascript:void(0)' %}" class="side-menu-button"><i class="fa fa-bars"></i></a>
-							</div>
-							<nav class="main-navigation pull-right hidden-xs hidden-sm">
-								<ul>
-									<li><a href="/homeemp/">Home</a></li>
-									<!--<li><a href="/viewempworker/" >Worker</a>-->
-										
-									</li>
-									<li><a href="/viewmyworker/" >My Worker</a>
-										
-									</li>
-									
-									<li><a href="#" class="has-submenu">Vacancy</a>
-										<ul class="sub-menu">
-											<li><a href="/addvacancy/">Post vacancy</a></li>
-											<li><a href="/viewvacancy/">View vacancy</a></li>
-											<li><a href="/editvacancy1/">Edit vacancy</a></li>
-											<li><a href="/deletevacancy1/">Delete vacancy</a></li>
-											<li><a href="/viewappliedvacancy/">Applied vacancy</a></li>
-											
-											
-										</ul>
-									</li>
-								<!--<li><a href="/viewnoc1/" >NOC</a>-->
-										
-									</li>
-									<li><a href="#" class="has-submenu">Feedback</a>
-										<ul class="sub-menu">
-											<li><a href="/view_feedbackworker/">Add Feedback</a></li>
-											<li><a href="/viewfeedback/">View Feedback</a></li>
-											<li><a href="/editfeedbackworker1/">Edit Feedback</a></li>
-											<li><a href="/deletefeedback1/">Delete Feedback</a></li>
-											
-											
-										</ul>
-									</li>
-									<li><a href="#" class="has-submenu">My Details</a>
-										<ul class="sub-menu">
-										<li><a href="/viewemydetails/">View details</a></li>
-											<li><a href="/vieweditemp/">Update details </a></li>
-											
-											
-											
-										</ul>
-									</li>
-									<li><a href="#" class="has-submenu">Sheddules</a>
-										<ul class="sub-menu">
-										<li><a href="/viewmyworker_jobsheddule/">Add sheddules</a></li>
-											<li><a href="/viewjobshedule/">View sheddules </a></li>
-											<li><a href="/deletejobshedule1/">Delete sheddules </a></li>
-											
-											
-											
-										</ul>
-									</li>
-									
-									
-									<li><a href="/home/">Logout</a></li>
-									
-								</ul>
-							</nav>
-						</div>
-					</div>
-				</header> <br><br><br><br><br><br><br>
-<html lang="en">
-  <head>
-    <title>edit_feedback</title>
-    
-  </head>
-   <body background="/static/files/images/whi.png" >
-   
-    
-<center>
-<div style="background-color:rgba(0, 0, 0, 0.9);width:400px;height:auto;"> 
-        <form action="/editfeedbackworker3/" method="get" > 
-   
-        <table class="gridtable"  align="center" style="width:300px;height:200px;color:white;">
+.btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(13,110,253,0.3);
+}
 
-<tr>
-<th colspan="4"><th> </th><b><font size="4" color="white">Please edit feedback here!!</th></tr>  <tr><td> <br></td></tr>  
+/* ===== Responsive ===== */
+@media(max-width:768px){
+    .feedback-card{
+        padding:20px;
+    }
+}
 
+</style>
+{% endblock %}
 
-<tr>
-{% for i in list %}
-<input type="hidden" name="feedbackid" value="{{i.feedback_id}}" />
-<tr><td>Feedback</td><td><input type="text" name="feedback_title" style="color:black;" value="{{i.feedback_title}}"  required></td> </tr>
+{% block content %}
 
+<div class="page-header-accent">
+    <h2 class="h4 font-weight-bold">Edit Feedback</h2>
+    <p class="text-muted small">Update the feedback details below.</p>
+</div>
 
+<div class="feedback-card">
 
-<td>Description</td><td><textarea name="des" value="" style="color:black;"  required>{{i.feedback_description}}</textarea></td></tr>
-<tr><td  align="right">
-<button><font color="black">EDIT</BUTTON></a></td>
+    <div class="feedback-title">
+        <i class="fas fa-edit mr-2"></i> Edit Feedback Details
+    </div>
 
-</table>
-<BR><BR>
-{% endfor %}
-</form>
+    {% for i in list %}
+    <form action="/editfeedbackworker3/" method="POST">
+        {% csrf_token %}
 
-</head>
+        <input type="hidden" name="feedbackid" value="{{ i.feedback_id }}">
 
+        <div class="form-group-modern">
+            <label>Feedback Title</label>
+            <input type="text"
+                   name="feedback_title"
+                   class="input-modern"
+                   value="{{ i.feedback_title }}"
+                   required>
+        </div>
 
-         
-                   
+        <div class="form-group-modern">
+            <label>Description</label>
+            <textarea name="des"
+                      class="textarea-modern"
+                      required>{{ i.feedback_description }}</textarea>
+        </div>
 
+        <button type="submit" class="btn-edit">
+            <i class="fas fa-save mr-1"></i> Update Feedback
+        </button>
 
-    
-  </body>
-</html>
+    </form>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

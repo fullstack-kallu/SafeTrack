@@ -2,227 +2,219 @@
 {% load static %}
 
 {% block title %}Active Worker Profiles - SafeTrack{% endblock %}
+
 {% block extra_css %}
 <style>
 
+/* ===== Page Wrapper ===== */
 .page-wrapper {
     padding: 2rem;
 }
 
-/* Card */
-.table-card {
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.08);
-    overflow: hidden;
-}
-
-/* Header */
-.table-title-header {
-    background: linear-gradient(135deg, #4e73df, #224abe);
-    color: white;
-    padding: 1.5rem;
-    font-size: 1.6rem;
-    font-weight: 700;
+/* ===== Section Header ===== */
+.section-header {
     text-align: center;
+    margin-bottom: 40px;
 }
 
-/* Desktop Table */
-.custom-table {
+.section-header h2 {
+    font-weight: 800;
+    font-size: 28px;
+}
+
+.section-header p {
+    color: #6c757d;
+}
+
+/* ===== Grid Layout ===== */
+.worker-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+/* ===== Unique Worker Card ===== */
+.worker-card {
+    background: linear-gradient(145deg, #ffffff, #f3f6ff);
+    border-radius: 25px;
+    padding: 30px 20px 25px 20px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+    transition: 0.4s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Glow Hover Effect */
+.worker-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 35px 70px rgba(78,115,223,0.25);
+}
+
+/* Top Gradient Accent */
+.worker-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 8px;
     width: 100%;
-    border-collapse: collapse;
+    background: linear-gradient(90deg, #4e73df, #224abe);
 }
 
-.custom-table thead {
-    background: #343a40;
+/* ===== Profile Section ===== */
+.worker-profile {
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-.custom-table th {
-    color: white;
-    padding: 12px 10px;
-    font-size: 13px;
-    text-transform: uppercase;
-}
-
-.custom-table td {
-    padding: 12px 10px;
-    font-size: 14px;
-    border-bottom: 1px solid #eee;
-}
-
-.custom-table tbody tr:nth-child(even) {
-    background: #f8f9fc;
-}
-
-.custom-table tbody tr:hover {
-    background: #eef2ff;
-}
-
-/* Worker Photo */
 .worker-photo {
-    width: 55px;
-    height: 55px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #4e73df;
+    border: 5px solid white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    margin-bottom: 12px;
 }
 
-/* Action Button */
+.worker-name {
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.worker-location {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+/* ===== Info Grid ===== */
+.worker-info {
+    margin-top: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 15px;
+    font-size: 13px;
+}
+
+.worker-info div {
+    background: rgba(78,115,223,0.05);
+    padding: 8px 10px;
+    border-radius: 10px;
+}
+
+.worker-info strong {
+    display: block;
+    font-size: 11px;
+    color: #6b7280;
+    margin-bottom: 2px;
+}
+
+/* ===== Stylish Button ===== */
 .action-btn {
-    background: linear-gradient(135deg, #f6c23e, #e0a800);
+    margin-top: 20px;
+    background: linear-gradient(135deg, #f6c23e, #ffce3d);
     color: #343a40;
-    padding: 6px 12px;
-    border-radius: 25px;
-    font-size: 12px;
-    font-weight: 600;
+    padding: 10px;
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 700;
     text-decoration: none;
-    display: inline-block;
+    text-align: center;
     transition: 0.3s ease;
 }
 
 .action-btn:hover {
     transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(246,194,62,0.4);
 }
 
-/* ============ MOBILE CARD VIEW ============ */
-@media (max-width: 768px) {
+/* ===== Mobile ===== */
+@media(max-width:768px){
 
-    .custom-table thead {
-        display: none;
+    .page-wrapper {
+        padding: 1rem;
     }
 
-    .custom-table,
-    .custom-table tbody,
-    .custom-table tr,
-    .custom-table td {
-        display: block;
-        width: 100%;
-    }
-
-    .custom-table tr {
-        background: #fff;
-        margin-bottom: 15px;
-        padding: 15px;
-        border-radius: 15px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    }
-
-    .custom-table td {
-        border: none;
-        padding: 6px 0;
-        font-size: 13px;
-    }
-
-    .custom-table td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        display: block;
-        font-size: 12px;
-        color: #555;
-        margin-bottom: 2px;
+    .worker-info {
+        grid-template-columns: 1fr;
     }
 
     .worker-photo {
-        width: 45px;
-        height: 45px;
-        margin-bottom: 8px;
-    }
-
-    .table-title-header {
-        font-size: 1.2rem;
+        width: 85px;
+        height: 85px;
     }
 
 }
 
 </style>
 {% endblock %}
+
 {% block content %}
+
 <div class="page-wrapper">
 
-    <div class="table-card">
+    <div class="section-header">
+        <h2>Active Worker Profiles 🧑‍🔧</h2>
+        <p>Browse and assign available workers easily.</p>
+    </div>
 
-        <div class="table-title-header">
-            Active Worker Profiles 🧑‍🔧
+    <div class="worker-grid">
+
+        {% for i in list %}
+        <div class="worker-card">
+
+            <div class="worker-profile">
+                <img src="/media/{{i.image}}" class="worker-photo">
+                <div class="worker-name">{{ i.worker_name }}</div>
+                <div class="worker-location">{{ i.gender }} | {{ i.place }}</div>
+            </div>
+
+            <div class="worker-info">
+
+                <div>
+                    <strong>DOB</strong>
+                    {{ i.dob }}
+                </div>
+
+                <div>
+                    <strong>Aadhar</strong>
+                    {{ i.aadhar_number }}
+                </div>
+
+                <div>
+                    <strong>Languages</strong>
+                    {{ i.languages_known }}
+                </div>
+
+                <div>
+                    <strong>Mobile</strong>
+                    {{ i.mobile }}
+                </div>
+
+                <div>
+                    <strong>Email</strong>
+                    {{ i.email }}
+                </div>
+
+                <div>
+                    <strong>Address</strong>
+                    {{ i.address|truncatewords:6 }}
+                </div>
+
+            </div>
+
+            <a href="/jobsheddule1?worker_id={{i.worker_id}}" class="action-btn">
+                ASSIGN WORK
+            </a>
+
         </div>
-
-        <table class="custom-table">
-            <thead>
-                <tr>
-                    <th>Photo</th>
-                    <th>Name</th>
-                    <th>Gender</th>
-                    <th>DOB</th>
-                    <th>Aadhar</th>
-                    <th>Place</th>
-                    <th>Address</th>
-                    <th>Languages</th>
-                    <th>Phone</th>
-                    <th>Mobile</th>
-                    <th>Email</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                {% for i in list %}
-                <tr>
-
-                    <td data-label="Photo">
-                        <img src="/media/{{i.image}}" class="worker-photo">
-                    </td>
-
-                    <td data-label="Name">
-                        {{ i.worker_name }}
-                    </td>
-
-                    <td data-label="Gender">
-                        {{ i.gender }}
-                    </td>
-
-                    <td data-label="DOB">
-                        {{ i.dob }}
-                    </td>
-
-                    <td data-label="Aadhar">
-                        {{ i.aadhar_number }}
-                    </td>
-
-                    <td data-label="Place">
-                        {{ i.place }}
-                    </td>
-
-                    <td data-label="Address">
-                        {{ i.address|truncatewords:6 }}
-                    </td>
-
-                    <td data-label="Languages">
-                        {{ i.languages_known }}
-                    </td>
-
-                    <td data-label="Phone">
-                        {{ i.phone }}
-                    </td>
-
-                    <td data-label="Mobile">
-                        {{ i.mobile }}
-                    </td>
-
-                    <td data-label="Email">
-                        {{ i.email }}
-                    </td>
-
-                    <td data-label="Action">
-                        <a href="/jobsheddule1?worker_id={{i.worker_id}}" class="action-btn">
-                            ADD ATTENDANCE
-                        </a>
-                    </td>
-
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% endfor %}
 
     </div>
 
 </div>
+
 {% endblock %}

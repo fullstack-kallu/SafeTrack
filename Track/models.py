@@ -195,6 +195,7 @@ class tbl_workershedule(models.Model):
     salary = models.IntegerField()
     time_from = models.CharField(max_length=50)
     working_houres = models.CharField(max_length=50)
+    attendance = models.CharField(max_length=20, default='Pending')
 
     class Meta:
         db_table = 'tbl_workershedule'

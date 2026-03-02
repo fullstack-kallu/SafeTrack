@@ -1,71 +1,133 @@
-<!DOCTYPE html>
-<html lang="en-US">
+{% extends "police/policeheder.html" %}
 {% load static %}
 
-<head>
-    {% include "police/policeheder.html" %}
-    <title>SafeTrack.com | Intelligence Record Analysis</title>
-</head>
+{% block title %}SafeTrack.com | Edit NOC Records{% endblock %}
 
-<body>
+{% block extra_css %}
+<style>
+    .noc-table-wrap {
+        overflow-x: auto;
+        border: 1px solid #E2E8F0;
+        border-radius: 12px;
+    }
 
-    <div class="main-content">
-        <div class="police-card">
-            <div class="card-header">
-                <h4><i class="fa-solid fa-folder-open"></i> Subject Intelligence Ledger</h4>
-                <div class="badge-modern bg-urgent">Classified</div>
-            </div>
+    .noc-table {
+        min-width: 860px;
+        width: 100%;
+        table-layout: fixed;
+    }
 
-            <p style="color: #718096; margin-bottom: 30px; font-size: 14px;">
-                Historical record of criminal intelligence and situational reports logged for the target subject. Select
-                an entry to recalibrate specific incident data.
-            </p>
+    .noc-table th,
+    .noc-table td {
+        word-wrap: break-word;
+        overflow-wrap: anywhere;
+    }
 
-            <div class="table-responsive">
-                <table class="police-table">
-                    <thead>
-                        <tr>
-                            <th>Incident Timestamp</th>
-                            <th>Offense Classification</th>
-                            <th>Operational Details</th>
-                            <th style="text-align: center;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for i in list %}
-                        <tr>
-                            <td style="font-weight: 700; color: var(--accent-blue);">{{i.date}}</td>
-                            <td>
-                                <span class="badge-modern"
-                                    style="background: #FEE2E2; color: #EF4444; font-size: 11px;">
-                                    {{i.crime}}
-                                </span>
-                            </td>
-                            <td style="font-size: 13px; color: #64748B; max-width: 300px;">{{i.crime_details}}</td>
-                            <td style="text-align: center;">
-                                <a href="/editnoc3?noc_id={{i.noc_id}}" class="badge-modern"
-                                    style="background: var(--primary-navy); color: white; text-decoration: none; padding: 8px 15px; display: inline-flex; align-items: center; gap: 8px;">
-                                    <i class="fa-solid fa-pen-nib"></i> EDIT RECORD
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+    .action-cell {
+        text-align: center;
+        white-space: nowrap;
+        position: sticky;
+        right: 0;
+        background: #FFFFFF;
+        z-index: 2;
+        box-shadow: -6px 0 10px rgba(15, 23, 42, 0.06);
+    }
+
+    .action-cell .btn-row {
+        display: inline-flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .crime-cell {
+        font-weight: 700;
+        color: #B91C1C;
+        text-transform: capitalize;
+    }
+
+    .details-cell {
+        font-size: 13px;
+        color: #334155;
+        line-height: 1.4;
+    }
+
+    .id-cell {
+        font-family: monospace;
+        font-weight: 700;
+        color: #475569;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="police-card">
+        <div class="card-header">
+            <h4><i class="fa-solid fa-folder-open"></i> NOC Records</h4>
+            <div class="badge-modern bg-urgent">Edit List</div>
         </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
-            <div style="font-size: 12px; color: #94A3B8;">
-                <i class="fa-solid fa-shield-check"></i> Database Link: Encrypted Node 081
-            </div>
-            <a href="/editnoc1/"
-                style="color: var(--accent-blue); font-weight: 700; font-size: 13px; text-decoration: none;">
-                <i class="fa-solid fa-arrow-left"></i> Return to Subject Selection
-            </a>
+        <p style="color: #718096; margin-bottom: 30px; font-size: 14px;">
+            Select a record and click edit to update NOC details.
+        </p>
+
+        <div class="noc-table-wrap">
+            <table class="police-table noc-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Crime</th>
+                        <th>Details</th>
+                        <th>NOC ID</th>
+                        <th>Worker ID</th>
+                        <th>Station ID</th>
+                        <th style="text-align: center;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in list %}
+                    <tr>
+                        <td style="font-weight: 700; color: var(--accent-blue);">{{i.date|default:"--"}}</td>
+                        <td class="crime-cell">{{i.crime|default:"--"}}</td>
+                        <td class="details-cell">{{i.crime_details|default:"--"}}</td>
+                        <td class="id-cell">{{i.noc_id|default:"--"}}</td>
+                        <td class="id-cell">{{i.worker_id|default:"--"}}</td>
+                        <td class="id-cell">{{i.station_id|default:"--"}}</td>
+                        <td class="action-cell">
+                            <div class="btn-row">
+                                <a href="/viewnoc2/?worker_id={{i.worker_id}}" class="badge-modern"
+                                    style="background: #10B981; color: white; text-decoration: none; padding: 8px 15px; display: inline-flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid fa-eye"></i> VIEW DETAILS
+                                </a>
+                                <a href="/editnoc3/?noc_id={{i.noc_id}}" class="badge-modern"
+                                    style="background: var(--primary-navy); color: white; text-decoration: none; padding: 8px 15px; display: inline-flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid fa-pen-nib"></i> UPDATE
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align:center; padding: 24px; color:#64748B; font-weight:600;">
+                            No NOC record found for worker ID {{ worker_id }}.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 
-</body>
-
-</html>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px;">
+        <div style="font-size: 12px; color: #94A3B8;">
+            <i class="fa-solid fa-shield-check"></i> Records are secure
+        </div>
+        <a href="/editnoc1/"
+            style="color: var(--accent-blue); font-weight: 700; font-size: 13px; text-decoration: none;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Worker List
+        </a>
+    </div>
+</div>
+{% endblock %}

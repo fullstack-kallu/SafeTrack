@@ -191,8 +191,55 @@ def homeworker(request):
 		return HttpResponse("<script>alert('Please login as Worker first');window.location='/login/';</script>")
 	return render(request, 'worker/home_worker.html')
 
+def _ensure_police_session(request):
+	"""Recover police session when u_id exists but user_type key is missing/stale."""
+	u_id = request.session.get('u_id')
+	if not u_id:
+		username = request.session.get('username')
+		if username:
+			login_row = tbl_login.objects.filter(username=username, user_type='police', status='true').first()
+			if login_row:
+				request.session['u_id'] = login_row.u_id
+				request.session['user_type'] = 'police'
+				return True
+		return False
+	if request.session.get('user_type') == 'police':
+		return True
+	login_row = tbl_login.objects.filter(u_id=u_id, user_type='police', status='true').first()
+	if login_row:
+		request.session['user_type'] = 'police'
+		return True
+	return False
+
+def _get_logged_police_station(request):
+	"""Return police station object for the logged-in police session."""
+	if not _ensure_police_session(request):
+		return None
+
+	station = tbl_policestation.objects.filter(station_id=request.session.get('u_id')).first()
+	if station:
+		return station
+
+	# Fallback by username->email mapping for legacy/misaligned rows.
+	username = request.session.get('username')
+	if username:
+		station = tbl_policestation.objects.filter(email=username).first()
+		if station:
+			request.session['u_id'] = station.station_id
+			request.session['user_type'] = 'police'
+			return station
+	return None
+
+def _get_workers_for_police_noc():
+	"""Common worker source for police NOC listing pages.
+
+	Use tbl_worker directly so legacy workers (missing/old login mappings)
+	are still visible in police NOC pages.
+	"""
+	return tbl_worker.objects.all().order_by('-worker_id')
+
 def homepolice(request):
-	if 'u_id' not in request.session or request.session.get('user_type') != 'police':
+	if not _ensure_police_session(request):
 		return HttpResponse("<script>alert('Please login as Police Station first');window.location='/login/';</script>")
 	return render(request, 'police/home_police.html')
 
@@ -281,35 +328,84 @@ def reginsert(request):
 		return HttpResponse(html)
 	
 def regempinsert(request):
-	"""Register employee/agency using ORM"""
+	"""Register employee/agency using ORM with inline error handling"""
 	try:
-		name = request.GET.get('Emp_name', '').strip()
-		gender = request.GET.get('Gender', '').strip()
-		firm_name = request.GET.get('Firm_name', '').strip()
-		aadhar_no = request.GET.get('Aadhar_number', '').strip()
-		dob = request.GET.get('DOB', '').strip()
-		address = request.GET.get('Emp_address', '').strip()
-		place = request.GET.get('Place', '').strip()
-		phone = request.GET.get('Phone', '').strip()
-		mobile = request.GET.get('Mobile', '').strip()
-		email_id = request.GET.get('Email_id', '').strip()
-		password = request.GET.get('Password', '').strip()
-		re_password = request.GET.get('re_Password', '').strip()
+		# Check if it's a POST request
+		if request.method == 'POST':
+			name = request.POST.get('Emp_name', '').strip()
+			gender = request.POST.get('Gender', '').strip()
+			firm_name = request.POST.get('Firm_name', '').strip()
+			aadhar_no = request.POST.get('Aadhar_number', '').strip()
+			dob = request.POST.get('DOB', '').strip()
+			address = request.POST.get('Emp_address', '').strip()
+			place = request.POST.get('Place', '').strip()
+			phone = request.POST.get('Phone', '').strip()
+			mobile = request.POST.get('Mobile', '').strip()
+			email_id = request.POST.get('Email_id', '').strip()
+			password = request.POST.get('Password', '').strip()
+			re_password = request.POST.get('re_Password', '').strip()
+		else:
+			# Fallback to GET for backward compatibility
+			name = request.GET.get('Emp_name', '').strip()
+			gender = request.GET.get('Gender', '').strip()
+			firm_name = request.GET.get('Firm_name', '').strip()
+			aadhar_no = request.GET.get('Aadhar_number', '').strip()
+			dob = request.GET.get('DOB', '').strip()
+			address = request.GET.get('Emp_address', '').strip()
+			place = request.GET.get('Place', '').strip()
+			phone = request.GET.get('Phone', '').strip()
+			mobile = request.GET.get('Mobile', '').strip()
+			email_id = request.GET.get('Email_id', '').strip()
+			password = request.GET.get('Password', '').strip()
+			re_password = request.GET.get('re_Password', '').strip()
 		
-		# Validate inputs
-		if not all([name, email_id, password, re_password]):
-			html = "<script>alert('Required fields missing');window.location='/reg_emp/';</script>"
-			return HttpResponse(html)
+		# Initialize error dictionary
+		errors = {}
+		
+		# Validate required fields
+		if not name:
+			errors['name'] = 'Full Name is required'
+		if not email_id:
+			errors['email'] = 'Email Address is required'
+		if not password:
+			errors['password'] = 'Password is required'
+		if not re_password:
+			errors['re_password'] = 'Please confirm your password'
 		
 		# Check password match
-		if password != re_password:
-			html = "<script>alert('Passwords do not match');window.location='/reg_emp/';</script>"
-			return HttpResponse(html)
+		if password and re_password and password != re_password:
+			errors['re_password'] = 'Passwords do not match'
 		
-		# Check if email already registered
-		if tbl_login.objects.filter(username=email_id).exists():
-			html = "<script>alert('Email already registered');window.location='/reg_emp/';</script>"
-			return HttpResponse(html)
+		# Check if email already registered in tbl_login
+		if email_id and tbl_login.objects.filter(username=email_id).exists():
+			errors['email'] = 'This email is already registered'
+		
+		# Check if mobile already registered in tbl_emp
+		if mobile and tbl_emp.objects.filter(mobile=mobile).exists():
+			errors['mobile'] = 'This phone number is already registered'
+		
+		# Check if aadhar already registered in tbl_emp
+		if aadhar_no and tbl_emp.objects.filter(aadhar_no=aadhar_no).exists():
+			errors['aadhar'] = 'This Aadhar number is already registered'
+		
+		# If there are validation errors, render the form with error messages
+		if errors:
+			context = {
+				'errors': errors,
+				'form_data': {
+					'Emp_name': name,
+					'Gender': gender,
+					'Firm_name': firm_name,
+					'Aadhar_number': aadhar_no,
+					'DOB': dob,
+					'Emp_address': address,
+					'Place': place,
+					'Phone': phone,
+					'Mobile': mobile,
+					'Email_id': email_id,
+				}
+			}
+			return render(request, 'common/reg_emp.html', context)
 		
 		# Create employee record
 		emp = tbl_emp.objects.create(
@@ -345,33 +441,81 @@ def regempinsert(request):
 		html = f"<script>alert('Registration error: {str(e)}');window.location='/reg_emp/';</script>"
 		return HttpResponse(html)
 def regpoliceinsert(request):
-	"""Register police station using ORM"""
+	"""Register police station using ORM with inline error handling"""
 	try:
-		branch = request.GET.get('branch', '').strip()
-		address = request.GET.get('address', '').strip()
-		phone = request.GET.get('Phone', '').strip()
-		mobile = request.GET.get('Mobile', '').strip()
-		email_id = request.GET.get('Email_id', '').strip()
-		district = request.GET.get('district', '').strip()
-		city = request.GET.get('city', '').strip()
-		state = request.GET.get('state', '').strip()
-		password = request.GET.get('Password', '').strip()
-		re_password = request.GET.get('re_Password', '').strip()
+		# Support both GET and POST
+		if request.method == 'POST':
+			branch = request.POST.get('branch', '').strip()
+			address = request.POST.get('address', '').strip()
+			phone = request.POST.get('Phone', '').strip()
+			mobile = request.POST.get('Mobile', '').strip()
+			email_id = request.POST.get('Email_id', '').strip()
+			district = request.POST.get('district', '').strip()
+			city = request.POST.get('city', '').strip()
+			state = request.POST.get('state', '').strip()
+			password = request.POST.get('Password', '').strip()
+			re_password = request.POST.get('re_Password', '').strip()
+		else:
+			branch = request.GET.get('branch', '').strip()
+			address = request.GET.get('address', '').strip()
+			phone = request.GET.get('Phone', '').strip()
+			mobile = request.GET.get('Mobile', '').strip()
+			email_id = request.GET.get('Email_id', '').strip()
+			district = request.GET.get('district', '').strip()
+			city = request.GET.get('city', '').strip()
+			state = request.GET.get('state', '').strip()
+			password = request.GET.get('Password', '').strip()
+			re_password = request.GET.get('re_Password', '').strip()
 		
-		# Validate inputs
-		if not all([branch, email_id, password, re_password]):
-			html = "<script>alert('Required fields missing');window.location='/reg_police/';</script>"
-			return HttpResponse(html)
+		# Initialize error dictionary
+		errors = {}
+		
+		# Validate required fields
+		if not branch:
+			errors['branch'] = 'Station Branch Name is required'
+		if not address:
+			errors['address'] = 'Address is required'
+		if not email_id:
+			errors['email'] = 'Email Address is required'
+		if not city:
+			errors['city'] = 'City is required'
+		if not district:
+			errors['district'] = 'District is required'
+		if not state:
+			errors['state'] = 'State is required'
+		if not password:
+			errors['password'] = 'Password is required'
+		if not re_password:
+			errors['re_password'] = 'Please confirm your password'
 		
 		# Check password match
-		if password != re_password:
-			html = "<script>alert('Passwords do not match');window.location='/reg_police/';</script>"
-			return HttpResponse(html)
+		if password and re_password and password != re_password:
+			errors['re_password'] = 'Passwords do not match'
 		
-		# Check if email already registered
-		if tbl_login.objects.filter(username=email_id).exists():
-			html = "<script>alert('Email already registered');window.location='/reg_police/';</script>"
-			return HttpResponse(html)
+		# Check if email already registered in tbl_login
+		if email_id and tbl_login.objects.filter(username=email_id).exists():
+			errors['email'] = 'This email is already registered'
+		
+		# Check if mobile already registered in tbl_policestation
+		if mobile and tbl_policestation.objects.filter(mobile=mobile).exists():
+			errors['mobile'] = 'This phone number is already registered'
+		
+		# If there are validation errors, render the form with error messages
+		if errors:
+			context = {
+				'errors': errors,
+				'form_data': {
+					'branch': branch,
+					'address': address,
+					'Phone': phone,
+					'Mobile': mobile,
+					'Email_id': email_id,
+					'district': district,
+					'city': city,
+					'state': state,
+				}
+			}
+			return render(request, 'common/reg_policestation.html', context)
 		
 		# Create police station record
 		police = tbl_policestation.objects.create(
@@ -404,47 +548,125 @@ def regpoliceinsert(request):
 		html = f"<script>alert('Registration error: {str(e)}');window.location='/reg_police/';</script>"
 		return HttpResponse(html)
 def regworkerinsert(request):
+    """Register worker using ORM with inline error handling"""
     if request.method == "POST":
         form = WorkerForm(request.POST, request.FILES)
+
+        # Initialize error dictionary
+        errors = {}
+        
+        # Get form data for duplicate checks
+        email = request.POST.get('email', '').strip()
+        mobile = request.POST.get('mobile', '').strip()
+        aadhar_number = request.POST.get('aadhar_number', '').strip()
+        
+        # Check if email already registered in tbl_login
+        if email and tbl_login.objects.filter(username=email).exists():
+            errors['email'] = 'This email is already registered'
+        
+        # Check if mobile already registered in tbl_worker
+        if mobile and tbl_worker.objects.filter(mobile=mobile).exists():
+            errors['mobile'] = 'This phone number is already registered'
+        
+        # Check if aadhar already registered in tbl_worker
+        if aadhar_number and tbl_worker.objects.filter(aadhar_number=aadhar_number).exists():
+            errors['aadhar'] = 'This Aadhar number is already registered'
+
+        # Stop submission early for duplicate checks and render inline messages
+        if errors:
+            context = {
+                'form': form,
+                'errors': errors,
+                'form_data': {
+                    'email': email,
+                    'mobile': mobile,
+                    'aadhar_number': aadhar_number,
+                }
+            }
+            return render(request, 'common/reg_worker.html', context)
 
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['paswd']
 
-            # Check email already exists
+            # Check email already exists (additional check after form validation)
             if tbl_login.objects.filter(username=email).exists():
-                return HttpResponse(
-                    "<script>alert('Email already registered');window.location='/reg_worker/';</script>"
+                # Render form with error
+                errors['email'] = 'This email is already registered'
+                context = {
+                    'form': form,
+                    'errors': errors,
+                    'form_data': {
+                        'email': email,
+                        'mobile': mobile,
+                        'aadhar_number': aadhar_number,
+                    }
+                }
+                return render(request, 'common/reg_worker.html', context)
+
+            try:
+                # Save worker
+                worker = form.save(commit=False)
+                worker.regis_date = str(date.today())
+                worker.status = 'Pending'
+                worker.save()
+
+                # Create login
+                tbl_login.objects.create(
+                    username=email,
+                    password=password,
+                    user_type='worker',
+                    u_id=worker.worker_id,
+                    status='false'
                 )
 
-            # Save worker
-            worker = form.save(commit=False)
-            worker.regis_date = str(date.today())   # ✅ FIXED
-            worker.status = 'Pending'
-            worker.save()
-
-            # Create login
-            tbl_login.objects.create(
-                username=email,
-                password=password,
-                user_type='worker',
-                u_id=worker.worker_id,
-                status='false'
-            )
-
-            return HttpResponse(
-                "<script>alert('Successfully registered as worker!');window.location='/login/';</script>"
-            )
+                return HttpResponse(
+                    "<script>alert('Successfully registered as worker!');window.location='/login/';</script>"
+                )
+            except IntegrityError as ie:
+                # Handle race condition - another request might have created the same user
+                errors['email'] = 'This email is already registered'
+                context = {
+                    'form': form,
+                    'errors': errors,
+                    'form_data': {
+                        'email': email,
+                        'mobile': mobile,
+                        'aadhar_number': aadhar_number,
+                    }
+                }
+                return render(request, 'common/reg_worker.html', context)
 
         else:
-            # 🔥 THIS LINE WILL SHOW THE REAL PROBLEM
+            # Form validation errors
+            for field, error_list in form.errors.items():
+                field_name = field
+                if field == 'email':
+                    errors['email'] = 'Please enter a valid email address'
+                elif field == 'mobile':
+                    errors['mobile'] = 'Please enter a valid mobile number'
+                elif field == 'aadhar_number':
+                    errors['aadhar'] = 'Please enter a valid Aadhar number'
+                elif field == 'paswd':
+                    errors['password'] = 'Password is required'
+                else:
+                    errors[field_name] = str(error_list[0]) if error_list else 'This field is required'
+            
             print("FORM ERRORS =>", form.errors)
 
-            return HttpResponse(
-                "<script>alert('Form validation failed');window.location='/reg_worker/';</script>"
-            )
+        # Render form with errors
+        context = {
+            'form': form,
+            'errors': errors,
+            'form_data': {
+                'email': email,
+                'mobile': mobile,
+                'aadhar_number': aadhar_number,
+            }
+        }
+        return render(request, 'common/reg_worker.html', context)
 
-    return render(request, 'common/reg_worker.html', {'form': WorkerForm()})
+    return render(request, 'common/reg_worker.html', {'form': WorkerForm(), 'errors': {}, 'form_data': {}})
 		
 def vacancyinsert(request):
 	"""Insert vacancy using ORM"""
@@ -454,12 +676,18 @@ def vacancyinsert(request):
 			return HttpResponse(html)
 		
 		emp_id = request.session['u_id']
-		vacancy = request.GET.get('vacancy', '').strip()
-		vacancy_num = request.GET.get('num', '').strip()
-		description = request.GET.get('description', '').strip()
+		if request.method == 'POST':
+			vacancy = request.POST.get('vacancy', '').strip()
+			vacancy_num = request.POST.get('num', '').strip()
+			description = request.POST.get('description', '').strip()
+		else:
+			# Backward compatibility for older GET based forms
+			vacancy = request.GET.get('vacancy', '').strip()
+			vacancy_num = request.GET.get('num', '').strip()
+			description = request.GET.get('description', '').strip()
 		
 		if not all([vacancy, vacancy_num, description]):
-			html = "<script>alert('All fields are required');window.location='/homeemp/';</script>"
+			html = "<script>alert('All fields are required');window.location='/addvacancy/';</script>"
 			return HttpResponse(html)
 		
 		tbl_vacancy.objects.create(
@@ -470,10 +698,10 @@ def vacancyinsert(request):
 			description=description
 		)
 		
-		html = "<script>alert('Vacancy created successfully!');window.location='/homeemp/';</script>"
+		html = "<script>alert('Vacancy created successfully!');window.location='/viewvacancy/';</script>"
 		return HttpResponse(html)
 	except Exception as e:
-		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
+		html = f"<script>alert('Error: {str(e)}');window.location='/addvacancy/';</script>"
 		return HttpResponse(html)
 def noc_insert1(request):
 	"""Get workers for NOC entry using ORM"""
@@ -509,8 +737,35 @@ def noc_insert1(request):
 		html = f"<script>alert('Error: {str(e)}');window.location='/homepolice/';</script>"
 		return HttpResponse(html)
 def addnoc(request):
-	worker_id=request.GET['worker_id']
-	return render(request,'police/noc.html',{'worker_id':worker_id})
+	"""
+	Display NOC form for a specific worker.
+	Parameters:
+	- worker_id: Required worker ID
+	- _tsid: Optional tracking ID (ignored)
+	"""
+	worker_id = request.GET.get('worker_id')
+	
+	if not worker_id:
+		html = "<script>alert('Worker ID is missing');window.location='/noc_insert1/';</script>"
+		return HttpResponse(html)
+	
+	# Convert worker_id to integer for database query
+	try:
+		worker_id_int = int(worker_id)
+	except ValueError:
+		html = "<script>alert('Invalid Worker ID');window.location='/noc_insert1/';</script>"
+		return HttpResponse(html)
+	
+	# Fetch worker details to display in the form
+	try:
+		worker = tbl_worker.objects.get(worker_id=worker_id_int)
+		return render(request, 'police/noc.html', {'worker_id': worker_id, 'worker': worker})
+	except tbl_worker.DoesNotExist:
+		html = "<script>alert('Worker not found with ID: " + str(worker_id) + "');window.location='/noc_insert1/';</script>"
+		return HttpResponse(html)
+	except Exception as e:
+		html = "<script>alert('Error: " + str(e) + "');window.location='/noc_insert1/';</script>"
+		return HttpResponse(html)
 def noc_insert(request):
 	"""Insert NOC record using ORM"""
 	try:
@@ -607,6 +862,7 @@ def worker_salary(request):
             FROM tbl_workershedule s
             JOIN tbl_worker w ON s.worker_id = w.worker_id
             WHERE strftime('%%m', s.time_from) = %s AND strftime('%%Y', s.time_from) = %s
+              AND s.attendance = 'Present'
             GROUP BY w.worker_name
         """, [str(month).zfill(2), str(year)])
         rows = cursor.fetchall()
@@ -1073,6 +1329,7 @@ def viewnoc2(request):
 		return HttpResponse(html)
 
 
+
 def viewvacancy(request):
 	"""View vacancies for the logged-in employer using ORM"""
 	try:
@@ -1121,6 +1378,33 @@ def viewvacancy(request):
 	except Exception as e:
 		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
 		return HttpResponse(html)
+
+def view_vacany2(request):
+	"""Agency vacancy detail page (prevents redirecting into worker flow)."""
+	try:
+		if 'u_id' not in request.session:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
+
+		emp_id = request.session['u_id']
+		vacancy_id = request.GET.get('vacancy_id', '').strip()
+
+		vacancies = tbl_vacancy.objects.filter(emp_id=str(emp_id))
+		if vacancy_id:
+			vacancies = vacancies.filter(vacancy_id=vacancy_id)
+
+		list_data = []
+		for vacancy in vacancies.order_by('-vacancy_id'):
+			list_data.append({
+				'vacancy_id': vacancy.vacancy_id,
+				'date': vacancy.date,
+				'vacancy': vacancy.vacancy,
+				'vacancy_no': vacancy.vacancy_no,
+				'description': vacancy.description,
+			})
+
+		return render(request, 'agency/view_vacancy2.html', {'list': list_data})
+	except Exception as e:
+		return HttpResponse(f"<script>alert('Error: {str(e)}');window.location='/viewvacancy/';</script>")
 
 def editvacancy1(request):
     """View vacancies for editing - uses ORM for better reliability"""
@@ -1248,45 +1532,53 @@ def viewappliedvacancy(request):
 	"""Agency view: View workers who applied to vacancies using ORM"""
 	try:
 		emp_id = request.session.get('u_id')
-		if not emp_id:
+		if not emp_id or request.session.get('user_type') != 'employer':
 			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
 		
 		# 1. Get all vacancies created by this employer
-		vacancies = tbl_vacancy.objects.filter(emp_id=str(emp_id))
+		vacancies = tbl_vacancy.objects.filter(emp_id=str(emp_id)).order_by('-vacancy_id')
+		vacancy_map = {str(v.vacancy_id): v for v in vacancies}
+		vacancy_ids = list(vacancy_map.keys())
 		list_data = []
-		
-		for vacancy in vacancies:
-			# 2. Get applications for this specific vacancy
-			# Note: vacancy_id in tbl_workerdetails is CharField
-			applications = tbl_workerdetails.objects.filter(vacancy_id=str(vacancy.vacancy_id))
-			
-			for app in applications:
-				try:
-					# 3. Get worker details
-					worker = tbl_worker.objects.get(worker_id=app.worker_id)
-					dict_data = {
-						'date': vacancy.date,
-						'vacancy': vacancy.vacancy,
-						'vacancy_no': vacancy.vacancy_no,
-						'description': vacancy.description,
-						'worker_id': worker.worker_id,
-						'vacancy_id': vacancy.vacancy_id,
-						'qualification': app.qualification,
-						'experience': app.experience,
-						'worker_name': worker.worker_name,
-						'gender': worker.gender,
-						'dob': worker.dob,
-						'aadhar_number': worker.aadhar_number,
-						'place': worker.place,
-						'address': worker.address,
-						'phone': worker.phone,
-						'mobile': worker.mobile,
-						'email': worker.email,
-						'status': worker.status
-					}
-					list_data.append(dict_data)
-				except tbl_worker.DoesNotExist:
-					continue
+
+		# 2. Get all applications for employer vacancies in one pass.
+		# vacancy_id in tbl_workerdetails is CharField; normalize with strip.
+		if vacancy_ids:
+			applications = tbl_workerdetails.objects.filter(vacancy_id__in=vacancy_ids).order_by('-detail_id')
+		else:
+			applications = []
+
+		for app in applications:
+			normalized_vacancy_id = str(app.vacancy_id).strip()
+			vacancy = vacancy_map.get(normalized_vacancy_id)
+			if not vacancy:
+				continue
+			try:
+				# 3. Get worker details
+				worker = tbl_worker.objects.get(worker_id=app.worker_id)
+				dict_data = {
+					'date': vacancy.date,
+					'vacancy': vacancy.vacancy,
+					'vacancy_no': vacancy.vacancy_no,
+					'description': vacancy.description,
+					'worker_id': worker.worker_id,
+					'vacancy_id': vacancy.vacancy_id,
+					'qualification': app.qualification,
+					'experience': app.experience,
+					'worker_name': worker.worker_name,
+					'gender': worker.gender,
+					'dob': worker.dob,
+					'aadhar_number': worker.aadhar_number,
+					'place': worker.place,
+					'address': worker.address,
+					'phone': worker.phone,
+					'mobile': worker.mobile,
+					'email': worker.email,
+					'status': worker.status
+				}
+				list_data.append(dict_data)
+			except tbl_worker.DoesNotExist:
+				continue
 		
 		return render(request, 'worker/view_appliedvacancy.html', {'list': list_data})
 	except Exception as e:
@@ -1299,8 +1591,10 @@ def login(request):
 	return render(request,'common/login.html')
 def viewappliedvacancy2(request):
 		cursor=connection.cursor()
-		v_id=request.GET['vacid']
-		w_id=request.GET['worid']
+		v_id=request.GET.get('vacid', '').strip()
+		w_id=request.GET.get('worid', '').strip()
+		if not v_id or not w_id:
+			return HttpResponse("<script>alert('Vacancy id is missing');window.location='/viewappliedvacancy/';</script>")
 		sql1="select * from tbl_worker where worker_id='%s'"%(w_id)
 		cursor.execute(sql1)
 		result=cursor.fetchall()
@@ -1429,34 +1723,50 @@ def editfeedbackworker1(request):
 		return HttpResponse(html)
 		
 def editfeedbackworker2(request):
-		cursor=connection.cursor()
-		worker_id=request.GET['worker_id']
-		sql1="select * from tbl_feedback where feedback_id=(select max(feedback_id) from tbl_feedback where worker_id='%s') " %(worker_id)
-		cursor.execute(sql1)
-		result=cursor.fetchall()
-		list=[]
-		if 	(cursor.rowcount) > 0:
-			for row1 in result:
-				dict={'feedback_id':row1[0],'date':row1[1],'emp_id':row1[2],'worker_id':row1[3],'feedback_title':row1[4],'feedback_description':row1[5]}
-				list.append(dict)
-			return render(request,'worker/edit_feedbackworker2.html',{'list':list})
-		else:
-			html="<script>alert('No feedback added. Please add your feedback about this worker!!! ');window.location='/editfeedbackworker1/';</script>"
-			return HttpResponse(html)
-def editfeedbackworker3(request):
+		"""Agency: open latest feedback for a worker scoped to current employer."""
+		emp_id = request.session.get('u_id')
+		worker_id = request.GET.get('worker_id', '').strip()
+		if not emp_id or not worker_id:
+			return HttpResponse("<script>alert('Missing worker details');window.location='/editfeedbackworker1/';</script>")
 		
-		feedback_id=request.GET['feedbackid']
-		#now=datetime.datetime.today()
+		feedback = tbl_feedback.objects.filter(
+			worker_id=str(worker_id),
+			emp_id=str(emp_id)
+		).order_by('-feedback_id').first()
 		
-		Feedback_title=request.GET['feedback_title'] 
-		Feedback_description=request.GET['des']
+		if feedback:
+			list_data = [{
+				'feedback_id': feedback.feedback_id,
+				'date': feedback.date,
+				'emp_id': feedback.emp_id,
+				'worker_id': feedback.worker_id,
+				'feedback_title': feedback.feedback_title,
+				'feedback_description': feedback.feedback_description
+			}]
+			return render(request, 'worker/edit_feedbackworker2.html', {'list': list_data})
 		
-		cursor=connection.cursor()
-	
-		sql7="update tbl_feedback set date='%s',feedback_title='%s',feedback_description='%s' where feedback_id='%s'" %(now,Feedback_title,Feedback_description,feedback_id)
-		cursor.execute(sql7)
-		html="<script>alert('successfully Editted!');window.location='/homeemp/';</script>"
+		html = "<script>alert('No feedback added for this worker by your agency.');window.location='/editfeedbackworker1/';</script>"
 		return HttpResponse(html)
+def editfeedbackworker3(request):
+		"""Agency: update feedback safely for own record only."""
+		emp_id = request.session.get('u_id')
+		feedback_id = request.GET.get('feedbackid', '').strip()
+		feedback_title = request.GET.get('feedback_title', '').strip()
+		feedback_description = request.GET.get('des', '').strip()
+		
+		if not emp_id or not feedback_id:
+			return HttpResponse("<script>alert('Invalid feedback update request');window.location='/editfeedbackworker1/';</script>")
+		
+		try:
+			feedback = tbl_feedback.objects.get(feedback_id=feedback_id, emp_id=str(emp_id))
+		except tbl_feedback.DoesNotExist:
+			return HttpResponse("<script>alert('Feedback not found for your agency');window.location='/editfeedbackworker1/';</script>")
+		
+		feedback.date = now
+		feedback.feedback_title = feedback_title
+		feedback.feedback_description = feedback_description
+		feedback.save()
+		return HttpResponse("<script>alert('successfully Editted!');window.location='/homeemp/';</script>")
 def viewemydetailsworker(request):
 	"""Worker self-profile edit view"""
 	try:
@@ -2056,9 +2366,12 @@ def viewfeedbackworkerhome(request):
 				list.append(dict)
 		return render(request,'view_appliedvacancy.html',{'list':list})'''
 def viewmyworker_jobsheddule(request):
+		emp_id = request.session.get('u_id')
+		if not emp_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
 		cursor=connection.cursor()
 		list=[]
-		sql="select * from tbl_myworker where status='fixed' and emp_id='%s'"%(request.session['u_id'])
+		sql="select * from tbl_myworker where status='fixed' and emp_id='%s'"%(emp_id)
 		
 		cursor.execute(sql)
 		result1=cursor.fetchall()
@@ -2071,10 +2384,16 @@ def viewmyworker_jobsheddule(request):
 					list.append(dict)
 		return render(request,'worker/viewmyworker_jobsheddule.html',{'list':list})
 def jobsheddule1(request):
-		worker_id=request.GET['worker_id']
+		if not request.session.get('u_id'):
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
+		worker_id=request.GET.get('worker_id')
+		if not worker_id:
+			return HttpResponse("<script>alert('Worker ID missing');window.location='/viewmyworker_jobsheddule/';</script>")
 		return render(request,'worker/jobsheddule.html',{'worker_id':worker_id})
 def jobsheddule2(request):
-		Emp_id=request.session['u_id']
+		Emp_id=request.session.get('u_id')
+		if not Emp_id:
+			return HttpResponse("<script>alert('Please login first');window.location='/login/';</script>")
 		Worker_id=request.POST['worker_id']
 		Job_details=request.POST['work'] 
 		Salary=request.POST['salary']
@@ -2121,6 +2440,30 @@ def jobsheddule2(request):
 		
 		html="<script>alert('successfully inserted! ');window.location='/homeemp/';</script>"
 		return HttpResponse(html)
+
+def markattendance(request):
+	"""Agency marks worker attendance for a schedule entry."""
+	try:
+		emp_id = request.session.get('u_id')
+		if not emp_id or request.session.get('user_type') != 'employer':
+			return HttpResponse("<script>alert('Please login as agency first');window.location='/login/';</script>")
+
+		shedule_id = request.GET.get('shedule_id', '').strip()
+		status = request.GET.get('status', '').strip()
+		if not shedule_id or status not in ['Present', 'Absent']:
+			return HttpResponse("<script>alert('Invalid attendance request');window.location='/viewjobshedule/';</script>")
+
+		try:
+			schedule = tbl_workershedule.objects.get(shedule_id=int(shedule_id), emp_id=int(emp_id))
+		except (tbl_workershedule.DoesNotExist, ValueError):
+			return HttpResponse("<script>alert('Schedule not found');window.location='/viewjobshedule/';</script>")
+
+		schedule.attendance = status
+		schedule.save()
+		return HttpResponse("<script>alert('Attendance updated');window.location='/viewjobshedule2/?worker_id=%s';</script>" % schedule.worker_id)
+	except Exception as e:
+		return HttpResponse(f"<script>alert('Error: {str(e)}');window.location='/viewjobshedule/';</script>")
+
 def viewjobshedule(request):
 	"""Agency view: View job schedules for assigned workers using ORM"""
 	try:
@@ -2148,6 +2491,7 @@ def viewjobshedule(request):
 					'salary': shed.salary,
 					'time_from': shed.time_from,
 					'working_houres': shed.working_houres,
+					'attendance': shed.attendance,
 					'worker_name': worker.worker_name,
 					'image': worker.image,
 					'gender': worker.gender,
@@ -2171,21 +2515,31 @@ def viewjobshedule(request):
 		html = f"<script>alert('Error: {str(e)}');window.location='/homeemp/';</script>"
 		return HttpResponse(html)
 def viewjobshedule2(request):
-		cursor=connection.cursor()
-		worker_id=request.GET['worker_id']
-		#sql="select worker_id from tbl_workershedule where time_from between '%s' and '%s' and emp_id='%s'"%(time_from,time_to)
-		sql="select * from tbl_workershedule where worker_id='%s'"%(worker_id)
-		cursor.execute(sql)
-		result=cursor.fetchall()
-		list=[]
-		if 	(cursor.rowcount) > 0:
-			for row in result:
-				dict={'shedule_id':row[0],'emp_id':row[1],'worker_id':row[2],'job_details':row[3],'salary':row[4],'time_from':row[5],'working_houres':row[6]}
-				list.append(dict)
-			return render(request,'worker/viewjobshedule2.html',{'list':list})
-		else:
-			html="<script>alert('No job sheddule added. Please give any job !!! ');window.location='/viewjobshedule/';</script>"
-			return HttpResponse(html)
+		emp_id = request.session.get('u_id')
+		if not emp_id or request.session.get('user_type') != 'employer':
+			return HttpResponse("<script>alert('Please login as agency first');window.location='/login/';</script>")
+		
+		worker_id = request.GET.get('worker_id', '').strip()
+		if not worker_id:
+			return HttpResponse("<script>alert('Worker ID missing');window.location='/viewjobshedule/';</script>")
+		
+		schedules = tbl_workershedule.objects.filter(worker_id=worker_id, emp_id=emp_id).order_by('-shedule_id')
+		list_data = []
+		for row in schedules:
+			list_data.append({
+				'shedule_id': row.shedule_id,
+				'emp_id': row.emp_id,
+				'worker_id': row.worker_id,
+				'job_details': row.job_details,
+				'salary': row.salary,
+				'time_from': row.time_from,
+				'working_houres': row.working_houres,
+				'attendance': getattr(row, 'attendance', 'Pending')
+			})
+		
+		if list_data:
+			return render(request, 'worker/viewjobshedule2.html', {'list': list_data})
+		return HttpResponse("<script>alert('No job sheddule added. Please give any job !!! ');window.location='/viewjobshedule/';</script>")
 def deletejobshedule1(request):
 		cursor=connection.cursor()
 		list=[]
@@ -2277,58 +2631,109 @@ def viewadminpolice(request):
 		html = f"<script>alert('Error: {str(e)}');window.location='/homeadmin/';</script>"
 		return HttpResponse(html)
 def viewpolice(request):
-	"""View all police stations - fetches all police station records"""
-	cursor=connection.cursor()
-	# Fetch ALL police stations from tbl_policestation table
-	sql="select * from tbl_policestation"
-	list=[]
+	"""View logged-in police station details only."""
+	if not _ensure_police_session(request):
+		return HttpResponse("<script>alert('Please login as Police Station first');window.location='/login/';</script>")
+
+	cursor = connection.cursor()
+	station_id = request.session['u_id']
+	sql = "select * from tbl_policestation where station_id='%s'" % (station_id)
+	list = []
 	cursor.execute(sql)
-	result=cursor.fetchall()
+	result = cursor.fetchall()
 	for row in result:
-		dict={'station_id':row[0],'branch':row[1],'address':row[2],'phone':row[3],'mobile':row[4],'email':row[5],'district':row[6],'city':row[7],'state':row[8],'password':row[9]}
+		dict = {
+			'station_id': row[0],
+			'branch': row[1],
+			'address': row[2],
+			'phone': row[3],
+			'mobile': row[4],
+			'email': row[5],
+			'district': row[6],
+			'city': row[7],
+			'state': row[8],
+			'password': row[9],
+		}
 		list.append(dict)
-	return render(request,'police/viewpolice.html',{'list':list})
+	return render(request, 'police/viewpolice.html', {'list': list})
 def editpolice1(request):
-		cursor=connection.cursor()
-		# Fetch ALL police stations from tbl_policestation table
-		sql="select * from tbl_policestation"
-		list=[]
+		if not _ensure_police_session(request):
+			return HttpResponse("<script>alert('Please login as Police Station first');window.location='/login/';</script>")
+
+		cursor = connection.cursor()
+		station_id = request.session['u_id']
+		sql = "select * from tbl_policestation where station_id='%s'" % (station_id)
+		list = []
 		cursor.execute(sql)
-		result=cursor.fetchall()
+		result = cursor.fetchall()
 		for row in result:
-			dict={'station_id':row[0],'branch':row[1],'address':row[2],'phone':row[3],'mobile':row[4],'email':row[5],'district':row[6],'city':row[7],'state':row[8],'password':row[9]}
+			dict = {
+				'station_id': row[0],
+				'branch': row[1],
+				'address': row[2],
+				'phone': row[3],
+				'mobile': row[4],
+				'email': row[5],
+				'district': row[6],
+				'city': row[7],
+				'state': row[8],
+				'password': row[9],
+			}
 			list.append(dict)
-		return render(request,'police/editpolice1.html',{'list':list})
+		return render(request, 'police/editpolice1.html', {'list': list})
 def editpolice2(request):
-		cursor=connection.cursor()
-		station_id=request.GET['stationid']
-		sql1="select * from tbl_policestation where station_id='%s' " %(station_id)
-		cursor.execute(sql1)
-		result=cursor.fetchall()
-		list=[]
-		for row in result:
-			dict={'station_id':row[0],'branch':row[1],'address':row[2],'phone':row[3],'mobile':row[4],'email':row[5],'district':row[6],'city':row[7],'state':row[8],'password':row[9]}
-			list.append(dict)
-		return render(request,'police/editpolice2.html',{'list':list})
+		station = _get_logged_police_station(request)
+
+		# Fallback for legacy links like /editpolice2/?stationid=3 where
+		# session->station mapping may be stale.
+		if not station:
+			q_station_id = request.GET.get('stationid', '').strip()
+			if q_station_id:
+				station = tbl_policestation.objects.filter(station_id=q_station_id).first()
+				if station:
+					request.session['u_id'] = station.station_id
+					request.session['user_type'] = 'police'
+
+		if not station:
+			return HttpResponse("<script>alert('Please login as Police Station first');window.location='/login/';</script>")
+
+		station_data = {
+			'station_id': station.station_id,
+			'branch': station.branch,
+			'address': station.address,
+			'phone': station.phone,
+			'mobile': station.mobile,
+			'email': station.email,
+			'district': station.district,
+			'city': station.city,
+			'state': station.state,
+		}
+		return render(request, 'police/editpolice2.html', {'station': station_data, 'list': [station_data]})
 def editpolice3(request):
-		
-		station_id=request.GET['stationid']
-		
-		
-		Branch=request.GET['branch'] 
-		Address=request.GET['address']
-		
-		Phone=request.GET['phone']
-		Mobile=request.GET['mobile']
-		Email=request.GET['email']
-		District=request.GET['district']
-		City=request.GET['city']
-		State=request.GET['state']
-		cursor=connection.cursor()
-	
-		sql7="update tbl_policestation set branch='%s',address='%s',phone='%s',mobile='%s',email='%s',district='%s',city='%s',state='%s' where station_id='%s'" %(Branch,Address,Phone,Mobile,Email,District,City,State,station_id)
+		if not _ensure_police_session(request):
+			return HttpResponse("<script>alert('Please login as Police Station first');window.location='/login/';</script>")
+
+		station_id = request.session['u_id']
+		data = request.POST if request.method == 'POST' else request.GET
+
+		Branch = data.get('branch', '').strip()
+		Address = data.get('address', '').strip()
+		Phone = data.get('phone', '').strip()
+		Mobile = data.get('mobile', '').strip()
+		Email = data.get('email', '').strip()
+		District = data.get('district', '').strip()
+		City = data.get('city', '').strip()
+		State = data.get('state', '').strip()
+
+		if not all([Branch, Address, Phone, Mobile, Email, District, City, State]):
+			return HttpResponse("<script>alert('All fields are required');window.location='/editpolice2/';</script>")
+
+		cursor = connection.cursor()
+		sql7 = "update tbl_policestation set branch='%s',address='%s',phone='%s',mobile='%s',email='%s',district='%s',city='%s',state='%s' where station_id='%s'" % (
+			Branch, Address, Phone, Mobile, Email, District, City, State, station_id
+		)
 		cursor.execute(sql7)
-		html="<script>alert('successfully Editted!');window.location='/homepolice/';</script>"
+		html = "<script>alert('Successfully edited profile!');window.location='/viewpolice/';</script>"
 		return HttpResponse(html)
 def deletenoc1(request):
 		cursor=connection.cursor()
@@ -2453,17 +2858,71 @@ def viewfeedbackemp(request):
 		return render(request,'agency/view_empfeedback.html',{'list':list})	
 
 def perdayjob(request):
-		cursor=connection.cursor()
-		list=[]
+		"""Worker view: show all schedules assigned by agency."""
+		u_id = request.session.get('u_id')
+		if not u_id or request.session.get('user_type') != 'worker':
+			return HttpResponse("<script>alert('Please login as worker first');window.location='/login/';</script>")
 		
-		sql1="select * from tbl_workershedule where worker_id='%s' and time_from='%s' "%(request.session['u_id'],now)
-		cursor.execute(sql1)
-		#return HttpResponse(now)
-		result1=cursor.fetchall()
-		for row1 in result1:
-			dict={'shedule_id':row1[0],'emp_id':row1[1],'worker_id':row1[2],'job_details':row1[3],'salary':row1[4],'time_from':row1[5],'working_houres':row1[6]}
-			list.append(dict)
-		return render(request,'police/perdayjob.html',{'list':list})	
+		# tbl_workershedule.worker_id is IntegerField; normalize session id safely.
+		if str(u_id).isdigit():
+			schedules = tbl_workershedule.objects.filter(worker_id=int(u_id)).order_by('-shedule_id')
+		else:
+			schedules = tbl_workershedule.objects.none()
+		
+		list_data = []
+		for s in schedules:
+			list_data.append({
+				'shedule_id': s.shedule_id,
+				'emp_id': s.emp_id,
+				'worker_id': s.worker_id,
+				'job_details': s.job_details,
+				'salary': s.salary,
+				'time_from': s.time_from,
+				'working_houres': s.working_houres,
+				'attendance': s.attendance
+			})
+		return render(request, 'worker/perdayjob.html', {'list': list_data})	
+
+def my_salary(request):
+	"""Worker view: monthly salary summary based on Present attendance."""
+	u_id = request.session.get('u_id')
+	if not u_id or request.session.get('user_type') != 'worker':
+		return HttpResponse("<script>alert('Please login as worker first');window.location='/login/';</script>")
+
+	today = datetime.date.today()
+	month = int(request.GET.get('month', today.month))
+	year = int(request.GET.get('year', today.year))
+	month_key = f"{year}-{str(month).zfill(2)}"
+
+	if str(u_id).isdigit():
+		rows = tbl_workershedule.objects.filter(
+			worker_id=int(u_id),
+			attendance='Present',
+			time_from__startswith=month_key
+		).order_by('-shedule_id')
+	else:
+		rows = tbl_workershedule.objects.none()
+
+	total_salary = sum(int(r.salary or 0) for r in rows)
+	list_data = []
+	for r in rows:
+		list_data.append({
+			'shedule_id': r.shedule_id,
+			'job_details': r.job_details,
+			'salary': r.salary,
+			'time_from': r.time_from,
+			'working_houres': r.working_houres,
+			'attendance': r.attendance,
+		})
+
+	return render(request, 'worker/my_salary.html', {
+		'list': list_data,
+		'total_salary': total_salary,
+		'month': month,
+		'year': year,
+		'months': range(1, 13),
+		'years': range(2020, 2031),
+	})
 	
 def viewnoc(request):
 	"""View a worker's own latest NOC using ORM"""
@@ -2623,9 +3082,31 @@ def viewcomplaints1(request):
 def editnoc1(request):
 	"""List workers for NOC editing using ORM"""
 	try:
-		# Get all worker IDs from login table
-		worker_ids = tbl_login.objects.filter(user_type='worker').values_list('u_id', flat=True)
-		workers = tbl_worker.objects.filter(worker_id__in=worker_ids)
+		if not _ensure_police_session(request):
+			return HttpResponse("<script>alert('Please login as Police Station first');window.location='/login/';</script>")
+
+		# Show workers that have at least one NOC. Handle legacy string ids safely.
+		raw_ids = tbl_noc.objects.values_list('worker_id', flat=True)
+		noc_worker_ids_int = []
+		for wid in raw_ids:
+			w = str(wid or '').strip()
+			if not w:
+				continue
+			try:
+				noc_worker_ids_int.append(int(w))
+			except ValueError:
+				continue
+
+		workers = tbl_worker.objects.filter(worker_id__in=noc_worker_ids_int).order_by('-worker_id')
+
+		# Fallback: if mapping is dirty, do manual match so page never becomes blank.
+		if not workers.exists():
+			workers = []
+			all_workers = tbl_worker.objects.all().order_by('-worker_id')
+			allowed = {str(i).strip() for i in raw_ids if str(i).strip()}
+			for w in all_workers:
+				if str(w.worker_id) in allowed:
+					workers.append(w)
 		
 		list_data = []
 		for worker in workers:
@@ -2654,25 +3135,45 @@ def editnoc1(request):
 def editnoc2(request):
 	"""List all NOCs for a specific worker for editing"""
 	try:
-		worker_id = request.GET.get('worker_id')
-		noc_records = tbl_noc.objects.filter(worker_id=worker_id)
+		worker_id = (request.GET.get('worker_id') or '').strip()
+		if not worker_id:
+			return HttpResponse("<script>alert('Worker ID missing');window.location='/editnoc1/';</script>")
+
+		# First try exact match with the worker_id
+		noc_records = tbl_noc.objects.filter(worker_id=worker_id).order_by('-noc_id')
 		
-		if noc_records.exists():
-			list_data = []
-			for row in noc_records:
-				dict_data = {
-					'noc_id': row.noc_id,
-					'worker_id': row.worker_id,
-					'station_id': row.station_id,
-					'date': row.date,
-					'crime': row.crime,
-					'crime_details': row.crime_details
-				}
-				list_data.append(dict_data)
-			return render(request, 'police/editnoc2.html', {'list': list_data})
+		# If no exact match, try with integer conversion
+		if not noc_records.exists():
+			try:
+				worker_id_int = str(int(worker_id))
+				noc_records = tbl_noc.objects.filter(worker_id=worker_id_int).order_by('-noc_id')
+			except ValueError:
+				pass
+		
+		# If still no match, try with all NOCs and manual comparison
+		if not noc_records.exists():
+			all_nocs = tbl_noc.objects.all().order_by('-noc_id')
+			noc_records = []
+			for noc in all_nocs:
+				noc_worker_id_str = str(noc.worker_id).strip() if noc.worker_id else ''
+				if noc_worker_id_str == worker_id or noc_worker_id_str == str(worker_id).strip():
+					noc_records.append(noc)
 		else:
-			html = "<script>alert('No NOC added. Please find the details and add it !! ');window.location='/viewnoc1/';</script>"
-			return HttpResponse(html)
+			noc_records = list(noc_records)
+			
+		list_data = []
+		for row in noc_records:
+			dict_data = {
+				'noc_id': row.noc_id,
+				'worker_id': row.worker_id,
+				'station_id': row.station_id,
+				'date': row.date,
+				'crime': row.crime,
+				'crime_details': row.crime_details
+			}
+			list_data.append(dict_data)
+			
+		return render(request, 'police/editnoc2.html', {'list': list_data, 'worker_id': worker_id})
 	except Exception as e:
 		html = f"<script>alert('Error: {str(e)}');window.location='/viewnoc1/';</script>"
 		return HttpResponse(html)
@@ -2680,8 +3181,25 @@ def editnoc2(request):
 def editnoc3(request):
 	"""Render edit form for a specific NOC record"""
 	try:
-		noc_id = request.GET.get('noc_id')
-		noc = tbl_noc.objects.get(noc_id=noc_id)
+		noc_id = (request.GET.get('noc_id') or '').strip()
+		worker_id = (request.GET.get('worker_id') or '').strip()
+
+		noc = None
+		if noc_id:
+			noc = tbl_noc.objects.filter(noc_id=noc_id).first()
+		elif worker_id:
+			# Open latest NOC for this worker directly from editnoc1 flow.
+			candidates = {worker_id, worker_id.strip()}
+			try:
+				candidates.add(str(int(worker_id)))
+			except ValueError:
+				pass
+			noc = tbl_noc.objects.filter(worker_id__in=list(candidates)).order_by('-noc_id').first()
+
+		if not noc:
+			html = "<script>alert('No NOC record found to edit.');window.location='/editnoc1/';</script>"
+			return HttpResponse(html)
+
 		dict_data = {
 			'noc_id': noc.noc_id,
 			'worker_id': noc.worker_id,
@@ -2981,6 +3499,65 @@ def view2(request):
 		return render(request, 'common/table1234.html', {'list': list_data})
 	except Exception as e:
 		return HttpResponse(f"Search error: {str(e)}")
+def forgot_password(request):
+	"""Forgot password: reset password using only email + new password (no old password needed)."""
+	if request.method == 'POST':
+		username = request.POST.get('user', '').strip()
+		npass = request.POST.get('npass', '').strip()
+		rpass = request.POST.get('rpass', '').strip()
+
+		if not username or not npass or not rpass:
+			return render(request, 'common/forgotpassword.html', {
+				'message': 'All fields are required.',
+				'message_type': 'error'
+			})
+
+		if npass != rpass:
+			return render(request, 'common/forgotpassword.html', {
+				'message': 'New passwords do not match. Please try again.',
+				'message_type': 'error'
+			})
+
+		if len(npass) < 6:
+			return render(request, 'common/forgotpassword.html', {
+				'message': 'Password must be at least 6 characters long.',
+				'message_type': 'error'
+			})
+
+		# Check if email/username exists in tbl_login
+		try:
+			login_record = tbl_login.objects.get(username=username)
+		except tbl_login.DoesNotExist:
+			return render(request, 'common/forgotpassword.html', {
+				'message': 'No account found with that email/username.',
+				'message_type': 'error'
+			})
+
+		# Update password in tbl_login
+		login_record.password = npass
+		login_record.save()
+
+		# Also update password in the respective user table
+		user_type = login_record.user_type
+		u_id = login_record.u_id
+		try:
+			if user_type == 'worker':
+				tbl_worker.objects.filter(worker_id=u_id).update(paswd=npass)
+			elif user_type == 'employer':
+				tbl_emp.objects.filter(emp_id=u_id).update(pswd=npass)
+			elif user_type == 'police':
+				tbl_policestation.objects.filter(station_id=u_id).update(password=npass)
+		except Exception:
+			pass  # Login password already updated; profile table update is secondary
+
+		return render(request, 'common/forgotpassword.html', {
+			'message': 'Password reset successfully! You can now login with your new password.',
+			'message_type': 'success'
+		})
+
+	# GET request — show the form
+	return render(request, 'common/forgotpassword.html', {})
+
 def changepassword (request):
 	cursor=connection.cursor()
 	username=request.GET['user']
@@ -3029,3 +3606,5 @@ def vacancy_search(request):
 		w = {'vacancy_id': row[0], 'date': row[1], 'emp_id': row[2], 'vacancy': row[3], 'vacancy_no': row[4] ,'description': row[5], 'status': row[4]}
 		list.append(w)
 	return render(request,'worker/vacancy_search.html', {'list': list})
+def landing(request):
+	return render(request,'common/landing.html')

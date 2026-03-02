@@ -1,199 +1,210 @@
+{% extends 'agency/agency_base.html' %}
+{% load static %}
 
+{% block title %}Worker Details{% endblock %}
 
+{% block extra_css %}
+<style>
 
-<!--[if IE 9]>
-<html class="ie ie9" lang="en-US">
-<![endif]-->
-<html lang="en-US">
-{% load  static %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+/* ===== Section Card ===== */
+.section-card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+    margin-bottom: 30px;
+}
 
-	<title>SafeTrack.com</title>
+/* ===== Section Title ===== */
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #0d6efd;
+    border-left: 5px solid #0d6efd;
+    padding-left: 10px;
+}
 
+/* ===== Modern Table ===== */
+.modern-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+}
 
-	<link href="{% static 'http://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,800' %}" rel='stylesheet' type='text/css'>
-	<link href="{% static 'http://fonts.googleapis.com/css?family=Audiowide' %}" rel='stylesheet' type='text/css'>
+.modern-table thead th {
+    background: linear-gradient(135deg,#0d6efd,#4dabf7);
+    color: #fff;
+    padding: 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    border: none;
+}
 
-	<link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
-	<link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
-	<link rel="stylesheet" href="{% static 'files/css/simple-line-icons.css' %}">
-	<link rel="stylesheet" href="{% static 'files/css/font-awesome.min.css' %}">
-	<link rel="stylesheet" href="{% static 'files/css/style.css' %}">
-	<link rel="stylesheet" href="{% static 'files/rs-plugin/css/settings.css' %}">
+.modern-table tbody tr {
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
 
-	<!--[if lt IE 9]>
-	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-	<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-	<![endif]-->
+.modern-table tbody tr:hover {
+    transform: translateY(-3px);
+}
 
-</head>
-<body>
+.modern-table td {
+    padding: 12px;
+    font-size: 12px;
+    border: none;
+}
 
-	
-	<div class="sidebar-menu-container" id="sidebar-menu-container">
+/* ===== Add Worker Button ===== */
+.btn-add {
+    background: linear-gradient(135deg,#28a745,#43d17d);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+    display: inline-block;
+}
 
-		<div class="sidebar-menu-push">
+.btn-add:hover {
+    box-shadow: 0 6px 15px rgba(40,167,69,0.4);
+    text-decoration: none;
+}
 
-			<div class="sidebar-menu-overlay"></div>
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
 
-			<div class="sidebar-menu-inner">
+    .modern-table thead {
+        display: none;
+    }
 
-				<header class="site-header">
-					<div id="main-header" class="main-header header-sticky">
-						<div class="inner-header clearfix">
-							<div class="logo">
-								<a href="">SafeTrack.com</a>
-							</div>
-							<div class="header-right-toggle pull-right hidden-md hidden-lg">
-								<a href="{% static 'javascript:void(0)' %}" class="side-menu-button"><i class="fa fa-bars"></i></a>
-							</div>
-							<nav class="main-navigation pull-right hidden-xs hidden-sm">
-								<ul>
-									<li><a href="/homeemp/">Home</a></li>
-									<!--<li><a href="/viewempworker/" >Worker</a>-->
-										
-									</li>
-									<li><a href="/viewmyworker/" >My Worker</a>
-										
-									</li>
-									
-									<li><a href="#" class="has-submenu">Vacancy</a>
-										<ul class="sub-menu">
-											<li><a href="/addvacancy/">Post vacancy</a></li>
-											<li><a href="/viewvacancy/">View vacancy</a></li>
-											<li><a href="/editvacancy1/">Edit vacancy</a></li>
-											<li><a href="/deletevacancy1/">Delete vacancy</a></li>
-											<li><a href="/viewappliedvacancy/">Applied vacancy</a></li>
-											
-											
-										</ul>
-									</li>
-								<!--<li><a href="/viewnoc1/" >NOC</a>-->
-										
-									</li>
-									<li><a href="#" class="has-submenu">Feedback</a>
-										<ul class="sub-menu">
-											<li><a href="/view_feedbackworker/">Add Feedback</a></li>
-											<li><a href="/viewfeedback/">View Feedback</a></li>
-											<li><a href="/editfeedbackworker1/">Edit Feedback</a></li>
-											<li><a href="/deletefeedback1/">Delete Feedback</a></li>
-											
-											
-										</ul>
-									</li>
-									<li><a href="#" class="has-submenu">My Details</a>
-										<ul class="sub-menu">
-										<li><a href="/viewemydetails/">View details</a></li>
-											<li><a href="/vieweditemp/">Update details </a></li>
-											
-											
-											
-										</ul>
-									</li>
-									<li><a href="#" class="has-submenu">Sheddules</a>
-										<ul class="sub-menu">
-										<li><a href="/viewmyworker_jobsheddule/">Add sheddules</a></li>
-											<li><a href="/viewjobshedule/">View sheddules </a></li>
-											<li><a href="/deletejobshedule1/">Delete sheddules </a></li>
-											
-											
-											
-										</ul>
-									</li>
-									
-									
-									<li><a href="/home/">Logout</a></li>
-									
-								</ul>
-							</nav>
-						</div>
-					</div>
-				</header> <br><br><br><br><br><br><br>
-				
-<html lang="en">
-  <head>
-    <title>view_worker</title>
-    <style type="text/css">
-	.TFtable{
-		width:80%; 
-		border-collapse:collapse; 
-	}
-	.TFtable td{ 
-		padding:7px; border:#4e95f4 1px solid;
-	}
-	/* provide some minimal visual accomodation for IE8 and below */
-	.TFtable tr{
-		background: #b8d1f3;
-	}
-	/*  Define the background color for all the ODD background rows  */
-	.TFtable tr:nth-child(odd){ 
-		background: #D3D3D3;
-	}
-	/*  Define the background color for all the EVEN background rows  */
-	.TFtable tr:nth-child(even){
-		background: #FFFFFF;
-	}
+    .modern-table,
+    .modern-table tbody,
+    .modern-table tr,
+    .modern-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .modern-table tr {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 14px;
+    }
+
+    .modern-table td {
+        padding: 8px 0;
+    }
+
+    .modern-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        display: block;
+        font-size: 11px;
+        margin-bottom: 4px;
+        color: #6c757d;
+        text-transform: uppercase;
+    }
+
+    .btn-add {
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
+    }
+}
+
 </style>
-  </head>
-  <body background="/static/files/images/whi.png" >
-   
-    
-<center>
+{% endblock %}
 
-        <form action="" method="get" > 
-   
-              
-      <table  class="TFtable" >
-	 	  <th colspan="5"><th> </th><b><font size="4" color="black">Worker Details </TH></tr>
-<tr>
-<th>Name</th><th>Gender</th><th>DOB</th><th>Aadhar Number</th><th>Registration_date</th><th>Place</th><th>Address</th><th>Languages_known</th><th>Phone</th><th>Mobile</th><th>Email</th>
-{% for i in list %}
-<tr><td>{{i.worker_name}}</td>
-<td>{{i.gender}}</td>
-<td>{{i.dob}}</td>
-<td>{{i.aadhar_number}}</td>
-<td>{{i.regis_date}}</td>
-<td>{{i.place}}</td>
-<td>{{i.address}}</td>
-<td>{{i.languages_known}}</td>
-<td>{{i.phone}}</td>
-<td>{{i.mobile}}</td>
-<td>{{i.email}}</td>
-<td><a href="/addmyworker?worker_id={{i.worker_id}}&vacancy_id={{i.vaccancy_id}}"><font color="red">ADD MY WORKER</td>
+{% block content %}
 
-{% endfor %}
-</table>
-<BR><BR>
-<BR><BR>
-<BR><BR>
-	 	  <th colspan="5"><th> </th><b><font size="4" color="black">feedback of worker </TH></tr>
-		  <BR><BR>
+<div class="page-header-accent">
+    <h2 class="h4 font-weight-bold">Worker Details</h2>
+    <p class="text-muted small">View complete profile and feedback of selected worker.</p>
+</div>
 
-<table  class="TFtable" >
+<!-- ===== Worker Details Section ===== -->
+<div class="section-card">
+    <div class="section-title">
+        <i class="fas fa-user mr-2"></i> Worker Information
+    </div>
 
-<tr>
-<th>Feedback title </th><th>Feedback description</th></tr>
-{% for i in feed %}
-<tr>
-<td>{{i.feedback_title}}</td>
-<td>{{i.feedback_description}}</td>
-</tr>
-{% empty %}
-	<td colspan="2" align="center"><h3> no feedbacks </h3><td></tr>
-{% endfor %}
-</table>
-<BR><BR>
-</form>
+    <table class="modern-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Gender</th>
+                <th>DOB</th>
+                <th>Aadhar</th>
+                <th>Reg Date</th>
+                <th>Place</th>
+                <th>Address</th>
+                <th>Languages</th>
+                <th>Phone</th>
+                <th>Mobile</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
-</head>
+        <tbody>
+            {% for i in list %}
+            <tr>
+                <td data-label="Name">{{ i.worker_name }}</td>
+                <td data-label="Gender">{{ i.gender }}</td>
+                <td data-label="DOB">{{ i.dob }}</td>
+                <td data-label="Aadhar">{{ i.aadhar_number }}</td>
+                <td data-label="Reg Date">{{ i.regis_date }}</td>
+                <td data-label="Place">{{ i.place }}</td>
+                <td data-label="Address">{{ i.address }}</td>
+                <td data-label="Languages">{{ i.languages_known }}</td>
+                <td data-label="Phone">{{ i.phone }}</td>
+                <td data-label="Mobile">{{ i.mobile }}</td>
+                <td data-label="Email">{{ i.email }}</td>
+                <td data-label="Action">
+                    <a href="/addmyworker?worker_id={{ i.worker_id }}&vacancy_id={{ i.vaccancy_id }}" class="btn-add">
+                        ADD MY WORKER
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
+<!-- ===== Feedback Section ===== -->
+<div class="section-card">
+    <div class="section-title">
+        <i class="fas fa-comment-dots mr-2"></i> Worker Feedback
+    </div>
 
-         
-                   
+    <table class="modern-table">
+        <thead>
+            <tr>
+                <th>Feedback Title</th>
+                <th>Feedback Description</th>
+            </tr>
+        </thead>
 
+        <tbody>
+            {% for i in feed %}
+            <tr>
+                <td data-label="Title">{{ i.feedback_title }}</td>
+                <td data-label="Description">{{ i.feedback_description }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2" style="text-align:center; padding:30px; color:#6c757d;">
+                    No feedbacks available.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-    
-  </body>
-</html>
+{% endblock %}

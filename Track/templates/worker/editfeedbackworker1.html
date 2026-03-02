@@ -123,7 +123,13 @@ h2 {
         <table class="worker-table">
             <tr>
                 <th>Photo</th>
-                <td><img src="{{ MEDIA_URL }}{{ i.image }}" class="worker-img"></td>
+                <td>
+                    {% if i.image %}
+                    <img src="{{ i.image.url }}" class="worker-img" alt="Worker image">
+                    {% else %}
+                    <img src="{% static 'files/images/author.png' %}" class="worker-img" alt="No image">
+                    {% endif %}
+                </td>
             </tr>
             <tr>
                 <th>Name</th>
@@ -172,7 +178,7 @@ h2 {
             <tr>
                 <th>Action</th>
                 <td>
-                    <a href="/editfeedbackworker2?worker_id={{ i.worker_id }}" class="edit-btn">
+                    <a href="/editfeedbackworker2/?worker_id={{ i.worker_id }}" class="edit-btn">
                         Edit Feedback
                     </a>
                 </td>
@@ -182,7 +188,11 @@ h2 {
 
     <!-- ================= MOBILE VIEW ================= -->
     <div class="mobile-card">
-        <img src="{{ MEDIA_URL }}{{ i.image }}">
+        {% if i.image %}
+        <img src="{{ i.image.url }}" alt="Worker image">
+        {% else %}
+        <img src="{% static 'files/images/author.png' %}" alt="No image">
+        {% endif %}
         <h4>{{ i.worker_name }}</h4>
 
         <p><strong>Gender:</strong> {{ i.gender }}</p>
@@ -194,7 +204,7 @@ h2 {
         <p><strong>Mobile:</strong> {{ i.mobile }}</p>
         <p><strong>Email:</strong> {{ i.email }}</p>
 
-        <a href="/editfeedbackworker2?worker_id={{ i.worker_id }}" class="edit-btn">
+        <a href="/editfeedbackworker2/?worker_id={{ i.worker_id }}" class="edit-btn">
             Edit Feedback
         </a>
     </div>

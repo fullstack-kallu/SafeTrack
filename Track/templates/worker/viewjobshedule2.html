@@ -1,167 +1,213 @@
-<!DOCTYPE html>
-<!--[if IE 9]>
-<html class="ie ie9" lang="en-US">
-<![endif]-->
-<html lang="en-US">
-{% load  static %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+{% extends 'agency/agency_base.html' %}
+{% load static %}
 
-	<title>SafeTrack.com</title>
+{% block title %}Worker Schedules{% endblock %}
 
+{% block extra_css %}
+<style>
 
-	<link href="{% static 'http://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,800' %}" rel='stylesheet' type='text/css'>
-	<link href="{% static 'http://fonts.googleapis.com/css?family=Audiowide' %}" rel='stylesheet' type='text/css'>
+/* ===== Section Card ===== */
+.schedule-card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    margin-bottom: 30px;
+}
 
-	<link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
-	<link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
-	<link rel="stylesheet" href="{% static 'files/css/simple-line-icons.css' %}">
-	<link rel="stylesheet" href="{% static 'files/css/font-awesome.min.css' %}">
-	<link rel="stylesheet" href="{% static 'files/css/style.css' %}">
-	<link rel="stylesheet" href="{% static 'files/rs-plugin/css/settings.css' %}">
+/* ===== Section Title ===== */
+.schedule-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #0d6efd;
+    border-left: 5px solid #0d6efd;
+    padding-left: 12px;
+}
 
-	<!--[if lt IE 9]>
-	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-	<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-	<![endif]-->
+/* ===== Modern Table ===== */
+.schedule-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+}
 
-</head>
-<body>
+.schedule-table thead th {
+    background: linear-gradient(135deg,#0d6efd,#4dabf7);
+    color: white;
+    padding: 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    border: none;
+}
 
-	
-	<div class="sidebar-menu-container" id="sidebar-menu-container">
+.schedule-table tbody tr {
+    background: #ffffff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
 
-		<div class="sidebar-menu-push">
+.schedule-table tbody tr:hover {
+    transform: translateY(-3px);
+}
 
-			<div class="sidebar-menu-overlay"></div>
+.schedule-table td {
+    padding: 12px;
+    font-size: 12px;
+    border: none;
+}
 
-			<div class="sidebar-menu-inner">
+/* ===== Attendance Badge ===== */
+.badge-present {
+    background: #28a745;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+}
 
-				<header class="site-header">
-					<div id="main-header" class="main-header header-sticky">
-						<div class="inner-header clearfix">
-							<div class="logo">
-								<a href="">SafeTrack.com</a>
-							</div>
-							<div class="header-right-toggle pull-right hidden-md hidden-lg">
-								<a href="{% static 'javascript:void(0)' %}" class="side-menu-button"><i class="fa fa-bars"></i></a>
-							</div>
-							<nav class="main-navigation pull-right hidden-xs hidden-sm">
-								<ul>
-									<li><a href="/homeemp/">Home</a></li>
-									<!--<li><a href="/viewempworker/" >Worker</a>-->
-										
-									</li>
-									<li><a href="/viewmyworker/" >My Worker</a>
-										
-									</li>
-									
-									<li><a href="#" class="has-submenu">Vacancy</a>
-										<ul class="sub-menu">
-											<li><a href="/addvacancy/">Post vacancy</a></li>
-											<li><a href="/viewvacancy/">View vacancy</a></li>
-											<li><a href="/editvacancy1/">Edit vacancy</a></li>
-											<li><a href="/deletevacancy1/">Delete vacancy</a></li>
-											<li><a href="/viewappliedvacancy/">Applied vacancy</a></li>
-											
-											
-										</ul>
-									</li>
-								<!--<li><a href="/viewnoc1/" >NOC</a>-->
-										
-									</li>
-									<li><a href="#" class="has-submenu">Feedback</a>
-										<ul class="sub-menu">
-											<li><a href="/view_feedbackworker/">Add Feedback</a></li>
-											<li><a href="/viewfeedback/">View Feedback</a></li>
-											<li><a href="/editfeedbackworker1/">Edit Feedback</a></li>
-											<li><a href="/deletefeedback1/">Delete Feedback</a></li>
-											
-											
-										</ul>
-									</li>
-									<li><a href="#" class="has-submenu">My Details</a>
-										<ul class="sub-menu">
-										<li><a href="/viewemydetails/">View details</a></li>
-											<li><a href="/vieweditemp/">Update details </a></li>
-											
-											
-											
-										</ul>
-									</li>
-									<li><a href="#" class="has-submenu">Sheddules</a>
-										<ul class="sub-menu">
-										<li><a href="/viewmyworker_jobsheddule/">Add sheddules</a></li>
-											<li><a href="/viewjobshedule/">View sheddules </a></li>
-											<li><a href="/deletejobshedule1/">Delete sheddules </a></li>
-											
-											
-											
-										</ul>
-									</li>
-									
-									
-									<li><a href="/home/">Logout</a></li>
-									
-								</ul>
-							</nav>
-						</div>
-					</div>
-				</header>
-<br><br>	<br><br><br><br><br><br>			
-<html lang="en">
-  <head>
-    <title>Detailed sheddule</title>
-    <style type="text/css">
-	.TFtable{
-		width:60%; 
-		border-collapse:collapse; 
-	}
-	.TFtable td{ 
-		padding:7px; border:#4e95f4 1px solid;
-	}
-	/* provide some minimal visual accomodation for IE8 and below */
-	.TFtable tr{
-		background: #b8d1f3;
-	}
-	/*  Define the background color for all the ODD background rows  */
-	.TFtable tr:nth-child(odd){ 
-		background: #D3D3D3;
-	}
-	/*  Define the background color for all the EVEN background rows  */
-	.TFtable tr:nth-child(even){
-		background: #FFFFFF;
-	}
+.badge-absent {
+    background: #dc3545;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+}
+
+.badge-pending {
+    background: #ffc107;
+    color: #000;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+}
+
+/* ===== Action Buttons ===== */
+.btn-attendance {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    text-decoration: none;
+    font-weight: 600;
+    margin-right: 5px;
+    transition: 0.3s;
+}
+
+.btn-present {
+    background: #28a745;
+    color: white;
+}
+
+.btn-present:hover {
+    box-shadow: 0 6px 15px rgba(40,167,69,0.4);
+}
+
+.btn-absent {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-absent:hover {
+    box-shadow: 0 6px 15px rgba(220,53,69,0.4);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+
+    .schedule-table thead {
+        display: none;
+    }
+
+    .schedule-table,
+    .schedule-table tbody,
+    .schedule-table tr,
+    .schedule-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .schedule-table tr {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 14px;
+    }
+
+    .schedule-table td {
+        padding: 8px 0;
+    }
+
+    .schedule-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        display: block;
+        font-size: 11px;
+        margin-bottom: 4px;
+        color: #6c757d;
+        text-transform: uppercase;
+    }
+}
+
 </style>
-  </head>
-  <body background="/static/files/images/whi.png" >
-   
-    
-<center>
+{% endblock %}
 
-        <form action="/update_employer/" method="get" > 
-   
-              
-      <table  class="TFtable" >
-	 	 
-<tr>
-	 	  <th colspan="5"><th> </th><b><font size="4" color="black">Worker sheddules</TH></tr><br><br>
+{% block content %}
 
-<tr><th>Job</th><th>Salary</th><th>Working time</th><th>Date</th>
-</tr>
+<div class="page-header-accent">
+    <h2 class="h4 font-weight-bold">Worker Schedules</h2>
+    <p class="text-muted small">Manage attendance and monitor job schedules.</p>
+</div>
 
-{% for i in list %}
-<tr>
-<td>{{i.job_details}}</td>
-<td>{{i.salary}}</td>
-<td>{{i.working_houres}}</td>
-<td>{{i.time_from}}</th>
-</tr>
+<div class="schedule-card">
 
-{% endfor %} 
-</table>
-</center>
-</body>
-  
-</html>
+    <div class="schedule-title">
+        <i class="fas fa-calendar-alt mr-2"></i> Assigned Schedules
+    </div>
+
+    <table class="schedule-table">
+        <thead>
+            <tr>
+                <th>Job</th>
+                <th>Salary</th>
+                <th>Working Time</th>
+                <th>Date</th>
+                <th>Attendance</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for i in list %}
+            <tr>
+                <td data-label="Job">{{ i.job_details }}</td>
+                <td data-label="Salary">{{ i.salary }}</td>
+                <td data-label="Working Time">{{ i.working_houres }}</td>
+                <td data-label="Date">{{ i.time_from }}</td>
+                <td data-label="Attendance">
+                    {% if i.attendance == "Present" %}
+                        <span class="badge-present">Present</span>
+                    {% elif i.attendance == "Absent" %}
+                        <span class="badge-absent">Absent</span>
+                    {% else %}
+                        <span class="badge-pending">Pending</span>
+                    {% endif %}
+                </td>
+                <td data-label="Action">
+                    <a href="/markattendance/?shedule_id={{i.shedule_id}}&status=Present"
+                       class="btn-attendance btn-present">Present</a>
+                    <a href="/markattendance/?shedule_id={{i.shedule_id}}&status=Absent"
+                       class="btn-attendance btn-absent">Absent</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align:center; padding:30px; color:#6c757d;">
+                    No schedules assigned yet.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

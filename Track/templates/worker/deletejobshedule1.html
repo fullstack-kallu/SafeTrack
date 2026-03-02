@@ -158,7 +158,7 @@
                 {% for i in list %}
                 <tr>
                     <td data-label="Photo">
-                        <img src="{{ MEDIA_URL }}{{ i.image }}" class="worker-img">
+                       <img src="/media/{{i.image}}" class="worker-photo" alt="Worker Photo"  height="50" width="50" >
                     </td>
                     <td data-label="Name">{{ i.worker_name }}</td>
                     <td data-label="Gender">{{ i.gender }}</td>

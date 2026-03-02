@@ -1,233 +1,152 @@
+{% extends 'agency/agency_base.html' %}
 {% load static %}
-<html lang="en-US">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-    <title>SafeTrack.com - Edit Vacancy</title>
+{% block title %}Edit Vacancy{% endblock %}
 
+{% block extra_css %}
+<style>
 
-    <link href="{% static 'http://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,800' %}" rel='stylesheet' type='text/css'>
-    <link href="{% static 'http://fonts.googleapis.com/css?family=Audiowide' %}" rel='stylesheet' type='text/css'>
+/* ===== Page Header ===== */
+.page-header-accent h2 {
+    font-size: 2rem;
+    font-weight: 700;
+}
 
-    <link rel="stylesheet" href="{% static 'files/css/bootstrap.css' %}">
-    <link rel="stylesheet" href="{% static 'files/css/animate.css' %}">
-    <link rel="stylesheet" href="{% static 'files/css/simple-line-icons.css' %}">
-    <link rel="stylesheet" href="{% static 'files/css/font-awesome.min.css' %}">
-    <link rel="stylesheet" href="{% static 'files/css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'files/rs-plugin/css/settings.css' %}">
+/* ===== Form Card ===== */
+.edit-card {
+    max-width: 650px;
+    margin: 30px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
 
-    <style type="text/css">
-        body {
-            background-color: #f0f0f0; 
-            font-family: 'Open Sans', Arial, sans-serif;
-            padding-top: 80px; 
-        }
+/* ===== Form Title ===== */
+.edit-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffc107;
+    margin-bottom: 25px;
+    text-align: center;
+}
 
-        /* --- Form Card Styling --- */
-        .form-card {
-            width: 90%;
-            max-width: 550px; 
-            margin: 40px auto; 
-            padding: 30px;
-            background-color: #ffffff; 
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
-            border-radius: 10px;
-        }
+/* ===== Form Groups ===== */
+.form-group-modern {
+    margin-bottom: 20px;
+}
 
-        .form-title {
-            font-size: 2.2em; 
-            font-weight: 700;
-            color: #ffc107; /* Yellow Accent for Vacancy */
-            margin-bottom: 25px;
-            text-align: center;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 15px;
-        }
+.form-group-modern label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    color: #343a40;
+}
 
-        /* Input and Textarea Styling */
-        .form-card input[type="text"], 
-        .form-card textarea {
-            width: 100%;
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            box-sizing: border-box; 
-            font-size: 1em;
-            color: #495057;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
+.input-modern,
+.textarea-modern {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    font-size: 14px;
+    transition: 0.3s;
+}
 
-        .form-card input:focus, .form-card textarea:focus {
-            border-color: #ffc107;
-            box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
-            outline: none;
-        }
+.input-modern:focus,
+.textarea-modern:focus {
+    border-color: #ffc107;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255,193,7,0.2);
+}
 
-        .form-card textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        /* Form Layout using Grid for labels/inputs */
-        .form-row {
-            display: flex;
-            align-items: flex-start; /* Align top for textarea */
-            margin-bottom: 10px;
-        }
-        
-        .form-label {
-            flex: 0 0 35%; 
-            padding-right: 15px;
-            padding-top: 10px; /* Vertically align label with input start */
-            text-align: right;
-            font-weight: 600;
-            color: #343a40;
-        }
-        
-        .form-input {
-            flex: 1; 
-        }
+.textarea-modern {
+    min-height: 120px;
+    resize: vertical;
+}
 
-        
-        /* Submit Button Styling */
-        .submit-button {
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff; /* Blue for Edit/Action */
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 1.1em;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
+/* ===== Button ===== */
+.btn-update {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg,#ffc107,#ff9800);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
 
-        .submit-button:hover {
-            background-color: #0056b3;
-        }
-        
-        /* Small screen adjustments */
-        @media (max-width: 576px) {
-            .form-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .form-label {
-                text-align: left;
-                padding-right: 0;
-                padding-top: 0;
-                margin-bottom: 5px;
-            }
-        }
+.btn-update:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255,152,0,0.3);
+}
 
-    </style>
-</head>
-<body>
+/* ===== Responsive ===== */
+@media(max-width:768px){
+    .edit-card{
+        padding:20px;
+    }
+}
 
-    
-    <div class="sidebar-menu-container" id="sidebar-menu-container">
+</style>
+{% endblock %}
 
-        <div class="sidebar-menu-push">
+{% block content %}
 
-            <div class="sidebar-menu-overlay"></div>
+<div class="page-header-accent">
+    <h2>Edit Vacancy</h2>
+    <p class="text-muted small">Update your posted vacancy details below.</p>
+</div>
 
-            <div class="sidebar-menu-inner">
+<div class="edit-card">
 
-                <header class="site-header">
-                    <div id="main-header" class="main-header header-sticky">
-                        <div class="inner-header clearfix">
-                            <div class="logo">
-                                <a href="">SafeTrack.com</a>
-                            </div>
-                            <div class="header-right-toggle pull-right hidden-md hidden-lg">
-                                <a href="{% static 'javascript:void(0)' %}" class="side-menu-button"><i class="fa fa-bars"></i></a>
-                            </div>
-                            <nav class="main-navigation pull-right hidden-xs hidden-sm">
-                                <ul>
-                                    <li><a href="/homeemp/">Home</a></li>
-                                    <li><a href="/viewmyworker/" >My Worker</a></li>
-                                    <li><a href="#" class="has-submenu">Vacancy</a>
-                                        <ul class="sub-menu">
-                                            <li><a href="/addvacancy/">Post vacancy</a></li>
-                                            <li><a href="/viewvacancy/">View vacancy</a></li>
-                                            <li><a href="/editvacancy1/">Edit vacancy</a></li>
-                                            <li><a href="/deletevacancy1/">Delete vacancy</a></li>
-                                            <li><a href="/viewappliedvacancy/">Applied vacancy</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#" class="has-submenu">Feedback</a>
-                                        <ul class="sub-menu">
-                                            <li><a href="/view_feedbackworker/">Add Feedback</a></li>
-                                            <li><a href="/viewfeedback/">View Feedback</a></li>
-                                            <li><a href="/editfeedbackworker1/">Edit Feedback</a></li>
-                                            <li><a href="/deletefeedback1/">Delete Feedback</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#" class="has-submenu">My Details</a>
-                                        <ul class="sub-menu">
-                                        <li><a href="/viewemydetails/">View details</a></li>
-                                            <li><a href="/vieweditemp/">Update details </a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="#" class="has-submenu">Sheddules</a>
-                                        <ul class="sub-menu">
-                                        <li><a href="/viewmyworker_jobsheddule/">Add sheddules</a></li>
-                                            <li><a href="/viewjobshedule/">View sheddules </a></li>
-                                            <li><a href="/deletejobshedule1/">Delete sheddules </a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="/home/">Logout</a></li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-                </header> 
-                <br><br><br><br><br><br><br>
-                
-                <center>
-                    <div class="form-card">
-                        <div class="form-title"><i class="fa fa-pencil-square-o"></i> Edit Vacancy Details</div>
-                        
-                        {% for i in list %}
-                        <form action="/editvacancy3/" method="get" > 
-                            
-                            <input type="hidden" name="vacancyid" value="{{i.vacancy_id}}" />
-                            
-                            <div class="form-row">
-                                <label class="form-label" for="vacancy">Vacancy Title</label>
-                                <div class="form-input">
-                                    <input type="text" id="vacancy" name="vacancy" value="{{i.vacancy}}" pattern="[a-zA-Z\s]+" required>
-                                </div>
-                            </div>
-
-                            <div class="form-row">
-                                <label class="form-label" for="num">Number of Openings</label>
-                                <div class="form-input">
-                                    <input type="text" id="num" name="num" value="{{i.vacancy_no}}" pattern="[0-9]+" title="Only numbers are allowed" required>
-                                </div>
-                            </div>
-                            
-                            <div class="form-row">
-                                <label class="form-label" for="des">Job Description</label>
-                                <div class="form-input">
-                                    <textarea id="des" name="des" required>{{i.description}}</textarea>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="submit-button"><i class="fa fa-refresh"></i> Update Vacancy</BUTTON>
-                        </form>
-                        {% endfor %}
-                    </div>
-                </center>
-                </div>
-        </div>
+    <div class="edit-title">
+        <i class="fas fa-pen mr-2"></i> Edit Vacancy Details
     </div>
-    
-<script src="{% static 'files/js/jquery.js' %}"></script>
-<script src="{% static 'files/js/bootstrap.min.js' %}"></script>
-</body>
-</html>
+
+    {% for i in list %}
+    <form action="/editvacancy3/" method="get">
+
+        <input type="hidden" name="vacancyid" value="{{ i.vacancy_id }}">
+
+        <div class="form-group-modern">
+            <label>Vacancy Title</label>
+            <input type="text"
+                   name="vacancy"
+                   class="input-modern"
+                   value="{{ i.vacancy }}"
+                   pattern="[a-zA-Z\s]+"
+                   required>
+        </div>
+
+        <div class="form-group-modern">
+            <label>Number of Openings</label>
+            <input type="text"
+                   name="num"
+                   class="input-modern"
+                   value="{{ i.vacancy_no }}"
+                   pattern="[0-9]+"
+                   title="Only numbers allowed"
+                   required>
+        </div>
+
+        <div class="form-group-modern">
+            <label>Job Description</label>
+            <textarea name="des"
+                      class="textarea-modern"
+                      required>{{ i.description }}</textarea>
+        </div>
+
+        <button type="submit" class="btn-update">
+            <i class="fas fa-sync-alt mr-1"></i> Update Vacancy
+        </button>
+
+    </form>
+    {% endfor %}
+
+</div>
+
+{% endblock %}

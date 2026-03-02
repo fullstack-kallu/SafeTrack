@@ -2,146 +2,176 @@
 {% load static %}
 
 {% block title %}Delete Job Schedule - SafeTrack{% endblock %}
-{% block content %}
-<body>
 
-	
-	<div class="sidebar-menu-container" id="sidebar-menu-container">
+{% block extra_css %}
+<style>
 
-		<div class="sidebar-menu-push">
+.page-wrapper {
+    padding: 2rem;
+}
 
-			<div class="sidebar-menu-overlay"></div>
+/* ===== Card Container ===== */
+.schedule-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
 
-			<div class="sidebar-menu-inner">
+/* ===== Header ===== */
+.schedule-header {
+    background: linear-gradient(135deg, #dc3545, #a71d2a);
+    color: white;
+    padding: 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+}
 
-				<header class="site-header">
-					<div id="main-header" class="main-header header-sticky">
-						<div class="inner-header clearfix">
-							<div class="logo">
-								<a href="">SafeTrack.com</a>
-							</div>
-							<div class="header-right-toggle pull-right hidden-md hidden-lg">
-								<a href="{% static 'javascript:void(0)' %}" class="side-menu-button"><i class="fa fa-bars"></i></a>
-							</div>
-							<nav class="main-navigation pull-right hidden-xs hidden-sm">
-								<ul>
-									<li><a href="/homeemp/">Home</a></li>
-									<!--<li><a href="/viewempworker/" >Worker</a>-->
-										
-									</li>
-									<li><a href="/viewmyworker/" >My Worker</a>
-										
-									</li>
-									
-									<li><a href="#" class="has-submenu">Vacancy</a>
-										<ul class="sub-menu">
-											<li><a href="/addvacancy/">Post vacancy</a></li>
-											<li><a href="/viewvacancy/">View vacancy</a></li>
-											<li><a href="/editvacancy1/">Edit vacancy</a></li>
-											<li><a href="/deletevacancy1/">Delete vacancy</a></li>
-											<li><a href="/viewappliedvacancy/">Applied vacancy</a></li>
-											
-											
-										</ul>
-									</li>
-								<!--<li><a href="/viewnoc1/" >NOC</a>-->
-										
-									</li>
-									<li><a href="#" class="has-submenu">Feedback</a>
-										<ul class="sub-menu">
-											<li><a href="/view_feedbackworker/">Add Feedback</a></li>
-											<li><a href="/viewfeedback/">View Feedback</a></li>
-											<li><a href="/editfeedbackworker1/">Edit Feedback</a></li>
-											<li><a href="/deletefeedback1/">Delete Feedback</a></li>
-											
-											
-										</ul>
-									</li>
-									<li><a href="#" class="has-submenu">My Details</a>
-										<ul class="sub-menu">
-										<li><a href="/viewemydetails/">View details</a></li>
-											<li><a href="/vieweditemp/">Update details </a></li>
-											
-											
-											
-										</ul>
-									</li>
-									<li><a href="#" class="has-submenu">Sheddules</a>
-										<ul class="sub-menu">
-										<li><a href="/viewmyworker_jobsheddule/">Add sheddules</a></li>
-											<li><a href="/viewjobshedule/">View sheddules </a></li>
-											<li><a href="">Delete sheddules </a></li>
-											
-											
-											
-										</ul>
-									</li>
-									
-									<li><a href="#" class="has-submenu">Settings</a>
-										<ul class="sub-menu">
-										<li><a href="/passwordchanging/">Change pswd</a></li>
-											</ul></li>
-									<li><a href="/home/">Logout</a></li>
-									
-								</ul>
-							</nav>
-						</div>
-					</div>
-				</header>
-<br><br>	<br><br><br><br><br><br>			
-<html lang="en">
-  <head>
-    <title>Detailed sheddule</title>
-    <style type="text/css">
-	.TFtable{
-		width:60%; 
-		border-collapse:collapse; 
-	}
-	.TFtable td{ 
-		padding:7px; border:#4e95f4 1px solid;
-	}
-	/* provide some minimal visual accomodation for IE8 and below */
-	.TFtable tr{
-		background: #b8d1f3;
-	}
-	/*  Define the background color for all the ODD background rows  */
-	.TFtable tr:nth-child(odd){ 
-		background: #D3D3D3;
-	}
-	/*  Define the background color for all the EVEN background rows  */
-	.TFtable tr:nth-child(even){
-		background: #FFFFFF;
-	}
+/* ===== Table ===== */
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-table thead {
+    background: #1f2937;
+}
+
+.custom-table th {
+    color: white;
+    padding: 14px;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.custom-table td {
+    padding: 14px;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.custom-table tbody tr:nth-child(even) {
+    background: #f9fafc;
+}
+
+.custom-table tbody tr:hover {
+    background: #ffe5e5;
+}
+
+/* ===== Delete Button ===== */
+.delete-btn {
+    background: #dc3545;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.delete-btn:hover {
+    background: #a71d2a;
+    box-shadow: 0 8px 20px rgba(220,53,69,0.4);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+
+    .custom-table thead {
+        display: none;
+    }
+
+    .custom-table,
+    .custom-table tbody,
+    .custom-table tr,
+    .custom-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .custom-table tr {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .custom-table td {
+        border: none;
+        padding: 6px 0;
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+    }
+
+    .custom-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #555;
+    }
+
+    .delete-btn {
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+}
+
 </style>
-  </head>
-  <body background="/static/files/images/whi.png" >
-   
-    
-<center>
- 
-        <form action="/update_employer/" method="get" > 
-   
-              
-      <table  class="TFtable" >
-	 	 
-<tr>
-	 	  <th colspan="5"><th> </th><b><font size="4" color="black">Worker sheddules</TH></tr><br><br>
+{% endblock %}
 
-<tr><th>Job</th><th>Salary</th><th>Working time</th><th>Date</th>
-</tr>
+{% block content %}
 
-{% for i in list %}
-<tr>
-<td>{{i.job_details}}</td>
-<td>{{i.salary}}</td>
-<td>{{i.working_houres}}</td>
-<td>{{i.time_from}}</th>
-<td><a href="/deletejobshedule3?shedule_id={{i.shedule_id}}"><FONT COLOR="RED">DELETE</td></tr>
-</tr>
+<div class="page-wrapper">
 
-{% endfor %} 
-</table>
-</center>
-</body>
-  {% endblock %}
-</html>
+    <div class="schedule-card">
+
+        <div class="schedule-header">
+            Delete Worker Schedules 🗑️
+        </div>
+
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Job</th>
+                    <th>Salary</th>
+                    <th>Working Hours</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for i in list %}
+                <tr>
+                    <td data-label="Job">{{ i.job_details }}</td>
+                    <td data-label="Salary">₹ {{ i.salary }}</td>
+                    <td data-label="Working Hours">{{ i.working_houres }}</td>
+                    <td data-label="Date">{{ i.time_from }}</td>
+                    <td data-label="Action">
+                        <a href="/deletejobshedule3?shedule_id={{i.shedule_id}}" 
+                           class="delete-btn"
+                           onclick="return confirm('Are you sure you want to delete this schedule?');">
+                           DELETE
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align:center; padding:20px;">
+                        No schedules available.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

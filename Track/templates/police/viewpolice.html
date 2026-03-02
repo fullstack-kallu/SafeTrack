@@ -4,7 +4,7 @@
 
 <head>
     {% include "police/policeheder.html" %}
-    <title>SafeTrack.com | Police Station Records</title>
+    <title>SafeTrack.com | Police Station Profile</title>
 </head>
 
 <body>
@@ -12,50 +12,79 @@
     <div class="main-content">
         <div class="police-card">
             <div class="card-header">
-                <h4><i class="fa-solid fa-building-shield"></i> Police Station Intel</h4>
-                <div class="badge-modern bg-info">Official Record</div>
+                <h4><i class="fa-solid fa-building-shield"></i> Police Station Profile</h4>
+                <div class="badge-modern bg-info">Verified Details</div>
             </div>
 
             <p style="color: #718096; margin-bottom: 30px; font-size: 14px;">
-                Verified registry of police station headquarters and liaison details contributing to the migrant
-                tracking network.
+                Complete station profile with branch identity, communication channels, and jurisdiction coverage.
             </p>
 
-            <div class="table-responsive">
-                <table class="police-table">
-                    <thead>
-                        <tr>
-                            <th>Branch</th>
-                            <th>Direct Address</th>
-                            <th>Phone (L)</th>
-                            <th>Mobile (M)</th>
-                            <th>Email Link</th>
-                            <th>District</th>
-                            <th>Zone / City</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for i in list %}
-                        <tr>
-                            <td style="font-weight: 700; color: var(--primary-navy);">{{i.branch}}</td>
-                            <td>{{i.address}}</td>
-                            <td><i class="fa-solid fa-phone-flip"
-                                    style="font-size: 10px; margin-right: 5px; opacity: 0.5;"></i> {{i.phone}}</td>
-                            <td><i class="fa-solid fa-mobile-screen-button"
-                                    style="font-size: 10px; margin-right: 5px; opacity: 0.5;"></i> {{i.mobile}}</td>
-                            <td style="color: var(--accent-blue);">{{i.email}}</td>
-                            <td><span class="badge-modern"
-                                    style="background: #F1F5F9; color: #475569;">{{i.district}}</span></td>
-                            <td>{{i.city}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            {% for i in list %}
+            <div
+                style="background: linear-gradient(180deg, #F8FAFC 0%, #EEF2FF 100%); border: 1px solid #E2E8F0; border-radius: 16px; padding: 22px;">
+                <div
+                    style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom: 18px;">
+                    <div>
+                        <h5 style="margin:0; font-weight: 800; color: var(--primary-navy);">{{ i.branch }}</h5>
+                        <p style="margin:4px 0 0 0; color:#64748B; font-size: 12px;">Station ID: {{ i.station_id }}</p>
+                    </div>
+                    <a href="/editpolice1/" class="badge-modern"
+                        style="background: var(--primary-navy); color: #fff; text-decoration:none; padding:10px 14px;">
+                        <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="police-table">
+                        <tbody>
+                            <tr>
+                                <th style="width:220px;">Branch</th>
+                                <td>{{ i.branch }}</td>
+                            </tr>
+                            <tr>
+                                <th>Address</th>
+                                <td>{{ i.address }}</td>
+                            </tr>
+                            <tr>
+                                <th>Phone</th>
+                                <td>{{ i.phone }}</td>
+                            </tr>
+                            <tr>
+                                <th>Mobile</th>
+                                <td>{{ i.mobile }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email</th>
+                                <td style="color: var(--accent-blue); font-weight: 700;">{{ i.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>District</th>
+                                <td>{{ i.district }}</td>
+                            </tr>
+                            <tr>
+                                <th>City</th>
+                                <td>{{ i.city }}</td>
+                            </tr>
+                            <tr>
+                                <th>State</th>
+                                <td>{{ i.state }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+            {% empty %}
+            <div
+                style="background: #F8FAFC; border:1px dashed #CBD5E1; border-radius: 14px; padding: 26px; text-align: center;">
+                <p style="margin:0; color:#64748B; font-weight:700;">No police profile details found for this account.
+                </p>
+            </div>
+            {% endfor %}
 
             <div style="margin-top: 30px; text-align: right;">
                 <p style="font-size: 11px; color: #A0AEC0;">
-                    <i class="fa-solid fa-clock-rotate-left"></i> Last verified: Current Session
+                    <i class="fa-solid fa-clock-rotate-left"></i> Synced in current session
                 </p>
             </div>
         </div>

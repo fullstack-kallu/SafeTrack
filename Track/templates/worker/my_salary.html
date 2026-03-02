@@ -1,0 +1,213 @@
+{% extends 'worker/worker_base.html' %}
+{% load static %}
+
+{% block title %}My Salary{% endblock %}
+
+{% block extra_css %}
+<style>
+
+/* ===== Filter Card ===== */
+.filter-form {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: end;
+      color: #000 !important;
+}
+
+.filter-form select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    font-size: 13px;
+      color: #000 !important;
+}
+
+.filter-form select:focus {
+    border-color: #3b82f6;
+    outline: none;
+}
+
+/* ===== Total Salary Card ===== */
+.salary-summary {
+    text-align: center;
+    padding: 20px;
+}
+
+.salary-summary h3 {
+    margin: 0;
+    font-weight: 700;
+}
+
+.salary-amount {
+    font-size: 22px;
+    color: #10B981;
+}
+
+/* ===== Table Improvements ===== */
+.data-table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.data-table tbody tr {
+    background: #ffffff;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+    transition: 0.3s;
+}
+
+.data-table tbody tr:hover {
+    transform: translateY(-3px);
+}
+
+.data-table td {
+    padding: 12px;
+    font-size: 13px;
+    border: none;
+}
+
+/* ===== Attendance Badge ===== */
+.badge-present {
+    background: #10B981;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.badge-absent {
+    background: #EF4444;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* ===== Salary Highlight ===== */
+.salary-cell {
+    font-weight: 700;
+    color: #3b82f6;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+
+    .data-table thead {
+        display: none;
+    }
+
+    .data-table,
+    .data-table tbody,
+    .data-table tr,
+    .data-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .data-table tr {
+        margin-bottom: 20px;
+        padding: 15px;
+        border-radius: 14px;
+    }
+
+    .data-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        display: block;
+        font-size: 12px;
+        margin-bottom: 4px;
+        color: #6b7280;
+        text-transform: uppercase;
+    }
+
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header-accent">
+    <h2 class="h4 font-weight-bold">My Salary</h2>
+    <p class="text-muted small">Salary includes only schedules marked as Present.</p>
+</div>
+
+<!-- Filter Section -->
+<div class="glass-card" style="margin-bottom: 16px;">
+    <form method="get" class="filter-form">
+        <div>
+            <label>Month</label><br>
+            <select name="month">
+                {% for m in months %}
+                <option value="{{ m }}" {% if m == month %}selected{% endif %}>{{ m }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label>Year</label><br>
+            <select name="year">
+                {% for y in years %}
+                <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn-modern">Filter</button>
+    </form>
+</div>
+
+<!-- Salary Summary -->
+<div class="glass-card salary-summary" style="margin-bottom: 16px;">
+    <h3>Total Credited Salary</h3>
+    <div class="salary-amount">Rs {{ total_salary }}</div>
+</div>
+
+<!-- Salary Table -->
+<div class="glass-card">
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Job</th>
+                    <th>Hours</th>
+                    <th>Attendance</th>
+                    <th>Salary</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for i in list %}
+                <tr>
+                    <td data-label="Date">{{ i.time_from }}</td>
+                    <td data-label="Job">{{ i.job_details }}</td>
+                    <td data-label="Hours">{{ i.working_houres }}</td>
+
+                    <td data-label="Attendance">
+                        {% if i.attendance == "Present" %}
+                            <span class="badge-present">Present</span>
+                        {% else %}
+                            <span class="badge-absent">{{ i.attendance }}</span>
+                        {% endif %}
+                    </td>
+
+                    <td data-label="Salary" class="salary-cell">
+                        Rs {{ i.salary }}
+                    </td>
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">
+                        No credited salary records for this month.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+{% endblock %}

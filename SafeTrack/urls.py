@@ -22,9 +22,10 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 admin.autodiscover()
 
 urlpatterns = [
+	path('', landing, name='landing'),
 	path('admin/', admin.site.urls),
 	 path('login/',TemplateView.as_view(template_name = 'common/login.html')),
-	path('home/',TemplateView.as_view(template_name = 'common/index.html')),
+	path('home/',TemplateView.as_view(template_name = 'common/index.html'), name='home'),
 	path('aboutus/',TemplateView.as_view(template_name = 'common/aboutus.html')),
 	path('contactus/',TemplateView.as_view(template_name = 'common/contactus.html')),
 	path('regadmin/',TemplateView.as_view(template_name = 'common/reg_admin.html')),
@@ -32,12 +33,12 @@ urlpatterns = [
 	path('approve/',approve, name = 'approve'),
 	 path('worker_salary/', worker_salary, name='worker_salary'),
 	path('reject/',reject, name = 'reject'),
-	path('emp/',TemplateView.as_view(template_name = 'common/reg_emp.html')),
+	path('emp/',TemplateView.as_view(template_name = 'common/reg_emp.html'), name='reg_emp'),
 	path('regempinsert/',regempinsert, name = 'regempinsert'),
 	path('police/',TemplateView.as_view(template_name = 'common/reg_policestation.html')),
 	path('regpoliceinsert/',regpoliceinsert, name = 'regpoliceinsert'),
-	path('registration/',TemplateView.as_view(template_name = 'common/reg_worker.html')),
-	path('reg_worker/',TemplateView.as_view(template_name = 'common/reg_worker.html')),
+	path('registration/',regworkerinsert, name='registration'),
+	path('reg_worker/',regworkerinsert, name='reg_worker'),
 	path('regworkerinsert/',regworkerinsert, name = 'regworkerinsert'),
 	path('index/',index, name = 'index'),
 	path('login/',login, name = 'login'),
@@ -85,7 +86,8 @@ urlpatterns = [
 	path('addvacancy/',TemplateView.as_view(template_name = 'agency/vacancy.html')),
 	path('vacancyinsert/',vacancyinsert, name = 'vacancyinsert'),
 	path('viewvacancy/',viewvacancy, name = 'viewvacancy'),
-	
+	path('view_vacany2/',view_vacany2, name='view_vacany2'),
+
 	path('editvacancy1/',editvacancy1, name = 'editvacancy1'),
 	path('editvacancy2/',editvacancy2, name = 'editvacancy2'),
 	path('editvacancy3/',editvacancy3, name = 'editvacancy3'),
@@ -147,6 +149,7 @@ urlpatterns = [
 	path('addfeedbackworker/',addfeedbackworker, name = 'addfeedbackworker'),
 	path('viewfeedbackemp/',viewfeedbackemp, name = 'viewfeedbackemp'),
 	path('perdayjob/',perdayjob, name = 'perdayjob'),
+	path('my_salary/',my_salary, name = 'my_salary'),
 	path('viewnoc/',viewnoc, name = 'viewnoc'),
 	path('addcomplaint/',addcomplaint, name = 'addcomplaint'),
 	path('complaint2/',complaint2, name = 'complaint2'),
@@ -170,6 +173,7 @@ urlpatterns = [
 	path('idcard/',idcard,name='idcard'),
 	path('viewjobshedule/',viewjobshedule,name='viewjobshedule'),
 	path('viewjobshedule2/',viewjobshedule2,name='viewjobshedule2'),
+	path('markattendance/',markattendance,name='markattendance'),
 	path('deletejobshedule1/',deletejobshedule1,name='deletejobshedule1'),
 	path('deletejobshedule2/',deletejobshedule2,name='deletejobshedule2'),
 	path('deletejobshedule3/',deletejobshedule3,name='deletejobshedule3'),
@@ -179,7 +183,9 @@ urlpatterns = [
 	path('policehome/', homepolice, name='policehome'),
 	path('workerhome/', homeworker, name='workerhome'),
 	path('emphome/', homeemp, name='emphome'),
-	path('password/',TemplateView.as_view(template_name = 'changepaswd.html')),
+	path('password/', forgot_password, name='forget password'),
+	path('forgot_password/', forgot_password, name='forgot_password'),
+	
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += staticfiles_urlpatterns()
 if settings.DEBUG:

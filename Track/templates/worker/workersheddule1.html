@@ -15,13 +15,14 @@
 
 /* Card */
 .schedule-card{
-    background:linear-gradient(135deg,#4F46E5,#4338CA);
+    background:linear-gradient(145deg,#FFFFFF,#F8FAFC);
+    border:1px solid #E2E8F0;
     padding:40px;
     border-radius:20px;
     width:100%;
     max-width:450px;
-    box-shadow:0 20px 40px rgba(0,0,0,0.15);
-    color:#fff;
+    box-shadow:0 20px 40px rgba(15,23,42,0.10);
+    color:#0F172A;
 }
 
 /* Title */
@@ -30,7 +31,7 @@
     font-weight:700;
     text-align:center;
     margin-bottom:30px;
-    color:#FF9800;
+    color:#0A1F44;
     letter-spacing:1px;
 }
 
@@ -45,30 +46,34 @@
 
 .form-group label{
     font-size:14px;
-    font-weight:600;
+    font-weight:700;
     display:block;
     margin-bottom:6px;
+    color:#000000;
 }
 
 .form-group input{
     width:100%;
-    padding:10px 12px;
-    border:none;
+    padding:11px 12px;
+    border:2px solid #CBD5E1;
     border-radius:8px;
     font-size:14px;
+    background:#FFFFFF;
+    color:#000000;
 }
 
 /* Focus effect */
 .form-group input:focus{
     outline:none;
-    box-shadow:0 0 0 3px rgba(255,152,0,0.5);
+    border-color:#0A1F44;
+    box-shadow:0 0 0 3px rgba(10,31,68,0.15);
 }
 
 /* Button */
 .submit-btn{
     width:100%;
     padding:12px;
-    background:#FF9800;
+    background:#0A1F44;
     border:none;
     border-radius:8px;
     font-size:14px;
@@ -79,7 +84,7 @@
 }
 
 .submit-btn:hover{
-    background:#FB8C00;
+    background:#1E3A8A;
     transform:translateY(-2px);
 }
 
@@ -122,7 +127,7 @@
                 </div>
 
                 <button type="submit" class="submit-btn">
-                    TAKE INFORMATIONS
+                    View Schedules
                 </button>
 
             </form>
